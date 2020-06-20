@@ -19,7 +19,7 @@ namespace Chess {
         {
             name.truncate(name.length() - 4);
         }
-        return name;
+        return name; 
     }
 
 
