@@ -213,6 +213,8 @@ class LIB_EXPORT ChessGame : public QObject
 		bool canMoveVariationUp(MoveId moveId) const;
 		/** Decide if moveVariationDown() can be executed */
 		bool canMoveVariationDown(MoveId moveId) const;
+		/** @return number of current variation */
+		MoveId variationNumber(MoveId moveId = CURRENT_MOVE) const;
 
 	private:
 

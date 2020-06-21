@@ -304,6 +304,7 @@ signals:
 		QString preverb();      // —Ë”Ô
 		QString getUCIHistory() const;
 		Chess::GameWindow* m_gameWindow;
+		QLabel* m_gameTitle;
 		Chess::ChessBrowser* m_gameView;
 };
 

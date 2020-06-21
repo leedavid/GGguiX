@@ -314,6 +314,18 @@
     <ClCompile Include="src\chessbrowser.cpp">
       <Filter>Source Files\分析窗口</Filter>
     </ClCompile>
+    <ClCompile Include="src\chartwidget.cpp">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClCompile>
+    <ClCompile Include="src\nag.cpp">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editaction.cpp">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gamewindow.cpp">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\autoverticalscroller.h">
@@ -520,9 +532,6 @@
     <QtMoc Include="src\engineoptionmodel_x.h">
       <Filter>Source Files\分析窗口</Filter>
     </QtMoc>
-    <QtMoc Include="src\gamewindows.h">
-      <Filter>Source Files\分析窗口</Filter>
-    </QtMoc>
     <QtMoc Include="src\toolmainwindow.h">
       <Filter>Source Files\分析窗口</Filter>
     </QtMoc>
@@ -536,6 +545,9 @@
       <Filter>Source Files\分析窗口</Filter>
     </QtMoc>
     <QtMoc Include="src\GameMimeData.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gamewindow.h">
       <Filter>Source Files\分析窗口</Filter>
     </QtMoc>
   </ItemGroup>

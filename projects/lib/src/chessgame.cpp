@@ -1038,6 +1038,79 @@ bool ChessGame::isMainline(MoveId moveId) const
 	}
 }
 
+bool ChessGame::atLineEnd(MoveId moveId) const
+{
+	MoveId node = nodeValid(moveId);
+	if (node != NO_MOVE)
+	{
+		if (m_moveNodes[node].nextNode == NO_MOVE)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+Chess::NagSet ChessGame::nags(MoveId moveId) const
+{
+	MoveId node = nodeValid(moveId);
+	if (node != NO_MOVE)
+	{
+		return m_moveNodes[node].nags;
+	}
+	return Chess::NagSet();
+}
+
+bool ChessGame::canMoveVariationUp(MoveId moveId) const
+{
+	if (isMainline())
+	{
+		return false;
+	}
+
+	MoveId variation = variationNumber(moveId);
+	MoveId parentNode = m_moveNodes[moveId].parentNode;
+
+	const QList <MoveId>& v = m_moveNodes[parentNode].variations;
+	int i = v.indexOf(variation);
+	return (i > 0);
+}
+
+bool ChessGame::canMoveVariationDown(MoveId moveId) const
+{
+	if (isMainline())
+	{
+		return false;
+	}
+
+	MoveId variation = variationNumber(moveId);
+	MoveId parentNode = m_moveNodes[moveId].parentNode;
+
+	const QList <MoveId>& v = m_moveNodes[parentNode].variations;
+	int i = v.indexOf(variation);
+	return (i >= 0 && (i + 1) < v.count());
+}
+
+MoveId ChessGame::variationNumber(MoveId moveId) const
+{
+	if (isMainline())
+	{
+		return 0;
+	}
+	MoveId node = nodeValid(moveId);
+	if (node != NO_MOVE)
+	{
+		MoveId parentNode = m_moveNodes[node].parentNode;
+
+		while (m_moveNodes[node].previousNode != parentNode)
+		{
+			node = m_moveNodes[node].previousNode;
+		}
+	}
+	return node;
+}
+
 bool ChessGame::setSquareAnnotation(QString squareAnnotation, MoveId moveId)
 {
 	squareAnnotation = squareAnnotation.trimmed();

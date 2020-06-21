@@ -316,12 +316,14 @@
     <ClCompile Include="src\boardview\boardscene.cpp" />
     <ClCompile Include="src\boardview\boardview.cpp" />
     <ClCompile Include="src\capture.cpp" />
+    <ClCompile Include="src\chartwidget.cpp" />
     <ClCompile Include="src\chessbrowser.cpp" />
     <ClCompile Include="src\chessclock.cpp" />
     <ClCompile Include="src\colorlist.cpp" />
     <ClCompile Include="src\cutechessapp.cpp" />
     <ClCompile Include="src\dockwidgetex.cpp" />
     <ClCompile Include="src\downloadmanager.cpp" />
+    <ClCompile Include="src\editaction.cpp" />
     <ClCompile Include="src\engine.cpp" />
     <ClCompile Include="src\engineconfigproxymodel.cpp" />
     <ClCompile Include="src\engineconfigurationdlg.cpp" />
@@ -346,6 +348,7 @@
     <ClCompile Include="src\boardview\graphicsboard.cpp" />
     <ClCompile Include="src\boardview\graphicspiece.cpp" />
     <ClCompile Include="src\boardview\graphicspiecereserve.cpp" />
+    <ClCompile Include="src\gamewindow.cpp" />
     <ClCompile Include="src\importprogressdlg.cpp" />
     <ClCompile Include="src\linkboard.cpp" />
     <ClCompile Include="src\logstream.cpp" />
@@ -356,6 +359,7 @@
     <ClCompile Include="src\movelist.cpp" />
     <ClCompile Include="src\movenumbertoken.cpp" />
     <ClCompile Include="src\movetoken.cpp" />
+    <ClCompile Include="src\nag.cpp" />
     <ClCompile Include="src\newgamedlg.cpp" />
     <ClCompile Include="src\newtournamentdialog.cpp" />
     <ClCompile Include="src\pathlineedit.cpp" />
@@ -557,13 +561,13 @@
       <Define Condition="'$(Configuration)|$(Platform)'=='Release|x64'">UNICODE;_UNICODE;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;LIB_EXPORT=;CUTECHESS_VERSION=1.1.8;QT_TESTCASE_BUILDDIR=.;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_CONCURRENT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_SVG_LIB;QT_NETWORK_LIB;%(PreprocessorDefinitions)</Define>
     </QtMoc>
     <ClInclude Include="src\engineparameter.h" />
-    <QtMoc Include="src\gamewindows.h">
-      <IncludePath Condition="'$(Configuration)|$(Platform)'=='REL|x64'">.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;.\..\lib\src;.\3rdparty\qcustomplot;.\3rdparty\modeltest;$(QTDIR)\include;.\.moc;C:\VulkanSDK\1.0.51.0\include;$(QTDIR)\mkspecs\win32-msvc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtSvg;$(QTDIR)\include\QtNetwork</IncludePath>
-      <Define Condition="'$(Configuration)|$(Platform)'=='REL|x64'">UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;LIB_EXPORT=;CUTECHESS_VERSION=1.1.0;QT_TESTCASE_BUILDDIR=.;QT_CORE_LIB;QT_CONCURRENT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_SVG_LIB;NDEBUG;QT_NETWORK_LIB;%(PreprocessorDefinitions)</Define>
-      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;.\..\lib\src;.\3rdparty\qcustomplot;.\3rdparty\modeltest;$(QTDIR)\include;.\.moc;C:\VulkanSDK\1.0.51.0\include;$(QTDIR)\mkspecs\win32-msvc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtSvg;$(QTDIR)\include\QtNetwork</IncludePath>
-      <Define Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;LIB_EXPORT=;CUTECHESS_VERSION=1.1.0;QT_TESTCASE_BUILDDIR=.;QT_CORE_LIB;QT_CONCURRENT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_SVG_LIB;QT_NETWORK_LIB;USE_SOUND;USE_SPEECH;%(PreprocessorDefinitions)</Define>
-      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;.\..\lib\src;.\3rdparty\qcustomplot;.\3rdparty\modeltest;$(QTDIR)\include;.\.moc;C:\VulkanSDK\1.0.51.0\include;$(QTDIR)\mkspecs\win32-msvc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtSvg;$(QTDIR)\include\QtNetwork</IncludePath>
-      <Define Condition="'$(Configuration)|$(Platform)'=='Release|x64'">UNICODE;_UNICODE;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;LIB_EXPORT=;CUTECHESS_VERSION=1.1.8;QT_TESTCASE_BUILDDIR=.;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_CONCURRENT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_SVG_LIB;QT_NETWORK_LIB;%(PreprocessorDefinitions)</Define>
+    <QtMoc Include="src\gamewindow.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='REL|x64'">.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;.\..\lib\src;.\3rdparty\qcustomplot;.\3rdparty\modeltest;$(QTDIR)\include;.\.moc;C:\VulkanSDK\1.0.51.0\include;$(QTDIR)\mkspecs\win32-msvc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtSvg;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtTextToSpeech;$(QTDIR)\include\QtMultimedia</IncludePath>
+      <Define Condition="'$(Configuration)|$(Platform)'=='REL|x64'">UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;LIB_EXPORT=;CUTECHESS_VERSION=1.1.0;QT_TESTCASE_BUILDDIR=.;QT_CORE_LIB;QT_CONCURRENT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_SVG_LIB;NDEBUG;QT_NETWORK_LIB;QT_TEXTTOSPEECH_LIB;QT_MULTIMEDIA_LIB;%(PreprocessorDefinitions)</Define>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;.\..\lib\src;.\3rdparty\qcustomplot;.\3rdparty\modeltest;$(QTDIR)\include;.\.moc;C:\VulkanSDK\1.0.51.0\include;$(QTDIR)\mkspecs\win32-msvc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtSvg;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtTextToSpeech;$(QTDIR)\include\QtMultimedia</IncludePath>
+      <Define Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;LIB_EXPORT=;CUTECHESS_VERSION=1.1.0;QT_TESTCASE_BUILDDIR=.;QT_CORE_LIB;QT_CONCURRENT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_SVG_LIB;QT_NETWORK_LIB;USE_SOUND;USE_SPEECH;QT_TEXTTOSPEECH_LIB;QT_MULTIMEDIA_LIB;%(PreprocessorDefinitions)</Define>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;.\..\lib\src;.\3rdparty\qcustomplot;.\3rdparty\modeltest;$(QTDIR)\include;.\.moc;C:\VulkanSDK\1.0.51.0\include;$(QTDIR)\mkspecs\win32-msvc;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtSvg;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtTextToSpeech;$(QTDIR)\include\QtMultimedia</IncludePath>
+      <Define Condition="'$(Configuration)|$(Platform)'=='Release|x64'">UNICODE;_UNICODE;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;LIB_EXPORT=;CUTECHESS_VERSION=1.1.8;QT_TESTCASE_BUILDDIR=.;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_CONCURRENT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_SVG_LIB;QT_NETWORK_LIB;QT_TEXTTOSPEECH_LIB;QT_MULTIMEDIA_LIB;%(PreprocessorDefinitions)</Define>
     </QtMoc>
     <ClInclude Include="src\gameid.h" />
     <QtMoc Include="src\GameMimeData.h">

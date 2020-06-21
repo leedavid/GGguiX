@@ -20,7 +20,7 @@
 #include "mainwindow.h"
 #include "openingbook.h"
 #include "polyglotbook.h"
-#include "gamewindows.h"
+#include "gamewindow.h"
 
 #include <QAction>
 #include <QHBoxLayout>
@@ -759,6 +759,15 @@ void MainWindow::createDockWindows()
 	connect(this, SIGNAL(signalGameLoaded(const Board&)), gameTextDock, SLOT(raise()));
 	connect(this, SIGNAL(displayTime(const QString&, Color, const QString&)), m_gameView, SLOT(slotDisplayTime(const QString&, Color, const QString&)));
 
+	gameTextDock->setWidget(m_gameWindow);
+	connect(this, SIGNAL(reconfigure()), m_gameView, SLOT(slotReconfigure()));
+	addDockWidget(Qt::RightDockWidgetArea, gameTextDock);
+	m_gameTitle = new QLabel;
+	connect(m_gameTitle, SIGNAL(linkActivated(QString)), this, SLOT(slotGameViewLink(QString)));
+	gameTextDock->setTitleBarWidget(m_gameTitle);
+
+	//m_menuView->addAction(gameTextDock->toggleViewAction());
+	gameTextDock->toggleViewAction()->setShortcut(Qt::CTRL + Qt::Key_E);
 
 	// Add toggle view actions to the View menu
 	m_viewMenu->addAction(moveListDock->toggleViewAction());

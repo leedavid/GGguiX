@@ -23,7 +23,7 @@
       <property name="handleWidth">
        <number>4</number>
       </property>
-      <widget class="ChessBrowser" name="chessBrowser"/>
+      <widget class="Chess::ChessBrowser" name="chessBrowser"/>
       <widget class="QWidget" name="boxWidget" native="true">
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
@@ -90,7 +90,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ChessBrowser</class>
+   <class>Chess::ChessBrowser</class>
    <extends>QTextBrowser</extends>
    <header>chessbrowser.h</header>
   </customwidget>
