@@ -80,14 +80,23 @@ class MainWindow : public QMainWindow
 
 	public slots:
 		void addGame(ChessGame* game);
-
 		void slotReconfigure();  // ÷ÿΩ®
+		/** Update GameView content after game was change. Triggers also @ref slotMoveChanged. */
+		void slotGameChanged(bool bModified);
+		void slotMoveChanged();
 
 	protected:
 		virtual void closeEvent(QCloseEvent* event);
 		void closeCurrentGame();
 
 		void setupAnalysisWidget(DockWidgetEx* analysisDock, Chess::AnalysisWidget* analysis);
+		void moveChanged();
+
+signals:
+	/** Re-read configuration. */
+	void reconfigure();
+	/** Main game has been updated. */
+	void boardChange(const Chess::Board& board, const QString& line);
 
 	private slots:
 		void slotEditBoard();

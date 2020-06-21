@@ -33,11 +33,6 @@ namespace Chess { class Board; }
 class ChessPlayer;
 class OpeningBook;
 class MoveEvaluation;
-//class EngineConfiguration;
-
-//enum class GameState {
-//    
-//};
 
 class LIB_EXPORT ChessGame : public QObject
 {
@@ -160,6 +155,9 @@ class LIB_EXPORT ChessGame : public QObject
 		QSemaphore m_pauseSem;
 		QSemaphore m_resumeSem;
 		GameAdjudicator m_adjudicator;
+
+		// X chess =================================
+
 };
 
 #endif // CHESSGAME_H

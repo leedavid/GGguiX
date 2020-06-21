@@ -143,6 +143,9 @@ MainWindow::MainWindow(ChessGame* game)
 	createMenus();
 	createToolBars();
 	createDockWindows();
+
+	/* Setup the dimensions of all widgets and the main board */
+	slotReconfigure();
 	
 	//-----------------------------------------------------------------------------------------------------------------
 
@@ -1204,6 +1207,56 @@ void MainWindow::setupAnalysisWidget(DockWidgetEx* analysisDock, Chess::Analysis
 	connect(this, SIGNAL(signalGameModeChanged(bool)), analysis, SLOT(setGameMode(bool)));
 }
 
+void MainWindow::moveChanged()
+{
+	//m_game
+	/*
+	const Game& g = game();
+	MoveId m = g.currentMove();
+
+	// Set board first
+	m_boardView->setBoard(g.board(), m_currentFrom, m_currentTo, game().atLineEnd());
+
+	QString annotation = game().textAnnotation();
+	BoardViewEx* frame = BoardViewFrame(m_boardView);
+	if (frame)
+	{
+		frame->setComment(annotation);
+	}
+
+	m_currentFrom = InvalidSquare;
+	m_currentTo = InvalidSquare;
+
+	emit displayTime(g.timeAnnotation(m, Game::BeforeMove), g.board().toMove(), g.timeAnnotation(m, Game::AfterMove));
+
+	// Highlight current move
+	m_gameView->showMove(m);
+	if (g.isMainline())
+	{
+		m_gameView->slotDisplayPly(g.ply());
+	}
+
+	displayVariations();
+
+	slotSearchTree();
+
+	QString line = getUCIHistory();
+	emit boardChange(g.board(), line);
+
+	// Clear  entries
+	m_nagText.clear();
+
+	emit signalMoveHasNextMove(!gameMode() && !game().atLineEnd());
+	emit signalMoveHasPreviousMove(!gameMode() && !game().atGameStart());
+	emit signalMoveHasVariation(!gameMode() && game().variationCount() > 0);
+	emit signalMoveHasParent(!gameMode() && !game().isMainline());
+	emit signalVariationHasSibling(!gameMode() && game().variationHasSiblings(m));
+	emit signalGameIsEmpty(false);
+	emit signalGameAtLineStart(!gameMode() && game().atLineStart());
+
+	*/
+}
+
 void MainWindow::slotEditBoard() {
 	BoardEditorDlg dlgEditBoard(m_tabs.at(m_tabBar->currentIndex()).m_game->board(), this);
 	if (dlgEditBoard.exec() != QDialog::Accepted)
@@ -1781,12 +1834,29 @@ void MainWindow::slotReconfigure()
 		SetWindowPos((HWND)winId(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 	}
 #endif
-	m_recentFiles.restore();
+	//m_recentFiles.restore();
 	emit reconfigure(); 	// Re-emit for children
-	delete m_output;
-	m_output = new Output(Output::NotationWidget);
-	UpdateGameText()
+	//delete m_output;
+	//m_output = new Output(Output::NotationWidget);
+	//UpdateGameText()
 
+}
+
+void MainWindow::slotGameChanged(bool bModified)
+{
+	//UpdateMaterial();
+	//UpdateGameText();
+	//UpdateGameTitle();
+	moveChanged();
+}
+
+void MainWindow::slotMoveChanged()
+{
+	//if (m_training->isChecked() || m_training2->isChecked())
+	//{
+	//	UpdateGameText();
+	//}
+	moveChanged();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
