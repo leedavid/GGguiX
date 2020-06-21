@@ -12,7 +12,7 @@
 
 namespace Chess {
 
-    Settings::Settings() : QSettings(IniFormat, UserScope, "chessx", "chessx")
+    Settings::Settings() : QSettings(IniFormat, UserScope, "GGzeroX", "GGzeroX")
     {}
 
     Settings::Settings(const QString& fileName) : QSettings(fileName, IniFormat)

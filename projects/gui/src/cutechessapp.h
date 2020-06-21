@@ -56,6 +56,7 @@ class CuteChessApplication : public QApplication
 		MainWindow* newGameWindow(ChessGame* game);
 		void newDefaultGame();
 		void showSettingsDialog();
+		
 		void showTournamentResultsDialog();
 		void showGameDatabaseDialog();
 		void showGameWall();

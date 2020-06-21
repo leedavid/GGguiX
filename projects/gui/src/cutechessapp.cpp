@@ -44,6 +44,7 @@
 #include "pgnimporter.h"
 #include "gamewall.h"
 
+
 #include <QTextCodec>
 
 
@@ -238,6 +239,8 @@ void CuteChessApplication::showSettingsDialog()
 
 	showDialog(m_settingsDialog);
 }
+
+
 
 void CuteChessApplication::showTournamentResultsDialog()
 {

@@ -43,6 +43,7 @@
 #include <board/boardfactory.h>
 #include <chessgame.h>
 #include <timecontrol.h>
+#include "dockwidgetex.h"
 #include <enginemanager.h>
 #include <gamemanager.h>
 #include <playerbuilder.h>
@@ -51,6 +52,7 @@
 #include <enginebuilder.h>
 #include <tournament.h>
 
+#include "analysiswidget.h"
 #include "cutechessapp.h"
 #include "gameviewer.h"
 #include "movelist.h"
@@ -66,12 +68,21 @@
 #include "boardview/boardscene.h"
 #include "tournamentresultsdlg.h"
 #include <engineconfiguration.h>
+#include "preferences.h"
+#include "settings.h"
 
 #include "BoardEditor.h"
 #include "random.h"
 
 #include <pgnstream.h>
 #include <pgngameentry.h>
+
+#ifdef USE_SOUND
+#include <QSound>
+#endif
+#ifdef USE_SPEECH
+#include <QTextToSpeech>
+#endif
 
 #ifdef QT_DEBUG
 #include <modeltest.h>
@@ -235,6 +246,9 @@ void MainWindow::createActions()
 	m_showSettingsAct = new QAction(tr("&通用设置"), this);
 	m_showSettingsAct->setMenuRole(QAction::PreferencesRole);
 
+	m_showSettingsActX = new QAction(tr("&设置X"), this);
+	m_showSettingsActX->setMenuRole(QAction::PreferencesRole);
+
 	m_showGameDatabaseWindowAct = new QAction(tr("&对局数据库(此功能暂时不可用)"), this);
 
 	m_showGameWallAct = new QAction(tr("&当前对局"), this);
@@ -318,6 +332,9 @@ void MainWindow::createActions()
 	connect(m_showSettingsAct, SIGNAL(triggered()),
 		app, SLOT(showSettingsDialog()));
 
+	connect(m_showSettingsActX, SIGNAL(triggered()),
+		this, SLOT(showSettingsDialogX()));
+
 	connect(m_showTournamentResultsAct, SIGNAL(triggered()),
 		app, SLOT(showTournamentResultsDialog()));
 
@@ -361,7 +378,10 @@ void MainWindow::createMenus()
 
 	m_toolsMenu = menuBar()->addMenu(tr("&设置"));
 	m_toolsMenu->addAction(m_showSettingsAct);
-        m_toolsMenu->addAction(m_showGameDatabaseWindowAct);
+	
+	m_toolsMenu->addAction(m_showSettingsActX);
+
+    //m_toolsMenu->addAction(m_showGameDatabaseWindowAct);
 
 	m_viewMenu = menuBar()->addMenu(tr("&视图"));
 	m_viewMenu->addAction(m_flipBoardAct);
@@ -670,6 +690,24 @@ void MainWindow::createDockWindows()
 
 	tabifyDockWidget(moveListDock, tagsDock);
 	moveListDock->raise();
+
+	// Analysis Dock----------------------------------------------------------------------
+	DockWidgetEx* analysisDock = new DockWidgetEx(tr("分析 1"), this);
+	analysisDock->setObjectName("AnalysisDock1");
+	analysisDock->toggleViewAction()->setShortcut(Qt::CTRL + Qt::Key_F2);
+	m_mainAnalysis = new Chess::AnalysisWidget(this);
+	m_mainAnalysis->setObjectName("Analysis");
+	setupAnalysisWidget(analysisDock, m_mainAnalysis);
+	addDockWidget(Qt::LeftDockWidgetArea, analysisDock);
+
+	/* Analysis Dock 2 */
+	DockWidgetEx* analysisDock2 = new DockWidgetEx(tr("分析 2"), this);
+	analysisDock2->setObjectName("AnalysisDock2");
+	analysisDock2->toggleViewAction()->setShortcut(Qt::CTRL + Qt::Key_F3);
+	m_secondaryAnalysis = new Chess::AnalysisWidget(this);
+	m_secondaryAnalysis->setObjectName("Analysis2");
+	setupAnalysisWidget(analysisDock2, m_secondaryAnalysis);
+	addDockWidget(Qt::LeftDockWidgetArea, analysisDock2);
 
 	// Add toggle view actions to the View menu
 	m_viewMenu->addAction(moveListDock->toggleViewAction());
@@ -1143,6 +1181,29 @@ void MainWindow::closeCurrentGame()
 	slotCloseTab(m_tabBar->currentIndex());
 }
 
+void MainWindow::setupAnalysisWidget(DockWidgetEx* analysisDock, Chess::AnalysisWidget* analysis)
+{
+	analysisDock->setWidget(analysis);
+	// addDockWidget(Qt::RightDockWidgetArea, analysisDock);
+	connect(analysis, SIGNAL(addVariation(Analysis, QString)),
+		SLOT(slotGameAddVariation(Analysis, QString)));
+	connect(analysis, SIGNAL(addVariation(QString)),
+		SLOT(slotGameAddVariation(QString)));
+	connect(this, SIGNAL(boardChange(const Board&, const QString&)), analysis, SLOT(setPosition(const Board&, QString)));
+	connect(this, SIGNAL(reconfigure()), analysis, SLOT(slotReconfigure()));
+	// Make sure engine is disabled if dock is hidden
+	connect(analysisDock, SIGNAL(visibilityChanged(bool)),
+		analysis, SLOT(slotVisibilityChanged(bool)));
+	//m_menuView->addAction(analysisDock->toggleViewAction());
+	m_viewMenu->addAction(analysisDock->toggleViewAction());
+	analysisDock->hide();
+	connect(this, SIGNAL(signalGameLoaded(const Board&)), analysis, SLOT(slotUciNewGame(const Board&)));
+	connect(this, SIGNAL(signalGameModeChanged(bool)), analysis, SLOT(setDisabled(bool)));
+	connect(this, SIGNAL(signalUpdateDatabaseList(QStringList)), analysis, SLOT(slotUpdateBooks(QStringList)));
+	connect(analysis, SIGNAL(signalSourceChanged(QString)), this, SLOT(slotUpdateOpeningBook(QString)));
+	connect(this, SIGNAL(signalGameModeChanged(bool)), analysis, SLOT(setGameMode(bool)));
+}
+
 void MainWindow::slotEditBoard() {
 	BoardEditorDlg dlgEditBoard(m_tabs.at(m_tabBar->currentIndex()).m_game->board(), this);
 	if (dlgEditBoard.exec() != QDialog::Accepted)
@@ -1587,6 +1648,17 @@ void MainWindow::pasteFen()
 		new HumanBuilder(CuteChessApplication::userName()));
 }
 
+void MainWindow::showSettingsDialogX(int page)
+{
+	Chess::PreferencesDialog dlg(this);
+	if (page >= 0)
+	{
+		dlg.setCurrentIndex(page);
+	}
+	connect(&dlg, SIGNAL(reconfigure()), SLOT(slotReconfigure()));
+	dlg.exec();
+}
+
 // 关于菜单
 void MainWindow::showAboutDialog()
 {
@@ -1685,6 +1757,36 @@ void MainWindow::slotCloseAllGames()
 
 	if (m_tabs.isEmpty())
 		app->gameManager()->finish();
+}
+
+void MainWindow::slotReconfigure()
+{
+	Chess::PreferencesDialog::setupIconInMenus(this);
+
+	if (Chess::AppSettings->getValue("/MainWindow/VerticalTabs").toBool())
+	{
+		setDockOptions(QMainWindow::AnimatedDocks | QMainWindow::AllowNestedDocks | QMainWindow::VerticalTabs);
+	}
+	else
+	{
+		setDockOptions(QMainWindow::AnimatedDocks | QMainWindow::AllowTabbedDocks | QMainWindow::AllowNestedDocks);
+	}
+#ifdef Q_OS_WINXX
+	if (AppSettings->getValue("/MainWindow/StayOnTop").toBool())
+	{
+		SetWindowPos((HWND)winId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	}
+	else
+	{
+		SetWindowPos((HWND)winId(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	}
+#endif
+	m_recentFiles.restore();
+	emit reconfigure(); 	// Re-emit for children
+	delete m_output;
+	m_output = new Output(Output::NotationWidget);
+	UpdateGameText()
+
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

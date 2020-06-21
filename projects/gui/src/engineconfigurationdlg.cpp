@@ -33,7 +33,7 @@
 #include <chessplayer.h>
 #include <enginebuilder.h>
 
-#include "engineoptionmodel.h"
+#include "engineoptionmodel_cute.h"
 #include "engineoptiondelegate.h"
 
 #ifdef QT_DEBUG

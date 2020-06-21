@@ -1,19 +1,16 @@
 /*
-    This file is part of GGzero Chess.
-    Copyright (C) 2008-2018 GGzero Chess authors
-
-    GGzero Chess is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    GGzero Chess is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with GGzero Chess.  If not, see <http://www.gnu.org/licenses/>.
+	This file is part of Cute Chess.
+	Copyright (C) 2008-2018 Cute Chess authors
+	Cute Chess is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	Cute Chess is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	You should have received a copy of the GNU General Public License
+	along with Cute Chess.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef ENGINE_CONFIGURATION_MODEL_H
@@ -44,41 +41,40 @@ class EngineConfigurationModel : public QAbstractListModel
 {
 	Q_OBJECT
 
-	public:
-		/*!
-		 * Creates an empty model.
-		*/
-		EngineConfigurationModel(EngineManager* engineManager, QObject* parent = nullptr);
-		/*! Destroys the model. */
-		virtual ~EngineConfigurationModel();
+public:
+	/*!
+	 * Creates an empty model.
+	*/
+	EngineConfigurationModel(EngineManager* engineManager, QObject* parent = nullptr);
+	/*! Destroys the model. */
+	virtual ~EngineConfigurationModel();
 
-		/*!
-		 * Returns the chosen chess variant.
-		 *
-		 * By default an empty string is returned, meaning that engines
-		 * are not filtered by their supported variants.
-		 */
-		QString chessVariant() const;
-		/*! Sets the chosen chess variant to \a variant. */
-		void setChessVariant(const QString& variant);
-		
-		// Inherited from QAbstractListModel
-		virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
-		virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;
-		virtual QVariant data(const QModelIndex& index, int role) const;
-		virtual QVariant headerData(int section, Qt::Orientation orientation,
-					    int role = Qt::DisplayRole) const;
+	/*!
+	 * Returns the chosen chess variant.
+	 *
+	 * By default an empty string is returned, meaning that engines
+	 * are not filtered by their supported variants.
+	 */
+	QString chessVariant() const;
+	/*! Sets the chosen chess variant to \a variant. */
+	void setChessVariant(const QString& variant);
 
-	private slots:
-		void onEngineAdded(int index);
-		void onEngineAboutToBeRemoved(int index);
-		void onEngineUpdated(int index);
-		void onEnginesReset();
+	// Inherited from QAbstractListModel
+	virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+	virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;
+	virtual QVariant data(const QModelIndex& index, int role) const;
+	virtual QVariant headerData(int section, Qt::Orientation orientation,
+		int role = Qt::DisplayRole) const;
 
-	private:
-		EngineManager* m_engineManager;
-		QString m_chessVariant;
+private slots:
+	void onEngineAdded(int index);
+	void onEngineAboutToBeRemoved(int index);
+	void onEngineUpdated(int index);
+	void onEnginesReset();
+
+private:
+	EngineManager* m_engineManager;
+	QString m_chessVariant;
 };
 
 #endif // ENGINE_CONFIGURATION_MODEL_H
-

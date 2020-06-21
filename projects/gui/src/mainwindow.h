@@ -30,12 +30,15 @@
 
 #include "capture.h"
 #include "linkboard.h"
+#include "dockwidgetex.h"
 #include "translatingslider.h"
+//#include "analysiswidget.h"
 //#include "TestThread.h"
 
 namespace Chess {
 	class Board;
 	class Move;
+	class AnalysisWidget;
 }
 class QMenu;
 class QAction;
@@ -54,6 +57,8 @@ class EvalHistory;
 class EvalWidget;
 class PgnStream;
 class Capture;
+class DockWidgetEx;
+
 
 /**
  * MainWindow
@@ -76,9 +81,13 @@ class MainWindow : public QMainWindow
 	public slots:
 		void addGame(ChessGame* game);
 
+		void slotReconfigure();  // 重建
+
 	protected:
 		virtual void closeEvent(QCloseEvent* event);
 		void closeCurrentGame();
+
+		void setupAnalysisWidget(DockWidgetEx* analysisDock, Chess::AnalysisWidget* analysis);
 
 	private slots:
 		void slotEditBoard();
@@ -136,6 +145,8 @@ class MainWindow : public QMainWindow
 		/** Value for Move Interval Slider is changed */
 		void slotSetSliderText(int value = -1);
 
+		void showSettingsDialogX(int page = -1);
+
 	private:
 		struct TabData
 		{
@@ -147,6 +158,9 @@ class MainWindow : public QMainWindow
 			Tournament* m_tournament;
 			bool m_finished;			
 		};
+
+		Chess::AnalysisWidget* m_mainAnalysis;
+		Chess::AnalysisWidget* m_secondaryAnalysis;
 
 		void createActions();
 		void createMenus();
@@ -222,6 +236,7 @@ class MainWindow : public QMainWindow
 		QAction* m_showNextTabAct;
 		QAction* m_aboutAct;
 		QAction* m_showSettingsAct;
+		QAction* m_showSettingsActX;          // 另一个设置
 
 		QAction* m_changeBoardPicAct;         // 改变棋盘图片
 		QAction* m_changeBoardBackGroundAct;  // 改变背景

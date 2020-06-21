@@ -26,7 +26,7 @@ namespace Chess {
         connect(ui.btPin, SIGNAL(clicked(bool)), SLOT(slotPinChanged(bool)));
         ui.analyzeButton->setFixedHeight(ui.engineList->sizeHint().height());
 
-        //m_tablebase = new OnlineTablebase;
+        //m_tablebase = new OnlineTablebase;   // 在线开局库
         //connect(m_tablebase, SIGNAL(bestMove(QList<Move>, int)), this, SLOT(showTablebaseMove(QList<Move>, int)));
     }
 
@@ -307,14 +307,17 @@ namespace Chess {
     void AnalysisWidget::setPosition(const Board& board, QString line)
     {
         if (ui.btPin->isChecked())
-        {
+        {   
+            delete m_NextBoard;
             m_NextBoard = board.copy();
             m_NextLine = line;
             return;
         }
         if (!(*m_board == board))
         {
+            delete m_board;
             m_board = board.copy();
+            delete m_NextBoard;
             m_NextBoard = board.copy();
             m_NextLine = line;
             m_line = line;
@@ -479,6 +482,8 @@ namespace Chess {
 
     void AnalysisWidget::showTablebaseMove(QList<Move> bestMoves, int score)
     {
+        (void)score;
+        (void)bestMoves;
         /*if (m_tbBoard == m_board)
         {
             bool first = true;
@@ -676,6 +681,7 @@ namespace Chess {
     void AnalysisWidget::slotUciNewGame(const Board& b)
     {
         m_bUciNewGame = true;
+        delete m_startPos;
         m_startPos = b.copy();
     }
 

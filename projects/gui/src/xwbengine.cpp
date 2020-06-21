@@ -62,6 +62,7 @@ namespace Chess {
             return true;
         }
         stopAnalysis();
+        delete m_board;
         m_board = board.copy();
         if (m_analyze && isActive() && m_setboard)
         {

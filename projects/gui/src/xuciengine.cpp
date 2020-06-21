@@ -20,6 +20,7 @@ namespace Chess {
 
     void UCIEngine::setStartPos(const Board& startPos)
     {
+        delete m_startPos;
         m_startPos = startPos.copy();
     }
 
@@ -36,6 +37,7 @@ namespace Chess {
         {
             return true;
         }
+        delete m_board;
         m_board = board.copy();
         if (!getSendHistory())
         {

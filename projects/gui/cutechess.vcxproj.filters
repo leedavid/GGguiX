@@ -185,9 +185,6 @@
     <ClCompile Include="src\engineoptiondelegate.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\engineoptionmodel.cpp">
-      <Filter>Source Files\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="src\importprogressdlg.cpp">
       <Filter>Source Files\PGN</Filter>
     </ClCompile>
@@ -278,6 +275,36 @@
     <ClCompile Include="src\enginedata.cpp">
       <Filter>Source Files\分析窗口</Filter>
     </ClCompile>
+    <ClCompile Include="src\colorlist.cpp">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClCompile>
+    <ClCompile Include="src\preferences.cpp">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engineoptiondialog.cpp">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClCompile>
+    <ClCompile Include="src\downloadmanager.cpp">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tableview.cpp">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engineoptionlist.cpp">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engineoptionmodel_cute.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engineoptionmodel.cpp">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClCompile>
+    <ClCompile Include="src\toolmainwindows.cpp">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dockwidgetex.cpp">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\autoverticalscroller.h">
@@ -308,9 +335,6 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="src\engineoptiondelegate.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="src\engineoptionmodel.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="src\engineselectiondlg.h">
@@ -463,6 +487,39 @@
     <QtMoc Include="messagedialog.h">
       <Filter>Source Files\分析窗口</Filter>
     </QtMoc>
+    <QtMoc Include="src\preferences.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </QtMoc>
+    <QtMoc Include="src\colorlist.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </QtMoc>
+    <QtMoc Include="src\engineoptiondialog.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </QtMoc>
+    <QtMoc Include="src\downloadmanager.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </QtMoc>
+    <QtMoc Include="src\tableview.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </QtMoc>
+    <QtMoc Include="src\engineoptionlist.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </QtMoc>
+    <QtMoc Include="src\engineoptionmodel_cute.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="src\engineoptionmodel_x.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gamewindows.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </QtMoc>
+    <QtMoc Include="src\toolmainwindow.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </QtMoc>
+    <QtMoc Include="src\dockwidgetex.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include=".moc\moc_predefs.h.cbt">
@@ -549,6 +606,15 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="ui\analysiswidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="ui\preferences.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="ui\engineoptiondialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="ui\gamewindow.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -682,6 +748,15 @@
       <Filter>Source Files\分析窗口</Filter>
     </ClInclude>
     <ClInclude Include="src\xuciengine.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClInclude>
+    <ClInclude Include="src\version.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nag.h">
       <Filter>Source Files\分析窗口</Filter>
     </ClInclude>
   </ItemGroup>
