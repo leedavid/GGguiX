@@ -303,9 +303,9 @@ signals:
 		OpeningBook* GetOpeningBook(int& depth) const;
 		QString preverb();      // —Ë”Ô
 		QString getUCIHistory() const;
-		Chess::GameWindow* m_gameWindow;
-		QLabel* m_gameTitle;
-		Chess::ChessBrowser* m_gameView;
+		//Chess::GameWindow* m_gameWindow;
+		//QLabel* m_gameTitle;
+		//Chess::ChessBrowser* m_gameView;
 };
 
 #endif // MAINWINDOW_H

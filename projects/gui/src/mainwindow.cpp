@@ -722,10 +722,11 @@ void MainWindow::createDockWindows()
 	addDockWidget(Qt::LeftDockWidgetArea, analysisDock2);
 
 	// ±ê×¢´°¿Ú
-	 /* Game view */
+	 /* Game view 
 	DockWidgetEx* gameTextDock = new DockWidgetEx(tr("±ê×¢"), this);
 	gameTextDock->setObjectName("GameTextDock");
 
+	
 	m_gameWindow = new Chess::GameWindow(gameTextDock);
 	connect(this, SIGNAL(reconfigure()), m_gameWindow, SLOT(slotReconfigure()));
 
@@ -770,6 +771,7 @@ void MainWindow::createDockWindows()
 
 	//m_menuView->addAction(gameTextDock->toggleViewAction());
 	gameTextDock->toggleViewAction()->setShortcut(Qt::CTRL + Qt::Key_E);
+	*/
 
 	// Add toggle view actions to the View menu
 	m_viewMenu->addAction(moveListDock->toggleViewAction());
