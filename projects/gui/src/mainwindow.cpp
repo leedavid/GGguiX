@@ -20,6 +20,7 @@
 #include "mainwindow.h"
 #include "openingbook.h"
 #include "polyglotbook.h"
+#include "gamewindows.h"
 
 #include <QAction>
 #include <QHBoxLayout>
@@ -76,6 +77,7 @@
 
 #include <pgnstream.h>
 #include <pgngameentry.h>
+#include "chessbrowser.h"
 
 #ifdef USE_SOUND
 #include <QSound>
@@ -145,8 +147,7 @@ MainWindow::MainWindow(ChessGame* game)
 	createDockWindows();
 
 	/* Setup the dimensions of all widgets and the main board */
-	slotReconfigure();
-	
+	slotReconfigure();	
 	//-----------------------------------------------------------------------------------------------------------------
 
 	connect(m_moveList, SIGNAL(moveClicked(int,bool)),			     // 点击棋谱走步
@@ -166,8 +167,14 @@ MainWindow::MainWindow(ChessGame* game)
 
 	readSettings();
 	addGame(game);
-
 	createStatus();
+
+	slotDatabaseChanged();
+
+	if (isMinimized())
+	{
+		showNormal();
+	}
 }
 
 MainWindow::~MainWindow()
@@ -712,6 +719,47 @@ void MainWindow::createDockWindows()
 	setupAnalysisWidget(analysisDock2, m_secondaryAnalysis);
 	addDockWidget(Qt::LeftDockWidgetArea, analysisDock2);
 
+	// 标注窗口
+	 /* Game view */
+	DockWidgetEx* gameTextDock = new DockWidgetEx(tr("标注"), this);
+	gameTextDock->setObjectName("GameTextDock");
+
+	m_gameWindow = new Chess::GameWindow(gameTextDock);
+	connect(this, SIGNAL(reconfigure()), m_gameWindow, SLOT(slotReconfigure()));
+
+	//m_gameToolBar = new QToolBar(tr("Game Time"), m_gameWindow);
+	//m_gameToolBar->setObjectName("GameToolBar");
+	//m_gameToolBar->setMovable(false);
+	//m_gameWindow->addToolBar(Qt::BottomToolBarArea, m_gameToolBar);
+	//for (int i = 0; i < 2; ++i)
+	//{
+	//	QLCDNumber* annotatedTime = new QLCDNumber(m_gameToolBar);
+	//	annotatedTime->setObjectName(QString("Clock") + QString::number(i));
+	//	m_gameToolBar->addWidget(annotatedTime);
+	//	annotatedTime->setDigitCount(7);
+	//	annotatedTime->setSegmentStyle(QLCDNumber::Flat);
+	//	annotatedTime->display("1:00:00");
+	//	if (i == 0)
+	//	{
+	//		ChartWidget* chartWidget = new ChartWidget(m_gameToolBar);
+	//		chartWidget->setObjectName("ChartWidget");
+	//		chartWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	//		connect(chartWidget, SIGNAL(halfMoveRequested(int)), this, SLOT(slotGameMoveToPly(int)));
+	//		m_gameToolBar->addWidget(chartWidget);
+	//	}
+	//}
+	//m_menuView->addAction(m_gameToolBar->toggleViewAction());
+	//m_gameToolBar->setVisible(AppSettings->getValue("/MainWindow/GameToolBar").toBool());
+	m_gameView = m_gameWindow->browser();
+	//m_gameView->toolBar = m_gameToolBar;
+	connect(m_gameView, SIGNAL(anchorClicked(const QUrl&)), SLOT(slotGameViewLink(const QUrl&)));
+	connect(m_gameView, SIGNAL(actionRequested(EditAction)), SLOT(slotGameModify(EditAction)));
+	connect(m_gameView, SIGNAL(queryActiveGame(const Game**)), this, SLOT(slotGetActiveGame(const Game**)));
+	connect(m_gameView, SIGNAL(signalMergeGame(GameId, QString)), this, SLOT(slotMergeActiveGame(GameId, QString)));
+	connect(this, SIGNAL(signalGameLoaded(const Board&)), gameTextDock, SLOT(raise()));
+	connect(this, SIGNAL(displayTime(const QString&, Color, const QString&)), m_gameView, SLOT(slotDisplayTime(const QString&, Color, const QString&)));
+
+
 	// Add toggle view actions to the View menu
 	m_viewMenu->addAction(moveListDock->toggleViewAction());
 	m_viewMenu->addAction(tagsDock->toggleViewAction());
@@ -1207,55 +1255,7 @@ void MainWindow::setupAnalysisWidget(DockWidgetEx* analysisDock, Chess::Analysis
 	connect(this, SIGNAL(signalGameModeChanged(bool)), analysis, SLOT(setGameMode(bool)));
 }
 
-void MainWindow::moveChanged()
-{
-	//m_game
-	/*
-	const Game& g = game();
-	MoveId m = g.currentMove();
 
-	// Set board first
-	m_boardView->setBoard(g.board(), m_currentFrom, m_currentTo, game().atLineEnd());
-
-	QString annotation = game().textAnnotation();
-	BoardViewEx* frame = BoardViewFrame(m_boardView);
-	if (frame)
-	{
-		frame->setComment(annotation);
-	}
-
-	m_currentFrom = InvalidSquare;
-	m_currentTo = InvalidSquare;
-
-	emit displayTime(g.timeAnnotation(m, Game::BeforeMove), g.board().toMove(), g.timeAnnotation(m, Game::AfterMove));
-
-	// Highlight current move
-	m_gameView->showMove(m);
-	if (g.isMainline())
-	{
-		m_gameView->slotDisplayPly(g.ply());
-	}
-
-	displayVariations();
-
-	slotSearchTree();
-
-	QString line = getUCIHistory();
-	emit boardChange(g.board(), line);
-
-	// Clear  entries
-	m_nagText.clear();
-
-	emit signalMoveHasNextMove(!gameMode() && !game().atLineEnd());
-	emit signalMoveHasPreviousMove(!gameMode() && !game().atGameStart());
-	emit signalMoveHasVariation(!gameMode() && game().variationCount() > 0);
-	emit signalMoveHasParent(!gameMode() && !game().isMainline());
-	emit signalVariationHasSibling(!gameMode() && game().variationHasSiblings(m));
-	emit signalGameIsEmpty(false);
-	emit signalGameAtLineStart(!gameMode() && game().atLineStart());
-
-	*/
-}
 
 void MainWindow::slotEditBoard() {
 	BoardEditorDlg dlgEditBoard(m_tabs.at(m_tabBar->currentIndex()).m_game->board(), this);
@@ -1842,22 +1842,7 @@ void MainWindow::slotReconfigure()
 
 }
 
-void MainWindow::slotGameChanged(bool bModified)
-{
-	//UpdateMaterial();
-	//UpdateGameText();
-	//UpdateGameTitle();
-	moveChanged();
-}
 
-void MainWindow::slotMoveChanged()
-{
-	//if (m_training->isChecked() || m_training2->isChecked())
-	//{
-	//	UpdateGameText();
-	//}
-	moveChanged();
-}
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
@@ -1999,6 +1984,16 @@ QString MainWindow::preverb()
 		init = true;
 	}
 	return list[Chess::Random::Get().GetInt(0, list.length() - 1)];
+}
+
+QString MainWindow::getUCIHistory() const
+{
+	QString line;
+	//Game gx = game();
+	auto gx = *m_game;
+	gx.moveToStart();
+	gx.dbMoveToId(m_game->currentMove(), &line);
+	return line;
 }
 
 void MainWindow::slotResignGame()

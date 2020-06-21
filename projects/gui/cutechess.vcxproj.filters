@@ -305,6 +305,15 @@
     <ClCompile Include="src\dockwidgetex.cpp">
       <Filter>Source Files\分析窗口</Filter>
     </ClCompile>
+    <ClCompile Include="src\mainwindowsActions.cpp">
+      <Filter>Source Files\mainWin</Filter>
+    </ClCompile>
+    <ClCompile Include="src\annotation.cpp">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClCompile>
+    <ClCompile Include="src\chessbrowser.cpp">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\autoverticalscroller.h">
@@ -518,6 +527,15 @@
       <Filter>Source Files\分析窗口</Filter>
     </QtMoc>
     <QtMoc Include="src\dockwidgetex.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </QtMoc>
+    <QtMoc Include="src\chessbrowser.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </QtMoc>
+    <QtMoc Include="src\chartwidget.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </QtMoc>
+    <QtMoc Include="src\GameMimeData.h">
       <Filter>Source Files\分析窗口</Filter>
     </QtMoc>
   </ItemGroup>
@@ -753,10 +771,16 @@
     <ClInclude Include="src\version.h">
       <Filter>Source Files\分析窗口</Filter>
     </ClInclude>
-    <ClInclude Include="src\game.h">
+    <ClInclude Include="src\nag.h">
       <Filter>Source Files\分析窗口</Filter>
     </ClInclude>
-    <ClInclude Include="src\nag.h">
+    <ClInclude Include="src\annotation.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editaction.h">
+      <Filter>Source Files\分析窗口</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gameid.h">
       <Filter>Source Files\分析窗口</Filter>
     </ClInclude>
   </ItemGroup>

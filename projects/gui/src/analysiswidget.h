@@ -128,11 +128,11 @@ namespace Chess {
         QList<Analysis> m_analyses;
         Ui::AnalysisWidget ui;
         QPointer<Engine> m_engine;
-        Board* m_board = Chess::BoardFactory::create("");
+        Board* m_board; // = Chess::BoardFactory::create("");
         QString m_line;
-        Board* m_NextBoard = Chess::BoardFactory::create("");
+        Board* m_NextBoard;// = Chess::BoardFactory::create("");
         QString m_NextLine;
-        Board* m_startPos = Chess::BoardFactory::create("");
+        Board* m_startPos; // = Chess::BoardFactory::create("");
         QString m_tablebaseEvaluation;
         QString m_tablebaseMove;
         Move m_tb;

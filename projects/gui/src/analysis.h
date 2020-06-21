@@ -47,6 +47,7 @@ namespace Chess {
         int depth() const;
         /** Set depth in plies. */
         void setDepth(int depth);
+        void setNPS(qint64 nps);
         /** Nodes spent on analysis. */
         quint64 nodes() const;
         /** Set nodes spent on analysis. */
@@ -63,7 +64,7 @@ namespace Chess {
         void setMovesToMate(int mate);
         /** Moves to mate. */
         /** Convert analysis to formatted text. */
-        QString toString(const Board& board) const;
+        QString toStrings(const Board& board) const;
         /** Assignment operator */
         Analysis& operator=(const Analysis& rhs);
         void setBestMove(bool bestMove);
@@ -100,6 +101,7 @@ namespace Chess {
         int m_elapsedTimeMS;
         Move m_tb;
         int m_scoreTb;
+        qint64 m_nps;                 // ËÙ¶È
     };
 
 

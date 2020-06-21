@@ -279,6 +279,16 @@ bool Board::isInPalace(const Square& square) const
 	return false;
 }
 
+void Board::setSquareAnnotation(QString squareAnnotation)
+{
+	m_squareAnnotation = squareAnnotation;
+}
+
+void Board::setArrowAnnotation(QString arrowAnnotation)
+{
+	m_arrowAnnotation = arrowAnnotation;
+}
+
 QString Board::squareString(int index) const
 {
 	return squareString(chessSquare(index));
@@ -528,6 +538,8 @@ QString Board::fenString(FenNotation notation) const
 
 bool Board::setFenString(const QString& fen)
 {
+	
+
 	QStringList strList = fen.split(' ');
 	if (strList.isEmpty())
 		return false;

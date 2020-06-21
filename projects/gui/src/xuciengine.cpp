@@ -390,10 +390,33 @@ namespace Chess {
                         continue;
                     }
                 }
-                else
+                else   // 中象还有得分
                 {
-                    section += 3;
+                    int score = type.toInt(&ok);
+                    if (m_board->sideToMove() == Side::Black)
+                    {
+                        analysis.setScore(-score);
+                    }
+                    else
+                    {
+                        analysis.setScore(score);
+                    }
+                    section += 2;
+                    if (ok)
+                    {
+                        scoreFound = true;
+                        continue;
+                    }
                 }
+            }
+
+            if (name == "nps") {
+                //qint64 nps = info.section(' ', section + 1, section + 1).toLongLong(&ok);
+                section += 2;
+                //if (ok) {
+               //    analysis.setNPS(nps);
+                    continue;
+               // }
             }
 
             if (name == "upperbound" || name == "lowerbound")
@@ -407,7 +430,7 @@ namespace Chess {
 
             if (name == "pv")
             {
-                Board* board = m_board;
+                Board* board = m_board->copy();
                 MoveList moves;
                 QString moveText;
                 section++;
@@ -428,10 +451,13 @@ namespace Chess {
                     movesMade++;
                 }
 
-                for (int i = 0; i < movesMade; i++)
-                    board->undoMove();
+                //for (int i = 0; i < movesMade; i++)
+                //    board->undoMove();
+                delete board;
 
                 analysis.setVariation(moves);
+
+                
                 
                 /*
                 Board board = m_board;

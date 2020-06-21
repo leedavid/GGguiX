@@ -39,6 +39,8 @@ namespace Chess {
 	class Board;
 	class Move;
 	class AnalysisWidget;
+	class GameWindow;
+	class ChessBrowser;
 }
 class QMenu;
 class QAction;
@@ -84,6 +86,8 @@ class MainWindow : public QMainWindow
 		/** Update GameView content after game was change. Triggers also @ref slotMoveChanged. */
 		void slotGameChanged(bool bModified);
 		void slotMoveChanged();
+		/** Database was changed - change informations. */
+		void slotDatabaseChanged();
 
 	protected:
 		virtual void closeEvent(QCloseEvent* event);
@@ -298,6 +302,9 @@ signals:
 
 		OpeningBook* GetOpeningBook(int& depth) const;
 		QString preverb();      // —Ë”Ô
+		QString getUCIHistory() const;
+		Chess::GameWindow* m_gameWindow;
+		Chess::ChessBrowser* m_gameView;
 };
 
 #endif // MAINWINDOW_H

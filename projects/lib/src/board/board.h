@@ -159,6 +159,11 @@ class LIB_EXPORT Board
 		// 棋子是否过河
 		//bool isOverRiver(const Square& square) const;
 
+		 /** Sets the squareAnnotation*/
+		void setSquareAnnotation(QString squareAnnotation);
+		/** Sets the arrowAnnotation*/
+		void setArrowAnnotation(QString arrowAnnotation);
+
 		inline bool operator == (const Board& b) const
 		{
 			return m_key == b.key();
@@ -572,6 +577,7 @@ class LIB_EXPORT Board
 		//QVector<int> m_reserve[2];
 		bool m_bIsAutoLink;   // 是不是自动连线
 		QString m_squareAnnotation;
+		QString m_arrowAnnotation;
 };
 
 

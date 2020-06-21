@@ -95,6 +95,11 @@ namespace Chess {
         m_depth = depth;
     }
 
+    void Analysis::setNPS(qint64 nps)
+    {
+        m_nps = nps;
+    }
+
     quint64 Analysis::nodes() const
     {
         return m_nodes;
@@ -195,7 +200,7 @@ namespace Chess {
         m_mateIn = mate;
     }
 
-    QString Analysis::toString(const Board& board) const
+    QString Analysis::toStrings(const Board& board) const
     {
         //return (" QString Analysis::toString(const Board& board) const");
         //
@@ -276,7 +281,17 @@ namespace Chess {
             QTime t(0, 0, 0, 0);
             t = t.addMSecs(time());
             QString elapsed = t.toString("h:mm:ss");
-            out += tr(" (depth %1, %2)").arg(depth()).arg(elapsed);
+            //out += tr(" (depth %1, %2)").arg(depth()).arg(elapsed);
+
+            int speed = m_nodes / time();
+            if (speed < 100) {
+                speed = m_nodes * 1000 / time();
+                out += QString(" (层数 %1, 用时 %2, 速度 %3 , 节点 %4)").arg(depth()).arg(elapsed).arg(speed).arg(m_nodes);
+            }
+            else {
+                out += QString(" (层数 %1, 用时 %2, 速度 %3 K, 节点 %4)").arg(depth()).arg(elapsed).arg(speed).arg(m_nodes);
+            }  
+            //out += tr(" (层数 %1, 用时 %2, 速度 %3)").arg(depth()).arg(elapsed).arg(m_nps);
         }
         else
         {

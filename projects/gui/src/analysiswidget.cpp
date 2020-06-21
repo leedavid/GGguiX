@@ -26,6 +26,16 @@ namespace Chess {
         connect(ui.btPin, SIGNAL(clicked(bool)), SLOT(slotPinChanged(bool)));
         ui.analyzeButton->setFixedHeight(ui.engineList->sizeHint().height());
 
+
+        m_board = Chess::BoardFactory::create("");       
+        m_NextBoard = Chess::BoardFactory::create("");       
+        m_startPos = Chess::BoardFactory::create("");
+
+        m_board->setFenString(m_board->defaultFenString());
+        m_NextBoard->setFenString(m_NextBoard->defaultFenString());
+        m_startPos->setFenString(m_startPos->defaultFenString());
+
+
         //m_tablebase = new OnlineTablebase;   // 在线开局库
         //connect(m_tablebase, SIGNAL(bestMove(QList<Move>, int)), this, SLOT(showTablebaseMove(QList<Move>, int)));
     }
@@ -34,6 +44,10 @@ namespace Chess {
     {
         stopEngine();
         //delete m_tablebase;
+
+        delete m_board;
+        delete m_NextBoard;
+        delete m_startPos;
     }
 
     void AnalysisWidget::startEngine()
@@ -103,7 +117,7 @@ namespace Chess {
     void AnalysisWidget::engineActivated()
     {
         ui.analyzeButton->setChecked(true);
-        ui.analyzeButton->setText(tr("Stop"));
+        ui.analyzeButton->setText(tr("停止"));
         m_analyses.clear();
         updateBookMoves(); // Delay this to here so that engine process is up
         if (!sendBookMove())
@@ -126,7 +140,7 @@ namespace Chess {
     void AnalysisWidget::engineDeactivated()
     {
         ui.analyzeButton->setChecked(false);
-        ui.analyzeButton->setText(tr("Analyze"));
+        ui.analyzeButton->setText(tr("分析"));
     }
 
     void AnalysisWidget::toggleAnalysis()
@@ -572,7 +586,7 @@ namespace Chess {
         }
         foreach(Analysis a, m_analyses)
         {
-            QString s = a.toString(*m_board);
+            QString s = a.toStrings(*m_board);
             if (!s.isEmpty()) text.append(s + "<br>");
         }
         if (!m_tablebaseEvaluation.isEmpty())

@@ -1,12 +1,12 @@
 #pragma once
 
 
-#include <QObject>
-
-#include "nag.h"
-
-
-namespace Chess {
-
-
-}
+//#include <QObject>
+//
+//#include "nag.h"
+//
+//
+//namespace Chess {
+//
+//
+//}
