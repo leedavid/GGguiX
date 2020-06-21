@@ -1,22 +1,4 @@
-/*
-    This file is part of GGzero Chess.
-
-    GGzero Chess is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    GGzero Chess is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with GGzero Chess.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-#ifndef CHESSGAME_H
-#define CHESSGAME_H
+#pragma once
 
 #include <QObject>
 #include <QVector>
@@ -220,8 +202,17 @@ class LIB_EXPORT ChessGame : public QObject
 		void setGameComment(const QString& gameComment);
 		/** Sets the comment associated with move at node @p moveId */
 		bool setAnnotation(QString annotation, MoveId moveId = CURRENT_MOVE, Position position = AfterMove);
-
-		
+		/** Determine if game contains something reasonable */
+		bool isEmpty() const;
+		/** @return whether the current position is in the mainline */
+		bool isMainline(MoveId moveId = CURRENT_MOVE) const;
+		/** @return nags for move at node @p moveId */
+		bool atLineEnd(MoveId moveId = CURRENT_MOVE) const;
+		Chess::NagSet nags(MoveId moveId = CURRENT_MOVE) const;
+		/** Decide if moveVariationUp() can be executed */
+		bool canMoveVariationUp(MoveId moveId) const;
+		/** Decide if moveVariationDown() can be executed */
+		bool canMoveVariationDown(MoveId moveId) const;
 
 	private:
 
@@ -363,4 +354,4 @@ private:
 	MoveId m_saveMoveValue;
 };
 
-#endif // CHESSGAME_H
+

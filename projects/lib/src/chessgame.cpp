@@ -1012,6 +1012,32 @@ bool ChessGame::setAnnotation(QString annotation, MoveId moveId, Position positi
 	return false;
 }
 
+bool ChessGame::isEmpty() const
+{
+	int moves;
+	int comments;
+	moveCount(&moves, &comments);
+	bool gameIsEmpty = ((moves + comments) == 0);
+	return gameIsEmpty;
+}
+
+bool ChessGame::isMainline(MoveId moveId) const
+{
+	if (moveId == 0)
+	{
+		return true;
+	}
+	MoveId node = nodeValid(moveId);
+	if (node == NO_MOVE)
+	{
+		return false;
+	}
+	else
+	{
+		return m_moveNodes[node].parentNode == NO_MOVE;
+	}
+}
+
 bool ChessGame::setSquareAnnotation(QString squareAnnotation, MoveId moveId)
 {
 	squareAnnotation = squareAnnotation.trimmed();

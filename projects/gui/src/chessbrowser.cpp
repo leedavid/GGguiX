@@ -195,7 +195,7 @@ namespace Chess {
 
     void ChessBrowser::slotContextMenu(const QPoint& pos)
     {
-        const Game* game = nullptr;
+        const ChessGame* game = nullptr;
         emit queryActiveGame(&game);
 
         // Handle non-game browser
@@ -222,7 +222,7 @@ namespace Chess {
             bool atLineStart = game->atLineStart(m_currentMove);
             bool atGameStart = m_currentMove == 0 || game->atGameStart(m_currentMove - 1);
             bool hasComment = !game->annotation(m_currentMove).isEmpty();
-            bool hasPrecomment = !game->annotation(m_currentMove, Game::BeforeMove).isEmpty();
+            bool hasPrecomment = !game->annotation(m_currentMove, ChessGame::BeforeMove).isEmpty();
             bool hasNags = !game->nags().isEmpty();
             bool atLineEnd = game->atLineEnd(m_currentMove);
 
@@ -296,7 +296,7 @@ namespace Chess {
         return action;
     }
 
-    void ChessBrowser::slotDisplayTime(const QString& text, Color color, const QString& otherText)
+    void ChessBrowser::slotDisplayTime(const QString& text, Side color, const QString& otherText)
     {
         if (toolBar)
         {
