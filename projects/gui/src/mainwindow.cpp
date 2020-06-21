@@ -253,10 +253,10 @@ void MainWindow::createActions()
 	m_stopTournamentAct = new QAction(tr("&停止联赛"), this);
 	m_showTournamentResultsAct = new QAction(tr("&联赛结果..."), this);
 
-	m_showSettingsAct = new QAction(tr("&通用设置"), this);
+	m_showSettingsAct = new QAction(tr("&引擎联赛设置"), this);
 	m_showSettingsAct->setMenuRole(QAction::PreferencesRole);
 
-	m_showSettingsActX = new QAction(tr("&设置X"), this);
+	m_showSettingsActX = new QAction(tr("&界面设置"), this);
 	m_showSettingsActX->setMenuRole(QAction::PreferencesRole);
 
 	m_showGameDatabaseWindowAct = new QAction(tr("&对局数据库(此功能暂时不可用)"), this);
@@ -380,15 +380,17 @@ void MainWindow::createMenus()
 	m_gameMenu->addSeparator();
 	m_gameMenu->addAction(m_quitGameAct);
 
-	m_tournamentMenu = menuBar()->addMenu(tr("&比赛"));
+	m_tournamentMenu = menuBar()->addMenu(tr("&联赛"));
 	m_tournamentMenu->addAction(m_newTournamentAct);
 	m_tournamentMenu->addAction(m_stopTournamentAct);
 	m_tournamentMenu->addAction(m_showTournamentResultsAct);
+	m_tournamentMenu->addSeparator();
+	m_tournamentMenu->addAction(m_showSettingsAct);
+
 	m_stopTournamentAct->setEnabled(false);
 
 	m_toolsMenu = menuBar()->addMenu(tr("&设置"));
-	m_toolsMenu->addAction(m_showSettingsAct);
-	
+	//m_toolsMenu->addAction(m_showSettingsAct);	
 	m_toolsMenu->addAction(m_showSettingsActX);
 
     //m_toolsMenu->addAction(m_showGameDatabaseWindowAct);
