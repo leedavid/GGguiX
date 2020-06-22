@@ -4,17 +4,55 @@
 #include "enginelist.h"
 #include "messagedialog.h"
 #include "analysiswidget.h"
-
+#include "playerbuilder.h"
+#include "mainwindow.h"
+#include "cutechessapp.h"
+#include "enginemanager.h"
+#include "enginebuilder.h"
 
 namespace Chess {
+    void AnalysisWidget::GetBulderCute()
+    {
+        int index = ui.engineList->currentIndex();   // 引擎选择
+        if (index != -1) {
+            if (m_buildersEngine == nullptr || index != m_bullderNum) {           
 
+
+                if (m_buildersEngine)
+                {
+   /*                 m_buildersEngin->deactivate();
+                    m_buildersEngin->deleteLater();*/
+                    //m_buildersEngine->e
+                    //m_buildersEngin.clear();
+                    //m_buildersEngine->q
+                    //m_buildersEngine->disconnect();
+                }
+
+                EngineManager* engineManager = CuteChessApplication::instance()->engineManager();
+                auto config = engineManager->engineAt(index);
+                QSettings s;
+                s.beginGroup("games");
+                bool ponder = s.value("pondering").toBool();
+                s.endGroup();
+                config.setPondering(ponder);
+
+                this->m_buildersEngine = new EngineBuilder(config);
+
+                m_bullderNum = index;
+            }
+        }
+    }
     AnalysisWidget::AnalysisWidget(QWidget* parent)
         : QWidget(parent),
         m_moveTime(0),
         m_bUciNewGame(true),
         m_onHold(false),
-        m_gameMode(false)
+        m_gameMode(false),
+        m_buildersEngine(nullptr),
+        m_bullderNum(0)
     {
+        pMain = (MainWindow*)parent;
+        
         ui.setupUi(this);
         connect(ui.engineList, SIGNAL(activated(int)), SLOT(toggleAnalysis()));
         connect(ui.bookList, SIGNAL(currentIndexChanged(int)), SLOT(bookActivated(int)));
@@ -35,6 +73,8 @@ namespace Chess {
         m_NextBoard->setFenString(m_NextBoard->defaultFenString());
         m_startPos->setFenString(m_startPos->defaultFenString());
 
+        
+
 
         //m_tablebase = new OnlineTablebase;   // 在线开局库
         //connect(m_tablebase, SIGNAL(bestMove(QList<Move>, int)), this, SLOT(showTablebaseMove(QList<Move>, int)));
@@ -48,10 +88,17 @@ namespace Chess {
         delete m_board;
         delete m_NextBoard;
         delete m_startPos;
+
+        if (m_buildersEngine != nullptr)
+            delete m_buildersEngine;
     }
 
     void AnalysisWidget::startEngine()
     {
+       
+        // 得到当前选择的引擎
+        this->GetBulderCute();
+        
         updateBookMoves();
 
         int index = ui.engineList->currentIndex();
@@ -140,7 +187,7 @@ namespace Chess {
     void AnalysisWidget::engineDeactivated()
     {
         ui.analyzeButton->setChecked(false);
-        ui.analyzeButton->setText(tr("分析"));
+        ui.analyzeButton->setText(tr("使用"));
     }
 
     void AnalysisWidget::toggleAnalysis()

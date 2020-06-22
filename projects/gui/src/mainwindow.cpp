@@ -704,16 +704,16 @@ void MainWindow::createDockWindows()
 	moveListDock->raise();
 
 	// Analysis Dock----------------------------------------------------------------------
-	DockWidgetEx* analysisDock = new DockWidgetEx(tr("分析 1"), this);
+	DockWidgetEx* analysisDock = new DockWidgetEx(tr("引擎 1"), this);
 	analysisDock->setObjectName("AnalysisDock1");
 	analysisDock->toggleViewAction()->setShortcut(Qt::CTRL + Qt::Key_F2);
 	m_mainAnalysis = new Chess::AnalysisWidget(this);
-	m_mainAnalysis->setObjectName("Analysis");
+	m_mainAnalysis->setObjectName("Analysis1");
 	setupAnalysisWidget(analysisDock, m_mainAnalysis);
 	addDockWidget(Qt::LeftDockWidgetArea, analysisDock);
 
 	/* Analysis Dock 2 */
-	DockWidgetEx* analysisDock2 = new DockWidgetEx(tr("分析 2"), this);
+	DockWidgetEx* analysisDock2 = new DockWidgetEx(tr("引擎 2"), this);
 	analysisDock2->setObjectName("AnalysisDock2");
 	analysisDock2->toggleViewAction()->setShortcut(Qt::CTRL + Qt::Key_F3);
 	m_secondaryAnalysis = new Chess::AnalysisWidget(this);

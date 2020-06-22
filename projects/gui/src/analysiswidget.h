@@ -21,19 +21,27 @@
 //#include "mainwindow.h"
 //class MainWindow;
 
-
+class PlayerBuilder;
+class MainWindow;
 
 namespace Chess {
 
     
     class Analysis;
-    class Board;
-
+    class Board;    
 
     class AnalysisWidget : public QWidget
     {
         Q_OBJECT
     public:
+
+        int m_bullderNum;                          // 当前引擎编号
+        PlayerBuilder*  m_buildersEngine;          // 这个是固定的引擎
+        MainWindow* pMain;
+        void GetBulderCute();
+        
+    
+
         AnalysisWidget(QWidget* parent);
         ~AnalysisWidget();
 

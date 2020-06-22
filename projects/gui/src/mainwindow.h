@@ -77,8 +77,9 @@ class MainWindow : public QMainWindow
 		
 		//bool m_bLinkMayNewGame; 
 		bool isMoveValid(const Chess::GenericMove& move);
-
+		
 		//TestThread* t;
+		//QComboBox* cbtnLinkEngine;            // 连线的引擎
 
 	public slots:
 		void addGame(ChessGame* game);

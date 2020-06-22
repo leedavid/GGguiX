@@ -106,7 +106,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>分析</string>
+        <string>使用</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
