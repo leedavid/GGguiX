@@ -141,6 +141,8 @@ MainWindow::MainWindow(ChessGame* game)
 	mainWidget->setLayout(mainLayout);
 	setCentralWidget(mainWidget);
 
+	
+
 	createActions();
 	createMenus();
 	createToolBars();
@@ -703,6 +705,7 @@ void MainWindow::createDockWindows()
 	tabifyDockWidget(moveListDock, tagsDock);
 	moveListDock->raise();
 
+	
 	// Analysis Dock----------------------------------------------------------------------
 	DockWidgetEx* analysisDock = new DockWidgetEx(tr("引擎 1"), this);
 	analysisDock->setObjectName("AnalysisDock1");
@@ -712,7 +715,7 @@ void MainWindow::createDockWindows()
 	setupAnalysisWidget(analysisDock, m_mainAnalysis);
 	addDockWidget(Qt::LeftDockWidgetArea, analysisDock);
 
-	/* Analysis Dock 2 */
+	// Analysis Dock 2 
 	DockWidgetEx* analysisDock2 = new DockWidgetEx(tr("引擎 2"), this);
 	analysisDock2->setObjectName("AnalysisDock2");
 	analysisDock2->toggleViewAction()->setShortcut(Qt::CTRL + Qt::Key_F3);
@@ -720,6 +723,7 @@ void MainWindow::createDockWindows()
 	m_secondaryAnalysis->setObjectName("Analysis2");
 	setupAnalysisWidget(analysisDock2, m_secondaryAnalysis);
 	addDockWidget(Qt::LeftDockWidgetArea, analysisDock2);
+	
 
 	// 标注窗口
 	 /* Game view 
@@ -1827,6 +1831,7 @@ void MainWindow::slotCloseAllGames()
 
 void MainWindow::slotReconfigure()
 {
+
 	Chess::PreferencesDialog::setupIconInMenus(this);
 
 	if (Chess::AppSettings->getValue("/MainWindow/VerticalTabs").toBool())

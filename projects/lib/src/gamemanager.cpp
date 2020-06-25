@@ -440,7 +440,7 @@ void GameManager::newGame(ChessGame* game,
 		return;
 	}
 
-	m_gameEntries << entry;
+	m_gameEntries << entry;        // 加入棋局对列，慢慢开启
 	startQueuedGame();
 }
 
@@ -525,7 +525,7 @@ GameThread* GameManager::getThread(const PlayerBuilder* white,
 	Q_ASSERT(white != nullptr);
 	Q_ASSERT(black != nullptr);
 
-	for (GameThread* thread : qAsConst(m_activeThreads))
+	for (GameThread* thread : qAsConst(m_activeThreads))  // 取出活动线程，变为常量
 	{
 		if (!thread->isReady())
 			continue;

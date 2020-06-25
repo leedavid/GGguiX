@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
 #endif
 
 	QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);     // HiDPI support
-	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);  // Windows Surface Book
+	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);  // Windows Surface Book // 
 	
 	// Register types for signal / slot connections
 	qRegisterMetaType<Chess::GenericMove>("Chess::GenericMove");
@@ -122,6 +122,7 @@ int main(int argc, char* argv[])
 
 	CuteChessApplication app(argc, argv);
 
+	
 	// Setting =================================================================================
 	QString portableIni = Chess::Settings::portableIniPath();
 	if (QFile::exists(portableIni))
@@ -171,7 +172,7 @@ int main(int argc, char* argv[])
 		app.setPalette(lightPalette);
 	}
 
-	// Setting =================================================================================
+	// Setting =================================================================================	
 
 
 	// ”Ô—‘…Ë÷√

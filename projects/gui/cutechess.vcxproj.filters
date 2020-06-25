@@ -78,6 +78,9 @@
     <Filter Include="Source Files\分析窗口">
       <UniqueIdentifier>{240f06a1-bf2b-4cba-b913-02e4526a6b40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\MyEngine">
+      <UniqueIdentifier>{154b8007-7627-40bd-a4c7-1ad684f3ebe4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\autoverticalscroller.cpp">

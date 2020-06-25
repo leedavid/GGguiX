@@ -257,7 +257,7 @@ void ChessPlayer::claimResult(const Chess::Result& result)
 
 	emit resultClaim(result);
 }
-
+// giveup
 void ChessPlayer::forfeit(Chess::Result::Type type, const QString& description)
 {
 	if (m_side.isNull())

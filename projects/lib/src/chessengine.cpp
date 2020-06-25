@@ -138,7 +138,7 @@ void ChessEngine::applyConfiguration(const EngineConfiguration& configuration)
 			setOption(option->name(), option->value());
 	}
 
-	m_whiteEvalPov = configuration.whiteEvalPov();
+	m_whiteEvalPov = configuration.whiteEvalPov();    // 红方的分数
 	m_pondering = configuration.pondering();
 	m_restartMode = configuration.restartMode();
 	setClaimsValidated(configuration.areClaimsValidated());
