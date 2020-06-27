@@ -476,7 +476,10 @@ void UciEngine::parseInfo(const QStringRef& line)
 	int type = -1;
 	QStringRef token(nextToken(line));
 	QVarLengthArray<QStringRef> tokens;
-	MoveEvaluation eval;
+	MoveEvaluation eval;	
+
+	eval.setSide(side());  // 
+	eval.setPly(board()->plyCount());
 
 	// The "string" info is not supported and it can't be parsed
 	// like other info lines.
@@ -504,10 +507,15 @@ void UciEngine::parseInfo(const QStringRef& line)
 			m_currentEval.clear();
 		m_currentEval.merge(eval);
 
+		m_currentEval.setPvNumber(1);  // 必须得有一个
+
 		emit thinking(m_currentEval);
 	}
 	else
 		emit thinking(eval);
+
+
+	//emit thinking(eval);
 }
 
 EngineOption* UciEngine::parseOption(const QStringRef& line)

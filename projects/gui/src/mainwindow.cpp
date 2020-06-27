@@ -128,8 +128,11 @@ MainWindow::MainWindow(ChessGame* game)
 #endif
 
 	m_evalHistory = new EvalHistory(this);					// 历史曲线窗口
-	m_evalWidgets[0] = new EvalWidget(this);				// PV 路径窗口
-	m_evalWidgets[1] = new EvalWidget(this);
+	//m_evalWidgets[0] = new EvalWidget(this);				// PV 路径窗口
+	//m_evalWidgets[1] = new EvalWidget(this);
+
+	m_AnalysisWidget[0] = new Chess::AnalysisWidget(this);
+	m_AnalysisWidget[1] = new Chess::AnalysisWidget(this);
 
 	QVBoxLayout* mainLayout = new QVBoxLayout();
 	mainLayout->addWidget(m_gameViewer);
@@ -669,15 +672,46 @@ void MainWindow::createDockWindows()
 	evalHistoryDock->setWidget(m_evalHistory);
 	addDockWidget(Qt::BottomDockWidgetArea, evalHistoryDock);
 
+
+	// Analysis Dock----------------------------------------------------------------------
+	/*
+	DockWidgetEx* analysisDock = new DockWidgetEx(tr("红方"), this);
+	analysisDock->setObjectName("AnalysisDock1");
+	analysisDock->toggleViewAction()->setShortcut(Qt::CTRL + Qt::Key_F2);
+	//m_mainAnalysis = new Chess::AnalysisWidget(this);
+	m_AnalysisWidget[0]->setObjectName("Analysis1");
+	setupAnalysisWidget(analysisDock, m_AnalysisWidget[0]);
+	addDockWidget(Qt::LeftDockWidgetArea, analysisDock);
+
+	// Analysis Dock 2 
+	DockWidgetEx* analysisDock2 = new DockWidgetEx(tr("黑方"), this);
+	analysisDock2->setObjectName("AnalysisDock2");
+	analysisDock2->toggleViewAction()->setShortcut(Qt::CTRL + Qt::Key_F3);
+	//m_secondaryAnalysis = new Chess::AnalysisWidget(this);
+	m_AnalysisWidget[1]->setObjectName("Analysis2");
+	setupAnalysisWidget(analysisDock2, m_AnalysisWidget[1]);
+	addDockWidget(Qt::LeftDockWidgetArea, analysisDock2);
+	*/
+	//----------------------------------------------------------------------------------------
+
 	// Players' eval widgets
 	auto whiteEvalDock = new QDockWidget(tr("红方评分"), this);
+	whiteEvalDock->setObjectName("WhiteEvalDock");
+	whiteEvalDock->setWidget(m_AnalysisWidget[Chess::Side::White]);
+	addDockWidget(Qt::RightDockWidgetArea, whiteEvalDock);
+	auto blackEvalDock = new QDockWidget(tr("黑方评分"), this);
+	blackEvalDock->setObjectName("BlackEvalDock");
+	blackEvalDock->setWidget(m_AnalysisWidget[Chess::Side::Black]);
+	addDockWidget(Qt::RightDockWidgetArea, blackEvalDock);
+
+	/*auto whiteEvalDock = new QDockWidget(tr("红方评分"), this);
 	whiteEvalDock->setObjectName("WhiteEvalDock");
 	whiteEvalDock->setWidget(m_evalWidgets[Chess::Side::White]);
 	addDockWidget(Qt::RightDockWidgetArea, whiteEvalDock);
 	auto blackEvalDock = new QDockWidget(tr("黑方评分"), this);
 	blackEvalDock->setObjectName("BlackEvalDock");
 	blackEvalDock->setWidget(m_evalWidgets[Chess::Side::Black]);
-	addDockWidget(Qt::RightDockWidgetArea, blackEvalDock);
+	addDockWidget(Qt::RightDockWidgetArea, blackEvalDock);*/
 
 	m_whiteEvalDock = whiteEvalDock;
 	m_blackEvalDock = blackEvalDock;
@@ -706,23 +740,7 @@ void MainWindow::createDockWindows()
 	moveListDock->raise();
 
 	
-	// Analysis Dock----------------------------------------------------------------------
-	DockWidgetEx* analysisDock = new DockWidgetEx(tr("引擎 1"), this);
-	analysisDock->setObjectName("AnalysisDock1");
-	analysisDock->toggleViewAction()->setShortcut(Qt::CTRL + Qt::Key_F2);
-	m_mainAnalysis = new Chess::AnalysisWidget(this);
-	m_mainAnalysis->setObjectName("Analysis1");
-	setupAnalysisWidget(analysisDock, m_mainAnalysis);
-	addDockWidget(Qt::LeftDockWidgetArea, analysisDock);
 
-	// Analysis Dock 2 
-	DockWidgetEx* analysisDock2 = new DockWidgetEx(tr("引擎 2"), this);
-	analysisDock2->setObjectName("AnalysisDock2");
-	analysisDock2->toggleViewAction()->setShortcut(Qt::CTRL + Qt::Key_F3);
-	m_secondaryAnalysis = new Chess::AnalysisWidget(this);
-	m_secondaryAnalysis->setObjectName("Analysis2");
-	setupAnalysisWidget(analysisDock2, m_secondaryAnalysis);
-	addDockWidget(Qt::LeftDockWidgetArea, analysisDock2);
 	
 
 	// 标注窗口
@@ -1112,7 +1130,10 @@ void MainWindow::setCurrentGame(const TabData& gameData)
 		slotUpdateWindowTitle();
 		slotUpdateMenus();
 
-		for (auto evalWidget : m_evalWidgets)
+		//for (auto evalWidget : m_evalWidgets)
+		//	evalWidget->setPlayer(nullptr);
+
+		for (auto evalWidget : m_AnalysisWidget)
 			evalWidget->setPlayer(nullptr);
 
 		return;
@@ -1151,7 +1172,7 @@ void MainWindow::setCurrentGame(const TabData& gameData)
 			clock, SLOT(start(int)));
 		connect(player, SIGNAL(stoppedThinking()),
 			clock, SLOT(stop()));
-		m_evalWidgets[i]->setPlayer(player);
+		m_AnalysisWidget[i]->setPlayer(player);
 	}
 
 	if (m_game->boardShouldBeFlipped())
@@ -1251,13 +1272,14 @@ void MainWindow::closeCurrentGame()
 
 void MainWindow::setupAnalysisWidget(DockWidgetEx* analysisDock, Chess::AnalysisWidget* analysis)
 {
+	//return;
 	analysisDock->setWidget(analysis);
 	// addDockWidget(Qt::RightDockWidgetArea, analysisDock);
-	connect(analysis, SIGNAL(addVariation(Analysis, QString)),
-		SLOT(slotGameAddVariation(Analysis, QString)));
-	connect(analysis, SIGNAL(addVariation(QString)),
-		SLOT(slotGameAddVariation(QString)));
-	connect(this, SIGNAL(boardChange(const Board&, const QString&)), analysis, SLOT(setPosition(const Board&, QString)));
+	//connect(analysis, SIGNAL(addVariation(Analysis, QString)),
+	//	SLOT(slotGameAddVariation(Analysis, QString)));
+	//connect(analysis, SIGNAL(addVariation(QString)),
+	//	SLOT(slotGameAddVariation(QString)));
+//	connect(this, SIGNAL(boardChange(const Board&, const QString&)), analysis, SLOT(setPosition(const Board&, QString)));
 	connect(this, SIGNAL(reconfigure()), analysis, SLOT(slotReconfigure()));
 	// Make sure engine is disabled if dock is hidden
 	connect(analysisDock, SIGNAL(visibilityChanged(bool)),
@@ -1265,11 +1287,11 @@ void MainWindow::setupAnalysisWidget(DockWidgetEx* analysisDock, Chess::Analysis
 	//m_menuView->addAction(analysisDock->toggleViewAction());
 	m_viewMenu->addAction(analysisDock->toggleViewAction());
 	analysisDock->hide();
-	connect(this, SIGNAL(signalGameLoaded(const Board&)), analysis, SLOT(slotUciNewGame(const Board&)));
-	connect(this, SIGNAL(signalGameModeChanged(bool)), analysis, SLOT(setDisabled(bool)));
-	connect(this, SIGNAL(signalUpdateDatabaseList(QStringList)), analysis, SLOT(slotUpdateBooks(QStringList)));
-	connect(analysis, SIGNAL(signalSourceChanged(QString)), this, SLOT(slotUpdateOpeningBook(QString)));
-	connect(this, SIGNAL(signalGameModeChanged(bool)), analysis, SLOT(setGameMode(bool)));
+	//connect(this, SIGNAL(signalGameLoaded(const Board&)), analysis, SLOT(slotUciNewGame(const Board&)));
+	//connect(this, SIGNAL(signalGameModeChanged(bool)), analysis, SLOT(setDisabled(bool)));
+	//connect(this, SIGNAL(signalUpdateDatabaseList(QStringList)), analysis, SLOT(slotUpdateBooks(QStringList)));
+	//connect(analysis, SIGNAL(signalSourceChanged(QString)), this, SLOT(slotUpdateOpeningBook(QString)));
+	//connect(this, SIGNAL(signalGameModeChanged(bool)), analysis, SLOT(setGameMode(bool)));
 }
 
 

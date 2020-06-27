@@ -35,9 +35,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Source Files\UCI">
-      <UniqueIdentifier>{56518f2b-113a-4c05-a160-b8fe0de84f0b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Sqlite">
       <UniqueIdentifier>{77c99011-3cfe-499e-8b35-cce41dc623d7}</UniqueIdentifier>
     </Filter>
@@ -49,6 +46,9 @@
     </Filter>
     <Filter Include="Source Files\PGN">
       <UniqueIdentifier>{928c39c7-ccf9-4107-9db9-0f590c88869d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine\UCI">
+      <UniqueIdentifier>{56518f2b-113a-4c05-a160-b8fe0de84f0b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -152,7 +152,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\uciengine.cpp">
-      <Filter>Source Files\UCI</Filter>
+      <Filter>Source Files\engine\UCI</Filter>
     </ClCompile>
     <ClCompile Include="ConnectionPool.cpp">
       <Filter>Source Files\Sqlite</Filter>
@@ -161,7 +161,7 @@
       <Filter>Source Files\Sqlite</Filter>
     </ClCompile>
     <ClCompile Include="src\chessengine.cpp">
-      <Filter>Source Files\UCI</Filter>
+      <Filter>Source Files\engine\UCI</Filter>
     </ClCompile>
     <ClCompile Include="src\board\westernboard.cpp">
       <Filter>Source Files\board</Filter>

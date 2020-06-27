@@ -9,6 +9,8 @@
 #include "cutechessapp.h"
 #include "enginemanager.h"
 #include "enginebuilder.h"
+#include <chessplayer.h>
+#include "moveevaluation.h"
 
 namespace Chess {
     void AnalysisWidget::GetBulderCute()
@@ -42,6 +44,21 @@ namespace Chess {
             }
         }
     }
+    void AnalysisWidget::setPlayer(ChessPlayer* player)
+    {
+        if (player != m_player || !player)
+            clear();
+        if (m_player)
+            m_player->disconnect(this);
+        m_player = player;
+        if (!player)
+            return;
+
+        connect(player, SIGNAL(startedThinking(int)),
+            this, SLOT(clear()));
+        connect(player, SIGNAL(thinking(MoveEvaluation)),
+            this, SLOT(onEval(MoveEvaluation)));
+    }
     AnalysisWidget::AnalysisWidget(QWidget* parent)
         : QWidget(parent),
         m_moveTime(0),
@@ -49,7 +66,8 @@ namespace Chess {
         m_onHold(false),
         m_gameMode(false),
         m_buildersEngine(nullptr),
-        m_bullderNum(0)
+        m_bullderNum(0),
+        m_player(nullptr)
     {
         pMain = (MainWindow*)parent;
         
@@ -97,7 +115,7 @@ namespace Chess {
     {
        
         // 得到当前选择的引擎
-        this->GetBulderCute();
+        //this->GetBulderCute();
         
         updateBookMoves();
 
@@ -226,6 +244,71 @@ namespace Chess {
                 m_engine->setMoveTime(0);
             }
         }
+    }
+
+    void AnalysisWidget::onEval(const MoveEvaluation& eval)
+    {
+        int elapsed = m_lastEngineStart.elapsed();
+        //int mpv = analysis.mpv() - 1;
+        int mpv = eval.pvNumber() - 1;
+        //bool bestMove = analysis.bestMove();
+        bool bestMove = eval.isBestMove();
+        if (bestMove)
+        {
+            if (m_eval.count() && m_eval.last().isBestMove())
+            {
+                m_eval.removeLast();
+            }
+            m_eval.append(eval);
+        }
+        else if (mpv < 0 || mpv > m_eval.count() || mpv >= ui.vpcount->value())
+        {
+            return;
+        }
+        else if (mpv == m_eval.count())
+        {
+            m_eval.append(eval);
+        }
+        else
+        {
+            m_eval[mpv] = eval;
+        }
+        //updateComplexity();
+        updateEval();
+        /*
+        Analysis c = analysis;
+        if (bestMove && analysis.variation().count())
+        {
+            foreach(Analysis a, m_analyses)
+            {
+                if (a.variation().count())
+                {
+                    if (a.variation().at(0) == analysis.variation().at(0))
+                    {
+                        c = a;
+                        c.setBestMove(true);
+                        break;
+                    }
+                }
+            }
+        }
+
+        c.setTb(m_tb);
+        c.setScoreTb(m_score_tb);
+        if (bestMove)
+        {
+            analysis.setElapsedTimeMS(elapsed);
+            emit receivedBestMove(c);
+        }
+        else if (c.getEndOfGame())
+        {
+            emit receivedBestMove(c);
+        }
+        */
+    }
+
+    void AnalysisWidget::clear()
+    {
     }
 
     void AnalysisWidget::slotReconfigure()
@@ -429,6 +512,46 @@ namespace Chess {
         return false;
     }
 
+
+    void Chess::AnalysisWidget::updateEval()
+    {
+        QString text;
+        if (ui.btPin->isChecked())
+        {
+            unsigned int moveNr = m_board->moveNumber();
+            text = tr("Analysis pinned to move %1").arg(moveNr) + "<br>";
+        }
+        foreach(auto a, m_eval)
+        {
+            QString s = a.toStrings();
+            if (!s.isEmpty()) text.append(s + "<br>");
+        }
+        if (!m_tablebaseEvaluation.isEmpty())
+        {
+            text.append(QString("<a href=\"0\" title=\"%1\">[+]</a> <b>%2:</b> ").arg(tr("Click to add move to game")).arg(tr("Tablebase")) + m_tablebaseEvaluation);
+        }
+        if (m_lastDepthAdded == 17)
+        {
+            text.append(QString("<br><b>%1:</b> %2/%3<br>").arg(tr("Complexity")).arg(m_complexity).arg(m_complexity2));
+        }
+        else if (m_lastDepthAdded >= 12)
+        {
+            text.append(tr("<br><b>Complexity:</b> %1<br>").arg(m_complexity));
+        }
+
+        if (moveList.count())
+        {
+            QString bookLine = tr("<i>Book:</i>");
+            foreach(MoveData move, moveList)
+            {
+                bookLine.append(" ");
+                bookLine.append(move.localsan);
+            }
+            text.append(bookLine);
+        }
+        ui.variationText->setText(text);
+    }
+
     void AnalysisWidget::sendBookMoveTimeout()
     {
         if (moveList.count() && m_moveTime.allowBook)
@@ -524,7 +647,7 @@ namespace Chess {
             {
                 m_analyses.removeLast();
             }
-            m_engine->setMpv(mpv);
+            m_engine->setMpv(mpv);  // 引擎改变 multiPV 
         }
     }
 
@@ -661,6 +784,8 @@ namespace Chess {
         }
         ui.variationText->setText(text);
     }
+
+
 
     void AnalysisWidget::updateComplexity()
     {

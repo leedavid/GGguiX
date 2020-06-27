@@ -21,6 +21,10 @@
 
 #include <QString>
 #include <QMetaType>
+#include <QtCore>
+#include <QTime>
+
+#include "board/side.h"
 
 /*!
  * \brief Evaluation data for a chess move.
@@ -34,7 +38,10 @@
  */
 class LIB_EXPORT MoveEvaluation
 {
-	public:
+
+	Q_DECLARE_TR_FUNCTIONS(MoveEvaluation)    // 多语言翻译
+
+public:
 		/*! Mate score reference */
 		constexpr static int MATE_SCORE = 1000000;
 
@@ -183,6 +190,21 @@ class LIB_EXPORT MoveEvaluation
 		/*! Merges non-empty parameters of \a other into this eval. */
 		void merge(const MoveEvaluation& other);
 
+		QString toStrings(); // 这儿不用board了
+
+		void setSide(Chess::Side s);
+		Chess::Side getSide();
+
+		bool isBestMove() const { return m_isBestMove; };
+		void SetIsBestMove(bool best) { m_isBestMove = best; };
+
+		void setPly(int p) { m_ply = p; };
+		int getPly() { return m_ply; };
+
+		bool getEndOfGame() const;
+		bool isMate() const;
+		bool isAlreadyMate() const;
+
 	private:
 		bool m_isBookEval;
 		bool m_isTrusted;
@@ -198,8 +220,11 @@ class LIB_EXPORT MoveEvaluation
 		quint64 m_tbHits;
 		QString m_pv;
 		QString m_ponderMove;
+		Chess::Side m_side;
+		bool m_isBestMove; 
+		int m_ply;
 };
 
-Q_DECLARE_METATYPE(MoveEvaluation)
+Q_DECLARE_METATYPE(MoveEvaluation)  // 加了这个，才能slot
 
 #endif // MOVEEVALUATION_H

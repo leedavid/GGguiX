@@ -17,6 +17,7 @@
 */
 
 #include "moveevaluation.h"
+#include "board/side.h"
 
 MoveEvaluation::MoveEvaluation()
 	: m_isBookEval(false),
@@ -30,7 +31,8 @@ MoveEvaluation::MoveEvaluation()
 	  m_ponderhitRate(0),
 	  m_nodeCount(0),
 	  m_nps(0),
-	  m_tbHits(0)
+	  m_tbHits(0),
+	m_isBestMove(false)
 {
 }
 
@@ -304,4 +306,104 @@ void MoveEvaluation::merge(const MoveEvaluation& other)
 		m_score = other.m_score;
 	if (other.m_time)
 		m_time = other.m_time;
+}
+
+void MoveEvaluation::setSide(Chess::Side s) {
+	m_side = s;
+}
+
+Chess::Side MoveEvaluation::getSide() {
+	return m_side;
+}
+
+QString MoveEvaluation::toStrings()
+{
+	QString out;
+
+	//bool whiteToMove = (m_side == Chess::Side::White);
+
+	QString cw = "00cc99";   // color white
+	QString cb = "ff3300";   // color black
+
+	if (getEndOfGame()) {
+
+	}
+	else if (isAlreadyMate()) {
+
+	}
+	else if (isMate()) {
+
+	}
+	else if (!isBestMove()) {
+		if (score() > 0) {
+			out = QString("<font color=\"#%1\"><b>+%2</b></font> ").arg(cw).arg(score() / 100.0, 0, 'f', 2);
+		}
+		else {
+			out = QString("<font color=\"#%1\"><b>%2</b></font> ").arg(cb).arg(score() / 100.0, 0, 'f', 2);
+		}
+	}
+
+	// pv 
+	QString moveText = m_pv;
+	if (moveText.length() > 2) {
+		out += " <a href=\"" + QString::number(-getPly()) + "\" title=\"点击走棋\">[+]</a> ";
+		if (!isBestMove()) {
+			out += " <a href=\"" + QString::number(getPly()) + "\" title=\"将些变招加入到棋谱\">[*]</a> ";
+		}
+		out += moveText;
+	}
+	if (!isBestMove()) {
+		QTime t(0, 0, 0, 0);
+		t = t.addMSecs(time());
+		QString elapsed = t.toString("h:mm:ss");
+		//out += tr(" (depth %1, %2)").arg(depth()).arg(elapsed);
+
+		int speed = m_nodeCount / (time()+1);  // 
+		if (speed < 100) {
+			speed = m_nodeCount * 1000 / time();
+			out += QString(" ( 层数 %1, 用时 %2 速度 %3  节点 %4").arg(depth()).arg(elapsed).arg(speed).arg(m_nodeCount);
+		}
+		else {
+			out += QString(" ( 层数 %1, 用时 %2 速度 %3 K 节点 %4").arg(depth()).arg(elapsed).arg(speed).arg(m_nodeCount);
+		}
+
+		// 
+		if (hashUsage()) {
+			out += QString(" Hash使用 %1").arg(hashUsage() / 10.0);
+		}
+
+		//if(tb)
+
+		auto ponder = ponderMove();
+		if (!ponder.isEmpty()) {
+			out += QString(" 后台 %1").arg(ponder);
+		}
+
+		if (ponderhitRate()) {
+			out += QString(" 命中概率 %1").arg(ponderhitRate() / 10.0);
+		}
+
+		out += " )";
+	}
+	else {
+		if (!out.isEmpty())	{
+			out += tr(" (最佳棋步)");
+		}
+	}	
+	return out;
+}
+
+bool MoveEvaluation::getEndOfGame() const
+{
+	return false;
+}
+
+bool MoveEvaluation::isMate() const
+{
+	return false;
+}
+
+bool MoveEvaluation::isAlreadyMate() const
+{
+	return false;
 }

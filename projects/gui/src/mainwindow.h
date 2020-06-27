@@ -173,8 +173,7 @@ signals:
 			bool m_finished;			
 		};
 
-		Chess::AnalysisWidget* m_mainAnalysis;
-		Chess::AnalysisWidget* m_secondaryAnalysis;
+		
 
 		void createActions();
 		void createMenus();
@@ -260,7 +259,12 @@ signals:
 		PlainTextLog* m_engineDebugLog;
 
 		EvalHistory* m_evalHistory;
-		EvalWidget* m_evalWidgets[2];
+		//EvalWidget* m_evalWidgets[2];
+
+		//Chess::AnalysisWidget* m_mainAnalysis;
+		//Chess::AnalysisWidget* m_secondaryAnalysis;
+
+		Chess::AnalysisWidget* m_AnalysisWidget[2];
 
 		QDockWidget* m_whiteEvalDock;
 		QDockWidget* m_blackEvalDock;

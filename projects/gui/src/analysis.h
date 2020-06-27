@@ -21,7 +21,7 @@ namespace Chess {
     /** The analysis class contains engine analysis. */
     class Analysis
     {
-        Q_DECLARE_TR_FUNCTIONS(Analysis)
+        Q_DECLARE_TR_FUNCTIONS(Analysis)    // ∂‡”Ô—‘∑≠“Î
 
     public:
         Analysis();
@@ -53,7 +53,7 @@ namespace Chess {
         /** Set nodes spent on analysis. */
         void setNodes(quint64 nodes);
         /** Main variation. */
-        MoveList variation() const;
+        MoveList variation() const;  // ±‰’–
         /** Set main variation. */
         void setVariation(const MoveList& variation);
         /** Is mate. */
@@ -88,7 +88,7 @@ namespace Chess {
         void setScoreTb(int value);
 
     private:
-        int m_numpv;
+        int m_numpv;  // PV
         int m_msec;
         int m_mateIn;
         int m_depth;

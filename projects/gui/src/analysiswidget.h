@@ -23,6 +23,8 @@
 
 class PlayerBuilder;
 class MainWindow;
+class ChessPlayer;
+class MoveEvaluation;
 
 namespace Chess {
 
@@ -39,6 +41,12 @@ namespace Chess {
         PlayerBuilder*  m_buildersEngine;          // 这个是固定的引擎
         MainWindow* pMain;
         void GetBulderCute();
+
+        /*!
+         * Connects the widget to \a player and disconnects from
+         * the previous player (if any).
+         */
+        void setPlayer(ChessPlayer* player);
         
     
 
@@ -112,6 +120,9 @@ namespace Chess {
         /** The pin button was pressed or released */
         void slotPinChanged(bool);
 
+        void onEval(const MoveEvaluation& eval);
+        void clear();
+
     signals:
         void addVariation(const Analysis& analysis, const QString&);
         void addVariation(const QString& san);
@@ -128,10 +139,14 @@ namespace Chess {
         bool isAnalysisEnabled() const;
         /** Update analysis. */
         void updateAnalysis();
+        
         /** Update complexity. */
         void updateComplexity();
         void updateBookMoves();
-        bool sendBookMove();
+        bool sendBookMove();       
+
+        QList<MoveEvaluation> m_eval;
+        void updateEval();
 
         QList<Analysis> m_analyses;
         Ui::AnalysisWidget ui;
@@ -162,6 +177,7 @@ namespace Chess {
         int games;
 
         bool m_gameMode;
+        QPointer<ChessPlayer> m_player;
     };
 
 
