@@ -67,7 +67,8 @@ namespace Chess {
         m_gameMode(false),
         m_buildersEngine(nullptr),
         m_bullderNum(0),
-        m_player(nullptr)
+        m_player(nullptr),
+        m_isMainEngine(false)
     {
         pMain = (MainWindow*)parent;
         
@@ -116,7 +117,7 @@ namespace Chess {
        
         // 得到当前选择的引擎
         //this->GetBulderCute();
-        
+        /*
         updateBookMoves();
 
         int index = ui.engineList->currentIndex();
@@ -147,10 +148,12 @@ namespace Chess {
             QString key = QString("/") + objectName() + "/Engine";
             AppSettings->setValue(key, ui.engineList->itemText(index));
         }
+        */
     }
 
     void AnalysisWidget::stopEngine()
     {
+       /*
         engineDeactivated();
         if (m_engine)
         {
@@ -158,6 +161,7 @@ namespace Chess {
             m_engine->deleteLater();
             m_engine.clear();
         }
+        */
     }
 
     void AnalysisWidget::slotVisibilityChanged(bool visible)
@@ -311,8 +315,31 @@ namespace Chess {
     {
     }
 
-    void AnalysisWidget::slotReconfigure()
+    int Chess::AnalysisWidget::getCurEngineIndex()
     {
+        return ui.engineList->currentIndex();
+    }
+
+    void AnalysisWidget::slotReconfigure()
+    {       
+        // 填充所有的引擎，选择上次保存的引擎
+        EngineManager* m_engineManager =
+            CuteChessApplication::instance()->engineManager();
+        for (int i = 0; i < m_engineManager->engineCount(); i++) {
+            ui.engineList->addItem(m_engineManager->engineAt(i).name());
+        }
+
+        int sel = 0;
+        // 是不是主引擎
+        if (this->getIsMainEngine()) {
+            sel = QSettings().value("ui/linkboard_curEngineFirst").toInt();
+        }
+        else {
+            sel = QSettings().value("ui/linkboard_curEngineSecond").toInt();
+        }
+        ui.engineList->setCurrentIndex(sel);
+
+        /*
         QString oldEngineName = ui.engineList->currentText();
         if (oldEngineName.isEmpty())
         {
@@ -342,6 +369,7 @@ namespace Chess {
         f.setPointSize(fontSize);
         setFont(f);
         ui.variationText->setFont(f);
+        */
     }
 
     void AnalysisWidget::saveConfig()
@@ -641,6 +669,9 @@ namespace Chess {
 
     void AnalysisWidget::slotMpvChanged(int mpv)
     {
+        //isEngineRunning()
+       
+        /*
         if (isEngineRunning())
         {
             while (m_analyses.count() > mpv)
@@ -649,6 +680,7 @@ namespace Chess {
             }
             m_engine->setMpv(mpv);  // 引擎改变 multiPV 
         }
+        */
     }
 
     bool AnalysisWidget::isAnalysisEnabled() const
@@ -889,6 +921,8 @@ namespace Chess {
     {
         return ui.engineList->currentText();
     }
+
+  
 
     //void AnalysisWidget::updateBookFile(Database* pgdb)
     //{

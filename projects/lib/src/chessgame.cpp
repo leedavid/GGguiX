@@ -109,7 +109,8 @@ ChessGame::ChessGame(Chess::Board* board, PgnGame* pgn, QObject* parent)
 	m_boardShouldBeFlipped(false),
 	m_pgn(pgn),
 	//isGetSetting(false),
-	isLinkBoard(false)
+	m_isLinkBoard(false),
+	m_isEngingMatch(false)   // 不是引擎比赛
 {
 	Q_ASSERT(pgn != nullptr);
 
@@ -130,10 +131,12 @@ ChessGame::~ChessGame()
 	}
 	if (m_bookOwnership)
 	{
-		bool same = (m_book[0] == m_book[1]);
-		delete m_book[0];
-		if (!same)
-			delete m_book[1];
+		if (m_book[0]) {
+			bool same = (m_book[0] == m_book[1]);
+			delete m_book[0];
+			if (!same)
+				delete m_book[1];
+		}
 	}
 }
 

@@ -97,6 +97,8 @@ class MainWindow : public QMainWindow
 		void setupAnalysisWidget(DockWidgetEx* analysisDock, Chess::AnalysisWidget* analysis);
 		void moveChanged();
 
+		int getSelEngineIndex(bool isMain) const;
+
 signals:
 	/** Re-read configuration. */
 	void reconfigure();
@@ -288,7 +290,7 @@ signals:
 		QLabel* m_status2;
 		QLabel* m_status3;
 		QComboBox* cbtnLinkBoard;             // 连线的棋盘
-		QComboBox* cbtnLinkEngine;            // 连线的引擎
+		//QComboBox* cbtnLinkEngine;            // 连线的引擎
 
 		QPointer<Chess::TranslatingSlider> m_sliderSpeed;
 		QLabel* m_sliderText;

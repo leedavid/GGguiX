@@ -70,6 +70,13 @@ namespace Chess {
         void setOnHold(bool onHold);
 
         QString engineName() const;
+
+        // bool m_isMainEngine;                 // 是不是主引擎
+        void setIsMainEngine(bool s) { m_isMainEngine = s; };
+        bool getIsMainEngine() { return m_isMainEngine; };
+
+        int getCurEngineIndex();              // 得到当前选择引擎的编号
+
         //void updateBookFile(Database*);
 
     public slots:
@@ -178,7 +185,8 @@ namespace Chess {
 
         bool m_gameMode;
         QPointer<ChessPlayer> m_player;
+        bool m_isMainEngine;                 // 是不是主引擎
     };
 
 
-}
+};

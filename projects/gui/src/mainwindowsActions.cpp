@@ -145,6 +145,16 @@ void MainWindow::moveChanged()
 	emit boardChange(*g->board(), line);
 }
 
+int MainWindow::getSelEngineIndex(bool isMain) const
+{
+	if (isMain) {
+		return m_AnalysisWidget[0]->getCurEngineIndex();
+	}
+	else {
+		return m_AnalysisWidget[1]->getCurEngineIndex();
+	}
+}
+
 
 void MainWindow::slotGameChanged(bool bModified)
 {

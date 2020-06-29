@@ -361,15 +361,15 @@ QString MoveEvaluation::toStrings()
 		int speed = m_nodeCount / (time()+1);  // 
 		if (speed < 100) {
 			speed = m_nodeCount * 1000 / time();
-			out += QString(" ( 层数 %1, 用时 %2 速度 %3  节点 %4").arg(depth()).arg(elapsed).arg(speed).arg(m_nodeCount);
+			out += QString(" (层数 %1 用时 %2 NPS %3 节点 %4").arg(depth()).arg(elapsed).arg(speed).arg(m_nodeCount);
 		}
 		else {
-			out += QString(" ( 层数 %1, 用时 %2 速度 %3 K 节点 %4").arg(depth()).arg(elapsed).arg(speed).arg(m_nodeCount);
+			out += QString(" (层数 %1 用时 %2 NPS %3 K 节点 %4").arg(depth()).arg(elapsed).arg(speed).arg(m_nodeCount);
 		}
 
 		// 
 		if (hashUsage()) {
-			out += QString(" Hash使用 %1").arg(hashUsage() / 10.0);
+			out += QString(" HASH %1").arg(hashUsage() / 10.0);
 		}
 
 		//if(tb)
@@ -380,10 +380,10 @@ QString MoveEvaluation::toStrings()
 		}
 
 		if (ponderhitRate()) {
-			out += QString(" 命中概率 %1").arg(ponderhitRate() / 10.0);
+			out += QString(" 概率 %1").arg(ponderhitRate() / 10.0);
 		}
 
-		out += " )";
+		out += ")";
 	}
 	else {
 		if (!out.isEmpty())	{

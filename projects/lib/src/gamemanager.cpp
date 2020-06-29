@@ -423,7 +423,7 @@ void GameManager::newGame(ChessGame* game,
 
 	GameEntry entry = { game, white, black, startMode, cleanupMode };
 
-	if(game->isLinkBoard){
+	if(game->getIsLinkBoard()){
 		if (!white->isHuman() && black->isHuman())
 			game->setBoardShouldBeFlipped(false);
 		else

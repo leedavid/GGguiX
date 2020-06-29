@@ -132,6 +132,8 @@ MainWindow::MainWindow(ChessGame* game)
 	//m_evalWidgets[1] = new EvalWidget(this);
 
 	m_AnalysisWidget[0] = new Chess::AnalysisWidget(this);
+	m_AnalysisWidget[0]->setIsMainEngine(true);             // 主引擎窗口
+
 	m_AnalysisWidget[1] = new Chess::AnalysisWidget(this);
 
 	QVBoxLayout* mainLayout = new QVBoxLayout();
@@ -258,10 +260,10 @@ void MainWindow::createActions()
 	m_stopTournamentAct = new QAction(tr("&停止联赛"), this);
 	m_showTournamentResultsAct = new QAction(tr("&联赛结果..."), this);
 
-	m_showSettingsAct = new QAction(tr("&引擎联赛设置"), this);
+	m_showSettingsAct = new QAction(tr("&通用设置"), this);
 	m_showSettingsAct->setMenuRole(QAction::PreferencesRole);
 
-	m_showSettingsActX = new QAction(tr("&界面设置"), this);
+	m_showSettingsActX = new QAction(tr("&其它设置"), this);
 	m_showSettingsActX->setMenuRole(QAction::PreferencesRole);
 
 	m_showGameDatabaseWindowAct = new QAction(tr("&对局数据库(此功能暂时不可用)"), this);
@@ -390,12 +392,12 @@ void MainWindow::createMenus()
 	m_tournamentMenu->addAction(m_stopTournamentAct);
 	m_tournamentMenu->addAction(m_showTournamentResultsAct);
 	m_tournamentMenu->addSeparator();
-	m_tournamentMenu->addAction(m_showSettingsAct);
+	//m_tournamentMenu->addAction(m_showSettingsAct);
 
 	m_stopTournamentAct->setEnabled(false);
 
 	m_toolsMenu = menuBar()->addMenu(tr("&设置"));
-	//m_toolsMenu->addAction(m_showSettingsAct);	
+	m_toolsMenu->addAction(m_showSettingsAct);	
 	m_toolsMenu->addAction(m_showSettingsActX);
 
     //m_toolsMenu->addAction(m_showGameDatabaseWindowAct);
@@ -695,14 +697,20 @@ void MainWindow::createDockWindows()
 	//----------------------------------------------------------------------------------------
 
 	// Players' eval widgets
-	auto whiteEvalDock = new QDockWidget(tr("红方评分"), this);
+	auto whiteEvalDock = new QDockWidget(tr("主引擎"), this);
 	whiteEvalDock->setObjectName("WhiteEvalDock");
-	whiteEvalDock->setWidget(m_AnalysisWidget[Chess::Side::White]);
+	whiteEvalDock->setWidget(m_AnalysisWidget[Chess::Side::White]);   // 不比赛时是主引擎
 	addDockWidget(Qt::RightDockWidgetArea, whiteEvalDock);
-	auto blackEvalDock = new QDockWidget(tr("黑方评分"), this);
+
+	connect(this, SIGNAL(reconfigure()), m_AnalysisWidget[0], SLOT(slotReconfigure()));
+
+
+	auto blackEvalDock = new QDockWidget(tr("副引擎"), this);
 	blackEvalDock->setObjectName("BlackEvalDock");
-	blackEvalDock->setWidget(m_AnalysisWidget[Chess::Side::Black]);
+	blackEvalDock->setWidget(m_AnalysisWidget[Chess::Side::Black]);   
 	addDockWidget(Qt::RightDockWidgetArea, blackEvalDock);
+
+	connect(this, SIGNAL(reconfigure()), m_AnalysisWidget[1], SLOT(slotReconfigure()));
 
 	/*auto whiteEvalDock = new QDockWidget(tr("红方评分"), this);
 	whiteEvalDock->setObjectName("WhiteEvalDock");
@@ -869,6 +877,7 @@ void MainWindow::createStatus()
 	//empty2->setFixedSize(10, 20);
 	//this->mainToolbar->addWidget(empty2);
 
+	/*
 	//cbtnLinkEngine
 	this->cbtnLinkEngine = new QComboBox(this);
 	this->cbtnLinkEngine->setObjectName(QStringLiteral("cbtnLinkEngine"));
@@ -885,6 +894,7 @@ void MainWindow::createStatus()
 
 	sel = QSettings().value("ui/linkboard_curEngine").toInt();
 	this->cbtnLinkEngine->setCurrentIndex(sel);
+	*/
 
 	m_sliderSpeed = new Chess::TranslatingSlider(this);
 	m_sliderSpeed->setToolTip("即时调整引擎运算时间");
@@ -952,11 +962,21 @@ void MainWindow::writeSettings()
 	s.endGroup();
 	s.endGroup();
 
+	// 当前连线方式
 	int sel = this->cbtnLinkBoard->currentIndex();
 	QSettings().setValue("ui/linkboard_curSel", sel);
 
-	sel = this->cbtnLinkEngine->currentIndex();
-	QSettings().setValue("ui/linkboard_curEngine", sel);
+
+	// 当前主引擎
+	sel = this->getSelEngineIndex(true);
+	QSettings().setValue("ui/linkboard_curEngineFirst", sel);  // 当前选择的引擎
+
+	// 当前副引擎
+	sel = this->getSelEngineIndex(false);
+	QSettings().setValue("ui/linkboard_curEngineSecond", sel);  // 当前选择的引擎
+
+	//sel = this->cbtnLinkEngine->currentIndex();
+	//QSettings().setValue("ui/linkboard_curEngine", sel);  // 当前选择的引擎
 	
 }
 
@@ -1172,7 +1192,15 @@ void MainWindow::setCurrentGame(const TabData& gameData)
 			clock, SLOT(start(int)));
 		connect(player, SIGNAL(stoppedThinking()),
 			clock, SLOT(stop()));
-		m_AnalysisWidget[i]->setPlayer(player);
+
+		if (m_game->getIsEngingMatch()){   // 引擎比赛
+			m_AnalysisWidget[i]->setPlayer(player);
+		}
+		else{  // 其它都是主，副引擎
+			if (player->isHuman() == false) {
+				m_AnalysisWidget[0]->setPlayer(player);
+			}
+		}		
 	}
 
 	if (m_game->boardShouldBeFlipped())
@@ -1977,63 +2005,63 @@ OpeningBook* MainWindow::GetOpeningBook(int& depth) const   // 得到开局库的信息
 
 QString MainWindow::preverb()
 {
-	static QList<QString> list;
-	static bool init = false;
-	if (init == false) {
-		list << "Less is more."
-			<< "Where there is s will，there is a way."
-			<< "No pains，no gains."
-			<< "Time and tide wait for no man."
-			<< "Strike while the iron is hot."
-			<< "It‘s never too late to mend."
-			<< "There is no smoke without fire."
-			<< "We never know the worth of water till the well is dry."
-			<< "Seeing is believing."
-			<< "Well begun is half done."
-			<< "Time flies never to be recalled."
-			<< "When in Rome, do as Roman do."
-			<< "He laughs best who laughs last."
-			<< "Haste makes waste."
-			<< "No weal without woe."
-			<< "Absence sharpens love, presence strengthens it."
-			<< "Pain past is pleasure."
-			<< "A burden of one's choice is not felt."
-			<< "Adversity leads to prosperity."
-			<< "A faithful friend is hard to find."
-			<< "A friend is easier lost than found."
-			<< "A friend without faults will never be found."
-			<< "A good book is a good friend."
-			<< "A good fame is better than a good face."
-			<< "A hedge between keeps friendship green."
-			<< "A little body often harbors a great soul."
-			<< "All rivers run into sea."
-			<< "All that ends well is well."
-			<< "All that glitters is not gold."
-			<< "A man becomes learned by asking questions."
-			<< "A man is known by his friends."
-			<< "A merry heart goes all the way."
-			<< "A miss is as good as a mile."
-			<< "An hour in the morning is worth two in the evening."
-			<< "A still tongue makes a wise head."
-			<< "A word spoken is past recalling."
-			<< "Beauty lies in the love‘s eyes."
-			<< "Between friends all is common."
-			<< "Cannot see the wood for the trees."
-			<< "Care and diligence bring luck.";
-
-		init = true;
-	}
-	return list[Chess::Random::Get().GetInt(0, list.length() - 1)];
+	static const QString list[] = {
+		     "Less is more.",
+			 "Where there is s will，there is a way.",
+			 "No pains，no gains.",
+			 "Time and tide wait for no man.",
+			 "Strike while the iron is hot.",
+			 "It‘s never too late to mend.",
+			 "There is no smoke without fire.",
+			 "We never know the worth of water till the well is dry.",
+			 "Seeing is believing.",
+			 "Well begun is half done.",
+			 "Time flies never to be recalled.",
+			 "When in Rome, do as Roman do.",
+			 "He laughs best who laughs last.",
+			 "Haste makes waste.",
+			 "No weal without woe.",
+			 "Absence sharpens love, presence strengthens it.",
+			 "Pain past is pleasure.",
+			 "A burden of one's choice is not felt.",
+			 "Adversity leads to prosperity.",
+			 "A faithful friend is hard to find.",
+			 "A friend is easier lost than found.",
+			 "A friend without faults will never be found.",
+			 "A good book is a good friend.",
+			 "A good fame is better than a good face.",
+			 "A hedge between keeps friendship green.",
+			 "A little body often harbors a great soul.",
+			 "All rivers run into sea.",
+			 "All that ends well is well.",
+			 "All that glitters is not gold.",
+			 "A man becomes learned by asking questions.",
+			 "A man is known by his friends.",
+			 "A merry heart goes all the way.",
+			 "A miss is as good as a mile.",
+			 "An hour in the morning is worth two in the evening.",
+			 "A still tongue makes a wise head.",
+			 "A word spoken is past recalling.",
+			 "Beauty lies in the love‘s eyes.",
+			 "Between friends all is common.",
+			 "Cannot see the wood for the trees.",
+			 "Care and diligence bring luck."
+	};
+	constexpr int a = sizeof(list)/sizeof(QString);
+	return list[Chess::Random::Get().GetInt(0, a-1)];
 }
 
 QString MainWindow::getUCIHistory() const
 {
+	return QString();
+	/*
 	QString line;
 	//Game gx = game();
 	auto gx = *m_game;
 	gx.moveToStart();
 	gx.dbMoveToId(m_game->currentMove(), &line);
 	return line;
+	*/
 }
 
 void MainWindow::slotResignGame()
@@ -2102,7 +2130,7 @@ void MainWindow::slotProcessCapMsg(Chess::stCaptureMsg msg)
 
 		}
 
-		if (this->tbtnLinkChessBoardRed->isChecked() || this->tbtnLinkChessBoardBlack->isChecked()) {  // 红方连线走棋
+		if (this->tbtnLinkChessBoardRed->isChecked() || this->tbtnLinkChessBoardBlack->isChecked()) {  // 连线走棋
 			bool ok = true;
 
 			// 得到当前的设置
@@ -2133,8 +2161,8 @@ void MainWindow::slotProcessCapMsg(Chess::stCaptureMsg msg)
 			pgn->m_autoLink = true;           // 动画延时为0
 			pgn->setSite(QSettings().value("pgn/site").toString());
 			auto game = new ChessGame(board, pgn);
-			game->isLinkBoard = true;        // 不等棋局结束，直接删除
-	
+
+			game->setIsLinkBoard(true);	
 
 			game->setStartingFen(fen);
 			//this->m_gameViewer->viewPreviousMove2(game->board());  //
@@ -2226,6 +2254,7 @@ void MainWindow::slotProcessCapMsg(Chess::stCaptureMsg msg)
 			};
 
 			//EvalWidget* m_evalWidgets[2];
+			/*  这个不用隐藏了，固定是上下二个
 			if (this->tbtnLinkChessBoardRed->isChecked()) {
 				m_whiteEvalDock->show();
 				m_blackEvalDock->hide();
@@ -2234,6 +2263,7 @@ void MainWindow::slotProcessCapMsg(Chess::stCaptureMsg msg)
 				m_blackEvalDock->show();
 				m_whiteEvalDock->hide();
 			}
+			*/
 			
 
 			// 
@@ -2308,7 +2338,8 @@ PlayerBuilder* MainWindow::mainCreatePlayerBuilder(Chess::Side side, bool isCPU)
 		
 		EngineManager* engineManager = CuteChessApplication::instance()->engineManager();
 
-		int sel = this->cbtnLinkEngine->currentIndex();   // 引擎选择
+		//int sel = this->cbtnLinkEngine->currentIndex();   // 引擎选择'
+		int sel = this->getSelEngineIndex(true);
 		auto config = engineManager->engineAt(sel);
 
 		QSettings s;
@@ -2329,10 +2360,11 @@ PlayerBuilder* MainWindow::mainCreatePlayerBuilder(Chess::Side side, bool isCPU)
 	return new HumanBuilder(CuteChessApplication::userName(), ignoreFlag);
 }
 
-// 红方电脑思考按钮
+// 红方电脑思考按钮, 禁止比赛模式
 void MainWindow::onPlayRedToggled(bool checked) {
 
 	//this->mainToolbar->setVisible(true);
+	tbtnEnginePlayBlack->setDisabled(checked);
 	
 	// 禁止其它按钮
 	tbtnLinkChessBoardRed->setDisabled(checked);
@@ -2349,6 +2381,9 @@ void MainWindow::onPlayBlackToggled(bool checked) {
 	
 	
 	// 禁止其它按钮
+	tbtnEnginePlayRed->setDisabled(checked);
+	
+
 	tbtnLinkChessBoardRed->setDisabled(checked);
 	tbtnLinkChessBoardBlack->setDisabled(checked);
 	tbtnLinkAuto->setDisabled(checked);
@@ -2494,6 +2529,7 @@ void MainWindow::onPlayWhich() //, Chess::Side side)
 
 
 			//EvalWidget* m_evalWidgets[2];
+			/*
 			if (this->tbtnEnginePlayRed->isChecked()) {
 				m_whiteEvalDock->show();
 				m_blackEvalDock->hide();
@@ -2502,6 +2538,7 @@ void MainWindow::onPlayWhich() //, Chess::Side side)
 				m_blackEvalDock->show();
 				m_whiteEvalDock->hide();
 			}
+			*/
 
 
 			PlayerBuilder* builders[2] = {
@@ -2521,7 +2558,7 @@ void MainWindow::onPlayWhich() //, Chess::Side side)
 				this, SLOT(addGame(ChessGame*)));
 			connect(game, SIGNAL(startFailed(ChessGame*)),
 				this, SLOT(onGameStartFailed(ChessGame*)));
-			CuteChessApplication::instance()->gameManager()->newGame(game,             // 将这个新棋局添加到Tab表中
+			CuteChessApplication::instance()->gameManager()->newGame(game,             // 将这个新棋局添加到Tab表中，可以慢慢加载实行
 				builders[Chess::Side::White], builders[Chess::Side::Black]);
 
 			//if (m_tabs.size() >= 2) {

@@ -113,7 +113,15 @@ class LIB_EXPORT ChessGame : public QObject
 		};
 
 		//bool isGetSetting;    // 是否从设置文件中得到了设置数据
-		bool isLinkBoard;       // 是否要翻转棋盘, 连线下棋不要翻转	
+
+		void setIsLinkBoard(bool isLink) {	m_isLinkBoard = isLink;	};        // 是否连线下棋不要翻转	
+		bool getIsLinkBoard() { return m_isLinkBoard; };
+		
+		void setIsEngingMatch(bool isMatch) { m_isEngingMatch = isMatch; };   // 是否引擎比赛
+		bool getIsEngingMatch() { return m_isEngingMatch; };
+		
+
+	
 
 	public slots:
 		void start();
@@ -282,6 +290,9 @@ class LIB_EXPORT ChessGame : public QObject
 		QSemaphore m_pauseSem;
 		QSemaphore m_resumeSem;
 		GameAdjudicator m_adjudicator;
+
+		bool m_isLinkBoard;       // 是否要翻转棋盘, 连线下棋不要翻转	
+		bool m_isEngingMatch;     // 是不是引擎比赛, 
 
 		// X chess =================================
 		/** Reference Counter for this object */
