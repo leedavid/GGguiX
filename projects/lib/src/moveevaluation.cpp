@@ -347,9 +347,11 @@ QString MoveEvaluation::toStrings()
 	QString moveText = m_pv;
 	if (moveText.length() > 2) {
 		out += " <a href=\"" + QString::number(-getPly()) + "\" title=\"点击走棋\">[+]</a> ";
+		/*
 		if (!isBestMove()) {
 			out += " <a href=\"" + QString::number(getPly()) + "\" title=\"将些变招加入到棋谱\">[*]</a> ";
 		}
+		*/
 		out += moveText;
 	}
 	if (!isBestMove()) {

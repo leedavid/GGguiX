@@ -122,6 +122,9 @@ QString UciEngine::positionString()
 
 void UciEngine::sendPosition()
 {
+	//
+	//if(h)
+	
 	write(positionString());
 }
 
@@ -223,7 +226,7 @@ void UciEngine::makeBookMove(const Chess::Move& move)
 		ping(false);
 	clearPonderState();
 
-	ChessEngine::makeBookMove(move);
+	ChessEngine::makeBookMove(move);   // 引擎本身有一个board
 }
 
 void UciEngine::startThinking()
@@ -301,6 +304,14 @@ void UciEngine::clearPonderState()
 	m_ponderState = NotPondering;
 	m_ponderMove = Chess::Move();
 	m_ponderMoveSan.clear();
+}
+
+void UciEngine::SetMpv(int mpv)
+{
+	if (m_mpv != mpv) {
+		m_mpv = mpv;
+		this->sendOption("MultiPV", mpv);
+	}
 }
 
 bool UciEngine::isPondering() const

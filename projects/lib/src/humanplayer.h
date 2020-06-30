@@ -46,6 +46,7 @@ class LIB_EXPORT HumanPlayer : public ChessPlayer
 		virtual void makeMove(const Chess::Move& move);
 		virtual bool supportsVariant(const QString& variant) const;
 		virtual bool isHuman() const;
+		virtual void SetMpv(int mpv) { (void)mpv;  };   // 这个不用
 
 	public slots:
 		/*!

@@ -53,6 +53,9 @@
     <Filter Include="Source Files\engine\player">
       <UniqueIdentifier>{6640c95a-4ff1-453f-875b-57bf73a4b390}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\engine\builder">
+      <UniqueIdentifier>{733e3b54-cc2a-4b2b-8808-41566d99e175}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\chessgame.cpp">
@@ -148,17 +151,11 @@
     <ClCompile Include="src\worker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\uciengine.cpp">
-      <Filter>Source Files\engine\UCI</Filter>
-    </ClCompile>
     <ClCompile Include="ConnectionPool.cpp">
       <Filter>Source Files\Sqlite</Filter>
     </ClCompile>
     <ClCompile Include="databasemanager.cpp">
       <Filter>Source Files\Sqlite</Filter>
-    </ClCompile>
-    <ClCompile Include="src\chessengine.cpp">
-      <Filter>Source Files\engine\UCI</Filter>
     </ClCompile>
     <ClCompile Include="src\board\westernboard.cpp">
       <Filter>Source Files\board</Filter>
@@ -232,11 +229,17 @@
     <ClCompile Include="src\board\genericmove.cpp">
       <Filter>Source Files\board</Filter>
     </ClCompile>
-    <ClCompile Include="src\humanbuilder.cpp">
-      <Filter>Source Files\engine\player</Filter>
-    </ClCompile>
     <ClCompile Include="src\humanplayer.cpp">
       <Filter>Source Files\engine\player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\chessengine.cpp">
+      <Filter>Source Files\engine\player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\uciengine.cpp">
+      <Filter>Source Files\engine\player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\humanbuilder.cpp">
+      <Filter>Source Files\engine\builder</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -270,9 +273,6 @@
     <ClInclude Include="src\board\embassyboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\enginebuilder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\enginebuttonoption.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -285,12 +285,6 @@
     <ClInclude Include="src\engineconfiguration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\enginefactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <QtMoc Include="src\enginemanager.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <ClInclude Include="src\engineoption.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -324,12 +318,6 @@
     <ClInclude Include="src\board\genericmove.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\humanbuilder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <QtMoc Include="src\humanplayer.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <ClInclude Include="components\json\src\jsonparser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -438,9 +426,6 @@
     <ClInclude Include="src\board\twokingseachboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <QtMoc Include="src\uciengine.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <ClInclude Include="src\board\westernboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -458,6 +443,15 @@
     </ClInclude>
     <ClInclude Include="databasemanager.h">
       <Filter>Source Files\Sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="src\humanbuilder.h">
+      <Filter>Source Files\engine\builder</Filter>
+    </ClInclude>
+    <ClInclude Include="src\enginebuilder.h">
+      <Filter>Source Files\engine\builder</Filter>
+    </ClInclude>
+    <ClInclude Include="src\enginefactory.h">
+      <Filter>Source Files\engine\builder</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -478,7 +472,16 @@
       <Filter>Source Files</Filter>
     </QtMoc>
     <QtMoc Include="src\chessengine.h">
-      <Filter>Source Files\engine\UCI</Filter>
+      <Filter>Source Files\engine\player</Filter>
+    </QtMoc>
+    <QtMoc Include="src\humanplayer.h">
+      <Filter>Source Files\engine\player</Filter>
+    </QtMoc>
+    <QtMoc Include="src\enginemanager.h">
+      <Filter>Source Files\engine\builder</Filter>
+    </QtMoc>
+    <QtMoc Include="src\uciengine.h">
+      <Filter>Source Files\engine\player</Filter>
     </QtMoc>
   </ItemGroup>
 </Project>

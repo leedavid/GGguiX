@@ -130,7 +130,7 @@ void ChessPlayer::startClock()
 	if (!m_timeControl.isInfinite())
 	{
 		int t = m_timeControl.timeLeft() + m_timeControl.expiryMargin();
-		m_timer->start(qMax(t, 0) + 200);
+		m_timer->start(qMax(t, 0) + 200);  // 200ms 保险
 	}
 }
 
@@ -303,5 +303,5 @@ void ChessPlayer::onCrashed()
 void ChessPlayer::onTimeout()
 {
 	if (!canPlayAfterTimeout())
-		forfeit(Chess::Result::Timeout);
+		forfeit(Chess::Result::Timeout);  // 时间到了，超时
 }

@@ -160,6 +160,7 @@ class LIB_EXPORT ChessPlayer : public QObject
 		 */
 		void setCanPlayAfterTimeout(bool enable);
 
+		virtual void SetMpv(int mpv) = 0;
 
 	public slots:
 		/*!

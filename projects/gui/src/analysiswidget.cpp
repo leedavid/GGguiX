@@ -90,9 +90,7 @@ namespace Chess {
 
         m_board->setFenString(m_board->defaultFenString());
         m_NextBoard->setFenString(m_NextBoard->defaultFenString());
-        m_startPos->setFenString(m_startPos->defaultFenString());
-
-        
+        m_startPos->setFenString(m_startPos->defaultFenString());       
 
 
         //m_tablebase = new OnlineTablebase;   // 在线开局库
@@ -670,6 +668,13 @@ namespace Chess {
     void AnalysisWidget::slotMpvChanged(int mpv)
     {
         //isEngineRunning()
+        if (m_player->isReady()) {
+            while (m_analyses.count() > mpv)
+            {
+                m_analyses.removeLast();
+            }
+            m_player->SetMpv(mpv);
+        }
        
         /*
         if (isEngineRunning())

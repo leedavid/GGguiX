@@ -43,6 +43,8 @@ class LIB_EXPORT UciEngine : public ChessEngine
 		virtual void startPondering();
 		virtual void clearPonderState();
 
+		virtual void SetMpv(int mpv);
+
 	protected:
 		// Inherited from ChessEngine
 		virtual bool sendPing();
@@ -99,6 +101,7 @@ class LIB_EXPORT UciEngine : public ChessEngine
 		bool m_rePing;
 		MoveEvaluation m_currentEval;
 		QStringList m_comboVariants;
+		int m_mpv;        // by LGL
 };
 
 #endif // UCIENGINE_H
