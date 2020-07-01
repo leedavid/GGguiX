@@ -149,7 +149,7 @@ void GameInitializer::initializeGame()
 				m_playerCount = 0;
 				deletePlayer(!i);
 
-				emit gameInitialized(false);
+				emit gameInitialized(false);   // 
 				return;
 			}
 		}
@@ -459,7 +459,7 @@ void GameManager::onThreadQuit()
 	}
 }
 
-void GameManager::onThreadReady()
+void GameManager::onThreadReady()   // 
 {
 	GameThread* thread = qobject_cast<GameThread*>(QObject::sender());
 	Q_ASSERT(thread != nullptr);

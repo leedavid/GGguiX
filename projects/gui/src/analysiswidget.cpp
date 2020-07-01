@@ -669,9 +669,9 @@ namespace Chess {
     {
         //isEngineRunning()
         if (m_player->isReady()) {
-            while (m_analyses.count() > mpv)
+            while (m_eval.count() > mpv)
             {
-                m_analyses.removeLast();
+                m_eval.removeLast();
             }
             m_player->SetMpv(mpv);
         }
