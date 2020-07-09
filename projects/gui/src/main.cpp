@@ -99,6 +99,14 @@ int customReportHook(int /* reportType */, char* message, int* /* returnValue */
 
 int main(int argc, char* argv[])
 {
+
+	//QTextCodec* codec = QTextCodec::codecForName("UTF-8");
+    //QTextCodec::setcoderfortr
+
+	//QTextCodec::setCodecForTr(codec);
+
+	//QTextCodec::setCodecForLocale(QTextCodec::codecForLocale());
+	//QTextCodec::setco
 	
 #if defined(_MSC_VER)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);

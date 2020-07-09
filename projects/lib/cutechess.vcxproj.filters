@@ -466,6 +466,7 @@
     <QtRcc Include="res\eco\eco.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\gamemanager.cpp">

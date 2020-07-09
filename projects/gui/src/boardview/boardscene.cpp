@@ -47,21 +47,24 @@ const qreal s_squareSize = 50;
 
 BoardScene::BoardScene(QObject* parent)
 	: QGraphicsScene(parent),
-	  m_board(nullptr),
-	  m_direction(Forward),
-	  m_squares(nullptr),
-	  //m_reserve(nullptr),
-	  m_chooser(nullptr),
-	  m_anim(nullptr),
-	  //m_renderer(new QSvgRenderer(QString(":/default.svg"), this)),
-	  //QString pic = QCoreApplication::applicationDirPath() + "/image/default.svg";
-	  m_renderer(new QSvgRenderer((QCoreApplication::applicationDirPath() + "/image/default.svg"), this)),
-	  m_highlightPiece(nullptr),
-	  m_moveArrows(nullptr)
+	m_board(nullptr),
+	m_direction(Forward),
+	m_squares(nullptr),
+	//m_reserve(nullptr),
+	m_chooser(nullptr),
+	m_anim(nullptr),
+	//m_renderer(new QSvgRenderer(QString(":/default.svg"), this)),
+	//QString pic = QCoreApplication::applicationDirPath() + "/image/default.svg";
+	//m_renderer(new QSvgRenderer((QCoreApplication::applicationDirPath() + "/image/default.svg"), this)),
+	m_renderer(nullptr),
+	m_highlightPiece(nullptr),
+	m_moveArrows(nullptr)
 {
 	// default-rbok.svg
 	// QSettings().value("ui/highlight_legal_moves", true).toBool())
 	QSettings().setValue("ui/movechess_click_mode", false);          // 点击方式走棋 
+
+	this->SetChessPiece();
 }
 
 BoardScene::~BoardScene()
@@ -103,10 +106,10 @@ void BoardScene::OnChangeBackGround()
 	QDir dir = QDir(dirpath);
 	QStringList files = dir.entryList(nameFilters, QDir::Files | QDir::Readable, QDir::Name);
 
-	QString prefile = QSettings().value("ui/board_backgroud").toString();
-	if (prefile == nullptr) {
-		prefile = "bg.png";
-	}
+	QString prefile = QSettings().value("ui/board_backgroud", "bg.png").toString();
+	//if (prefile == nullptr) {
+	//	prefile = "bg.png";
+	//}
 
 	int num = 0;
 	for (QString file : files) {
@@ -127,14 +130,63 @@ void BoardScene::OnChangeBackGround()
 	this->update();
 }
 
+void BoardScene::OnChangeChessPicece()
+{
+	// 得到所有的文件
+	QStringList nameFilters;
+	nameFilters << "*.svg";
+	QString dirpath = QCoreApplication::applicationDirPath() + "/image/chessPiece/";
+	QDir dir = QDir(dirpath);
+	QStringList files = dir.entryList(nameFilters, QDir::Files | QDir::Readable, QDir::Name);
+
+	QString prefile = QSettings().value("ui/board_chessSVG", "default.svg").toString();
+	//if (prefile == nullptr) {
+	//	prefile = "bg.png";
+	//}
+
+	int num = 0;
+	for (QString file : files) {
+		if (prefile == file) {
+			break;
+		}
+		num++;
+	}
+	num++;
+	if (num >= files.length()) {
+		num = 0;
+	}
+	prefile = files[num];
+	QSettings().setValue("ui/board_chessSVG", prefile);
+
+
+	//SetBackground();
+	SetChessPiece();
+
+	populate();
+
+	this->update();
+}
+
 void BoardScene::SetBackground()
 {
-	QString file = QSettings().value("ui/board_backgroud").toString();
-	if (file == nullptr) {
-		file = "bg.png";
-	}
+	QString file = QSettings().value("ui/board_backgroud", "bg.png").toString();
+	//if (file == nullptr) {
+	//	file = "bg.png";
+	//}
 	QString pic = QCoreApplication::applicationDirPath() + "/image/backgroud/" + file;
 	this->setBackgroundBrush(QPixmap(pic));
+}
+
+void BoardScene::SetChessPiece()
+{
+	//m_renderer(new QSvgRenderer((QCoreApplication::applicationDirPath() + "/image/default.svg"), this)),
+	if (m_renderer != nullptr) {
+		delete m_renderer;
+	}
+	QString file = QSettings().value("ui/board_chessSVG","default.svg").toString();
+	QString pic = QCoreApplication::applicationDirPath() + "/image/chessPiece/" + file;
+
+	m_renderer = new QSvgRenderer(pic, this);
 }
 
 // 连线走棋信息

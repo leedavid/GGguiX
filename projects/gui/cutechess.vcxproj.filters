@@ -739,6 +739,8 @@
     <None Include="res\chessboard\MaurizioMonge\spatial.svg">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="res\icons\cutechess_win.rc" />

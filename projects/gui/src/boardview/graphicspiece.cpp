@@ -63,7 +63,14 @@ void GraphicsPiece::paint(QPainter* painter,
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 
+	//m_renderer->
+
 	QRectF bounds(m_renderer->boundsOnElement(m_elementId));
+
+	//if (bounds.height() == 0) {
+	//	return;
+	//}
+
 	qreal ar = bounds.width() / bounds.height();
 	qreal width = m_rect.width() * 0.95;  // was 0.8 棋子相对格子的比例
 

@@ -207,7 +207,7 @@ class LIB_EXPORT GameManager : public QObject
 		void cleanup();
 
 		bool m_finishing;
-		int m_concurrency;
+		int m_concurrency;							// 并发的游戏数 缺省是 1
 		int m_activeQueuedGameCount;
 		QList< QPointer<GameThread> > m_threads;
 		QList<GameThread*> m_activeThreads;

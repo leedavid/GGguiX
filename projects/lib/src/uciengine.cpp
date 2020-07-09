@@ -376,15 +376,35 @@ void UciEngine::parseInfo(const QVarLengthArray<QStringRef>& tokens,
 			  int type,
 			  MoveEvaluation* eval)
 {
+	//enum Keyword
+	//{
+	//	InfoDepth,
+	//	InfoSelDepth,
+	//	InfoTime,
+	//	InfoNodes,
+	//	InfoScore,
+	//	InfoPv,   by LGL
+	//	InfoMultiPv,		
+	//	InfoCurrMove,
+	//	InfoCurrMoveNumber,
+	//	InfoHashFull,
+	//	InfoNps,
+	//	InfoTbHits,
+	//	InfoCpuLoad,
+	//	InfoString,
+	//	InfoRefutation,
+	//	InfoCurrLine
+	//};
+
 	enum Keyword
 	{
 		InfoDepth,
 		InfoSelDepth,
 		InfoTime,
 		InfoNodes,
-		InfoScore,
 		InfoPv,
-		InfoMultiPv,		
+		InfoMultiPv,
+		InfoScore,
 		InfoCurrMove,
 		InfoCurrMoveNumber,
 		InfoHashFull,
@@ -420,33 +440,81 @@ void UciEngine::parseInfo(const QVarLengthArray<QStringRef>& tokens,
 		eval->setPv(m_useDirectPv ?  directPv(tokens) : sanPv(tokens));
 		break;
 	case InfoScore:
-		{
-			int score = 0;
-			//for (int i = 1; i < tokens.size(); i++)
-			//{
-			int i = 1;
-			if (tokens[i - 1] == "cp")
-				score = tokens[i].toString().toInt();
-			else if (tokens[i - 1] == "mate")
-			{
-				score = tokens[i].toString().toInt();
-				if (score > 0)
-					score = eval->MATE_SCORE + 1 - score * 2;
-				else if (score < 0)
-					score = -eval->MATE_SCORE - score * 2;
-			}
-			else if (tokens[i - 1] == "lowerbound"
-				|| tokens[i - 1] == "upperbound")
-				return;
-			else {
-				score = tokens[i-1].toString().toInt();
-			}
-			//i++;
-			//}
-			if (whiteEvalPov() && side() == Chess::Side::Black)
-				score = -score;
-			eval->setScore(score);
+	{
+		int score = 0;
+
+		//if (tokens.size() == 10) {
+
+		//	auto ss = tokens[0].toString();
+		//	score = tokens[0].toString().toInt();
+		//}
+		//else {
+		//	for (int i = 1; i < tokens.size(); i++) {
+
+		//		auto ss0 = tokens[i-1].toString();
+		//		auto ss1 = tokens[i].toString();
+
+		//		//int i = 1;
+		//		if (tokens[i - 1] == "cp")
+		//			score = tokens[i].toString().toInt();
+		//		else if (tokens[i - 1] == "mate")
+		//		{
+		//			score = tokens[i].toString().toInt();
+		//			if (score > 0)
+		//				score = eval->MATE_SCORE + 1 - score * 2;
+		//			else if (score < 0)
+		//				score = -eval->MATE_SCORE - score * 2;
+		//		}
+		//		else if (tokens[i - 1] == "lowerbound"
+		//			|| tokens[i - 1] == "upperbound")
+		//			return;
+		//		//else {
+		//		//	score = tokens[i - 1].toString().toInt();
+		//		//}
+		//		//i++;
+		//	}		
+		//}
+
+		//QString ss1;
+
+		if (tokens.size() == 1) {
+			score = tokens[0].toString().toInt();   // no cp 
+			eval->setCanUpdatePv(true);
 		}
+		else {
+			for (int i = 1; i < tokens.size(); i++)
+			{
+				if (tokens[i - 1] == "cp") {
+					score = tokens[i].toString().toInt();
+					eval->setCanUpdatePv(true);
+				}
+				else if (tokens[i - 1] == "mate")
+				{
+					score = tokens[i].toString().toInt();
+					if (score > 0)
+						score = eval->MATE_SCORE + 1 - score * 2;
+					else if (score < 0)
+						score = -eval->MATE_SCORE - score * 2;
+					eval->setCanUpdatePv(true);
+				}
+				else if (tokens[i - 1] == "lowerbound"
+					|| tokens[i - 1] == "upperbound")
+					//eval->setLowOrUpBound(true);
+					return;
+				//i++;
+			}
+		}
+
+		//if (score > 10000) {
+		//	int a = 0;
+		//}
+
+		if (whiteEvalPov() && side() == Chess::Side::Black)
+			score = -score;
+		eval->setScore(score);
+
+		
+	}
 		break;
 	case InfoNps:
 		eval->setNps(tokens[0].toString().toULongLong());
@@ -464,15 +532,35 @@ void UciEngine::parseInfo(const QVarLengthArray<QStringRef>& tokens,
 
 void UciEngine::parseInfo(const QStringRef& line)
 {
+	//static const QString types[] =
+	//{
+	//	"depth",			//
+	//	"seldepth",
+	//	"time",
+	//	"nodes",
+	//	"score",				// by LGL
+	//	"pv",
+	//	"multipv",		
+	//	"currmove",
+	//	"currmovenumber",
+	//	"hashfull",
+	//	"nps",
+	//	"tbhits",
+	//	"cpuload",
+	//	"string",
+	//	"refutation",
+	//	"currline"
+	//};
+
 	static const QString types[] =
 	{
-		"depth",			//
+		"depth",
 		"seldepth",
 		"time",
 		"nodes",
-		"score",				// by LGL
 		"pv",
-		"multipv",		
+		"multipv",
+		"score",
 		"currmove",
 		"currmovenumber",
 		"hashfull",
@@ -483,6 +571,9 @@ void UciEngine::parseInfo(const QStringRef& line)
 		"refutation",
 		"currline"
 	};
+
+	// NewGG Error
+	if (board() == nullptr) return;
 	
 	int type = -1;
 	QStringRef token(nextToken(line));
@@ -509,6 +600,12 @@ void UciEngine::parseInfo(const QStringRef& line)
 		eval.setPonderMove(m_ponderMoveSan);
 	if (m_movesPondered)
 		eval.setPonderhitRate((m_ponderHits * 1000) / m_movesPondered);
+
+	//if (eval.score() > 1000) {
+	//	int a = 0;
+	//}
+
+	if (eval.isCanUpdatePv() == false) return;
 
 	// Only the primary PV can be considered the current eval
 	if (eval.pvNumber() <= 1)

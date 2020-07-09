@@ -222,7 +222,7 @@ class GameThread : public QThread
 		void onGameDestroyed();
 
 	private:
-		bool m_ready;
+		bool m_ready;                                // 线程空闲, 准备执行新的任务
 		GameManager::StartMode m_startMode;
 		GameManager::CleanupMode m_cleanupMode;
 		ChessGame* m_game;
@@ -326,7 +326,7 @@ void GameThread::setCleanupMode(GameManager::CleanupMode mode)
 
 void GameThread::onGameDestroyed()
 {
-	m_ready = true;
+	m_ready = true;            
 	emit ready();
 }
 

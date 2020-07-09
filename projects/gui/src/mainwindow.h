@@ -255,6 +255,7 @@ signals:
 
 		QAction* m_changeBoardPicAct;         // 改变棋盘图片
 		QAction* m_changeBoardBackGroundAct;  // 改变背景
+		QAction* m_changeBoardChessAct;       // 改变棋子图案
 
 		//QAction* m_showSettingsAct;
 

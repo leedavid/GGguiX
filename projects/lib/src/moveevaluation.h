@@ -198,6 +198,10 @@ public:
 		bool isBestMove() const { return m_isBestMove; };
 		void SetIsBestMove(bool best) { m_isBestMove = best; };
 
+		bool isCanUpdatePv() const { return m_canUpdatePv; };
+		void setCanUpdatePv(bool b) { m_canUpdatePv = b; };
+
+
 		void setPly(int p) { m_ply = p; };
 		int getPly() { return m_ply; };
 
@@ -222,6 +226,8 @@ public:
 		QString m_ponderMove;
 		Chess::Side m_side;
 		bool m_isBestMove; 
+		//bool m_isLowerOrUpBound;
+		bool m_canUpdatePv;         // Òª¸üÐÂpv
 		int m_ply;
 };
 

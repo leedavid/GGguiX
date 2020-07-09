@@ -17,17 +17,11 @@ namespace Chess {
     {
         int index = ui.engineList->currentIndex();   // 引擎选择
         if (index != -1) {
-            if (m_buildersEngine == nullptr || index != m_bullderNum) {           
-
+            if (m_buildersEngine == nullptr || index != m_bullderNum) {  
 
                 if (m_buildersEngine)
                 {
-   /*                 m_buildersEngin->deactivate();
-                    m_buildersEngin->deleteLater();*/
-                    //m_buildersEngine->e
-                    //m_buildersEngin.clear();
-                    //m_buildersEngine->q
-                    //m_buildersEngine->disconnect();
+                    delete m_buildersEngine;
                 }
 
                 EngineManager* engineManager = CuteChessApplication::instance()->engineManager();
@@ -41,6 +35,8 @@ namespace Chess {
                 this->m_buildersEngine = new EngineBuilder(config);
 
                 m_bullderNum = index;
+
+                // 重新player
             }
         }
     }
@@ -80,7 +76,7 @@ namespace Chess {
         connect(ui.variationText, SIGNAL(anchorClicked(QUrl)),
             SLOT(slotLinkClicked(QUrl)));
         connect(ui.vpcount, SIGNAL(valueChanged(int)), SLOT(slotMpvChanged(int)));
-        connect(ui.btPin, SIGNAL(clicked(bool)), SLOT(slotPinChanged(bool)));
+        //connect(ui.btPin, SIGNAL(clicked(bool)), SLOT(slotPinChanged(bool)));
         ui.analyzeButton->setFixedHeight(ui.engineList->sizeHint().height());
 
 
@@ -476,13 +472,13 @@ namespace Chess {
 
     void AnalysisWidget::setPosition(const Board& board, QString line)
     {
-        if (ui.btPin->isChecked())
-        {   
-            delete m_NextBoard;
-            m_NextBoard = board.copy();
-            m_NextLine = line;
-            return;
-        }
+        //if (ui.btPin->isChecked())
+        //{   
+        //    delete m_NextBoard;
+        //    m_NextBoard = board.copy();
+        //    m_NextLine = line;
+        //    return;
+        //}
         if (!(*m_board == board))
         {
             delete m_board;
@@ -542,13 +538,15 @@ namespace Chess {
     void Chess::AnalysisWidget::updateEval()
     {
         QString text;
-        if (ui.btPin->isChecked())
-        {
-            unsigned int moveNr = m_board->moveNumber();
-            text = tr("Analysis pinned to move %1").arg(moveNr) + "<br>";
-        }
+        //if (ui.btPin->isChecked())
+        //{
+        //    unsigned int moveNr = m_board->moveNumber();
+        //    text = tr("Analysis pinned to move %1").arg(moveNr) + "<br>";
+        //}
         foreach(auto a, m_eval)
         {
+            //if (a.isLowOrUpBound()) continue;  // by LGL
+
             QString s = a.toStrings();
             if (!s.isEmpty()) text.append(s + "<br>");
         }
@@ -556,14 +554,14 @@ namespace Chess {
         {
             text.append(QString("<a href=\"0\" title=\"%1\">[+]</a> <b>%2:</b> ").arg(tr("Click to add move to game")).arg(tr("Tablebase")) + m_tablebaseEvaluation);
         }
-        if (m_lastDepthAdded == 17)
-        {
-            text.append(QString("<br><b>%1:</b> %2/%3<br>").arg(tr("Complexity")).arg(m_complexity).arg(m_complexity2));
-        }
-        else if (m_lastDepthAdded >= 12)
-        {
-            text.append(tr("<br><b>Complexity:</b> %1<br>").arg(m_complexity));
-        }
+        //if (m_lastDepthAdded == 17)
+        //{
+        //    text.append(QString("<br><b>%1:</b> %2/%3<br>").arg(tr("Complexity")).arg(m_complexity).arg(m_complexity2));
+        //}
+        //else if (m_lastDepthAdded >= 12)
+        //{
+        //    text.append(tr("<br><b>Complexity:</b> %1<br>").arg(m_complexity));
+        //}
 
         if (moveList.count())
         {
@@ -645,10 +643,10 @@ namespace Chess {
     void AnalysisWidget::setMoveTime(EngineParameter mt)
     {
         m_moveTime = mt;
-        if (isEngineRunning() && !ui.btPin->isChecked())
-        {
-            m_engine->setMoveTime(mt);
-        }
+        //if (isEngineRunning() && !ui.btPin->isChecked())
+        //{
+        //    m_engine->setMoveTime(mt);
+        //}
     }
 
     void AnalysisWidget::setMoveTime(int n)
@@ -786,11 +784,11 @@ namespace Chess {
     void AnalysisWidget::updateAnalysis()
     {
         QString text;
-        if (ui.btPin->isChecked())
-        {
-            unsigned int moveNr = m_board->moveNumber();
-            text = tr("Analysis pinned to move %1").arg(moveNr) + "<br>";
-        }
+        //if (ui.btPin->isChecked())
+        //{
+        //    unsigned int moveNr = m_board->moveNumber();
+        //    text = tr("Analysis pinned to move %1").arg(moveNr) + "<br>";
+        //}
         foreach(Analysis a, m_analyses)
         {
             QString s = a.toStrings(*m_board);
@@ -895,10 +893,10 @@ namespace Chess {
 
     void AnalysisWidget::unPin()
     {
-        if (ui.btPin->isChecked())
-        {
-            ui.btPin->setChecked(false);
-        }
+        //if (ui.btPin->isChecked())
+        //{
+        //    ui.btPin->setChecked(false);
+        //}
     }
 
     void AnalysisWidget::slotUciNewGame(const Board& b)

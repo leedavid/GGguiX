@@ -16,6 +16,8 @@
     along with GGzero Chess.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#pragma execution_character_set("utf-8")
+
 #include "gamedatabasedlg.h"
 #include "ui_gamedatabasedlg.h"
 

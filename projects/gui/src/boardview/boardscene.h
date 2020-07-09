@@ -85,6 +85,8 @@ class BoardScene : public QGraphicsScene
 
 		void OnchangeBoardPicture();
 		void OnChangeBackGround();
+		void OnChangeChessPicece(); // 改变棋子图案
+
 
 		/*!
 		 * Clears the scene, creates a new board, and populates
@@ -151,6 +153,7 @@ class BoardScene : public QGraphicsScene
 		};
 
 		void SetBackground();
+		void SetChessPiece();  // 棋子方案
 
 		QPointF squarePos(const Chess::Square& square) const;
 		GraphicsPiece* pieceAt(const QPointF& pos) const;

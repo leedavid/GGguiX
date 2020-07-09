@@ -453,6 +453,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="res\eco\eco.bin" />
     <QtRcc Include="res\eco\eco.qrc">
     </QtRcc>

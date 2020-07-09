@@ -40,7 +40,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>&amp;行数:</string>
+        <string>&amp; MPv:</string>
        </property>
        <property name="buddy">
         <cstring>vpcount</cstring>
@@ -50,30 +50,13 @@
      <item>
       <widget class="QSpinBox" name="vpcount">
        <property name="toolTip">
-        <string>Number of parallel lines</string>
+        <string>Number of Multi PV </string>
        </property>
        <property name="minimum">
-        <number>1</number>
+        <number>2</number>
        </property>
        <property name="maximum">
-        <number>99</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="btPin">
-       <property name="toolTip">
-        <string>Pin engine to current position</string>
-       </property>
-       <property name="text">
-        <string notr="true"/>
-       </property>
-       <property name="icon">
-        <iconset resource="../res/chessboard/chessboard.qrc">
-         <normaloff>:/icon/pin.ico</normaloff>:/icon/pin.ico</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
+        <number>9</number>
        </property>
       </widget>
      </item>

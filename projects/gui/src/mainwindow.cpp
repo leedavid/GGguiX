@@ -242,9 +242,10 @@ void MainWindow::createActions()
 	m_adjudicateWhiteWinAct = new QAction(tr("判定红胜"), this);
 	m_adjudicateBlackWinAct = new QAction(tr("判定黑胜"), this);
 
-	m_changeBoardPicAct = new QAction(tr("更换棋盘图片"), this);
+	m_changeBoardPicAct = new QAction(tr("更换棋盘"), this);
 
 	m_changeBoardBackGroundAct = new QAction(tr("更换背景"), this);
+	m_changeBoardChessAct = new QAction(tr("更换棋子"), this);
 
 	m_resignGameAct = new QAction(tr("认输"), this);
 
@@ -266,7 +267,7 @@ void MainWindow::createActions()
 	m_showSettingsActX = new QAction(tr("&其它设置"), this);
 	m_showSettingsActX->setMenuRole(QAction::PreferencesRole);
 
-	m_showGameDatabaseWindowAct = new QAction(tr("&对局数据库(此功能暂时不可用)"), this);
+	m_showGameDatabaseWindowAct = new QAction(tr("&对局数据库"), this);
 
 	m_showGameWallAct = new QAction(tr("&当前对局"), this);
 
@@ -293,6 +294,7 @@ void MainWindow::createActions()
 	//this->m_gameViewer->boardScene()->changeBoardPicture();
 	connect(m_changeBoardPicAct, SIGNAL(triggered()), this->m_gameViewer->boardScene(), SLOT(OnchangeBoardPicture()));
 	connect(m_changeBoardBackGroundAct, SIGNAL(triggered()), this->m_gameViewer->boardScene(), SLOT(OnChangeBackGround()));
+	connect(m_changeBoardChessAct, SIGNAL(triggered()), this->m_gameViewer->boardScene(), SLOT(OnChangeChessPicece()));
 
 	connect(m_editBoardAct, SIGNAL(triggered()), this, SLOT(slotEditBoard()));
 	connect(m_newGameAct, SIGNAL(triggered()), this, SLOT(slotNewGame()));
@@ -400,7 +402,7 @@ void MainWindow::createMenus()
 	m_toolsMenu->addAction(m_showSettingsAct);	
 	m_toolsMenu->addAction(m_showSettingsActX);
 
-    //m_toolsMenu->addAction(m_showGameDatabaseWindowAct);
+    m_toolsMenu->addAction(m_showGameDatabaseWindowAct);
 
 	m_viewMenu = menuBar()->addMenu(tr("&视图"));
 	m_viewMenu->addAction(m_flipBoardAct);
@@ -1703,6 +1705,7 @@ void MainWindow::onMouseRightClicked(/*QGraphicsSceneContextMenuEvent* event*/)
 
 	mymenu.addSeparator();
 
+	mymenu.addAction(m_changeBoardChessAct);
 	mymenu.addAction(m_changeBoardPicAct);	
 	mymenu.addAction(m_changeBoardBackGroundAct);
 
@@ -1794,7 +1797,8 @@ void MainWindow::showAboutDialog()
 	html += "<a href=\"http://elo.ggzero.cn\">GGzero训练网站</a><br>";
 	html += "<a href=\"http://bbs.ggzero.cn\">官方论坛</a><br>";
 	html += "<a href=\"https://jq.qq.com/?_wv=1027&k=5FxO79E\">加入QQ群</a><br>";
-	QMessageBox::about(this, tr("佳佳界面"), html);	
+	html += "<br>感谢: 小雪 SuJinpei 蓝天 及其它棋友 <br>";
+	QMessageBox::about(this, tr("关于佳佳界面"), html);	
 }
 
 // 
