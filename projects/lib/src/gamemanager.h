@@ -27,6 +27,10 @@ class ChessPlayer;
 class PlayerBuilder;
 class GameThread;
 
+//namespace Chess {
+//	enum Side;	
+//};
+
 
 /*!
  * \brief A class for managing chess games and players
@@ -148,6 +152,8 @@ class LIB_EXPORT GameManager : public QObject
 			     StartMode startMode = StartImmediately,
 			     CleanupMode cleanupMode = DeletePlayers);
 
+		void MyStartMatch(bool isWhite, int engineIndex);
+
 	public slots:
 		/*!
 		 * Removes all future games from the queue, waits for
@@ -185,10 +191,14 @@ class LIB_EXPORT GameManager : public QObject
 		/*! This signal redirects the ChessPlayer::debugMessage() signal. */
 		void debugMessage(const QString& data);
 
+		
+
+
 	private slots:
 		void onThreadReady();
 		void onThreadQuit();
 		void onGameInitialized(bool success);
+
 
 	private:
 		struct GameEntry
@@ -207,12 +217,18 @@ class LIB_EXPORT GameManager : public QObject
 		void cleanup();
 
 		bool m_finishing;
-		int m_concurrency;							// 并发的游戏数 缺省是 1
+		int m_concurrency;							   // 并发的游戏数 缺省是 1
 		int m_activeQueuedGameCount;
 		QList< QPointer<GameThread> > m_threads;
 		QList<GameThread*> m_activeThreads;
 		QList<GameEntry> m_gameEntries;
-		QList<ChessGame*> m_activeGames;
+		QList<ChessGame*> m_activeGames;	
+
+		static const int M_MAX_PLAYER = 10;
+		ChessPlayer* m_my_ChessPlayer[M_MAX_PLAYER];       // 最多10个引擎 player
+		ChessPlayer* m_my_ChessPlayerHumen;                // 人类player 			
+	
+		//GameEntry m_gameNowEntry;   // 当前的GameEntry 用于连线或分析用
 };
 
 #endif // GAMEMANAGER_H

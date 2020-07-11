@@ -117,8 +117,8 @@ class LIB_EXPORT ChessGame : public QObject
 		void setIsLinkBoard(bool isLink) {	m_isLinkBoard = isLink;	};        // 是否连线下棋不要翻转	
 		bool getIsLinkBoard() { return m_isLinkBoard; };
 		
-		void setIsEngingMatch(bool isMatch) { m_isEngingMatch = isMatch; };   // 是否引擎比赛
-		bool getIsEngingMatch() { return m_isEngingMatch; };
+		//void setIsEngingMatch(bool isMatch) { m_isEngingMatch = isMatch; };   // 是否引擎比赛
+		//bool getIsEngingMatch() { return m_isEngingMatch; };
 		
 
 	
@@ -292,7 +292,7 @@ class LIB_EXPORT ChessGame : public QObject
 		GameAdjudicator m_adjudicator;
 
 		bool m_isLinkBoard;       // 是否要翻转棋盘, 连线下棋不要翻转	
-		bool m_isEngingMatch;     // 是不是引擎比赛, 
+		//bool m_isEngingMatch;     // 是不是引擎比赛, 
 
 		// X chess =================================
 		/** Reference Counter for this object */

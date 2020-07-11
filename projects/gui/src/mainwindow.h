@@ -72,18 +72,13 @@ class MainWindow : public QMainWindow
 	public:
 		explicit MainWindow(ChessGame* game);
 		virtual ~MainWindow();
-		QString windowListTitle() const;
+		QString windowListTitle() const;		
 
-		
-		//bool m_bLinkMayNewGame; 
 		bool isMoveValid(const Chess::GenericMove& move);
-		
-		//TestThread* t;
-		//QComboBox* cbtnLinkEngine;            // 连线的引擎
 
 	public slots:
 		void addGame(ChessGame* game);
-		void slotReconfigure();  // 重建
+		void slotReconfigure();                  // 重建
 		/** Update GameView content after game was change. Triggers also @ref slotMoveChanged. */
 		void slotGameChanged(bool bModified);
 		void slotMoveChanged();
@@ -154,6 +149,8 @@ signals:
 		void onLinkAutomaticToggled(bool checked);        
 		void onLinkWhich(bool checked);
 
+		void onActEngineThink();
+
 		void onLinkBoardCombox(const QString&);
 
 		/** Value for Move Interval is changed */
@@ -214,7 +211,7 @@ signals:
 
 		QToolButton* tbtnLinkAuto;           // 全自动连接其它棋盘
 
-		//QAction* actEngineThink;			// 让引擎思考
+		QAction* actEngineThink;			// 让引擎思考
 		QAction* actEngineStop;				// 让引擎停止思考，立即出步
 		QAction* actEngineAnalyze;			// 让引擎分析
 		QAction* actEngineSetting;			// 引擎设置参数
@@ -222,7 +219,7 @@ signals:
 
 		GameTabBar* m_tabBar;		    
 
-		GameViewer* m_gameViewer;
+		GameViewer* m_gameViewer;           // 当前游戏的视图
 		MoveList* m_moveList;
 		PgnTagsModel* m_tagsModel;
 
@@ -257,18 +254,11 @@ signals:
 		QAction* m_changeBoardBackGroundAct;  // 改变背景
 		QAction* m_changeBoardChessAct;       // 改变棋子图案
 
-		//QAction* m_showSettingsAct;
-
 		PlainTextLog* m_engineDebugLog;
-
 		EvalHistory* m_evalHistory;
-		//EvalWidget* m_evalWidgets[2];
 
-		//Chess::AnalysisWidget* m_mainAnalysis;
-		//Chess::AnalysisWidget* m_secondaryAnalysis;
-
+		// 分析窗口
 		Chess::AnalysisWidget* m_AnalysisWidget[2];
-
 		QDockWidget* m_whiteEvalDock;
 		QDockWidget* m_blackEvalDock;
 
@@ -290,15 +280,12 @@ signals:
 		QLabel* m_status1;
 		QLabel* m_status2;
 		QLabel* m_status3;
-		QComboBox* cbtnLinkBoard;             // 连线的棋盘
-		//QComboBox* cbtnLinkEngine;            // 连线的引擎
+		QComboBox* cbtnLinkBoard;               // 连线的棋盘选择comb
 
 		QPointer<Chess::TranslatingSlider> m_sliderSpeed;
 		QLabel* m_sliderText;
 
 		// 状态栏 ---------------------------------------------------------------------------
-
-
 		//bool m_bAutomaticLinking; 
 
 		void wait(int msec) {
@@ -314,6 +301,7 @@ signals:
 		//Chess::GameWindow* m_gameWindow;
 		//QLabel* m_gameTitle;
 		//Chess::ChessBrowser* m_gameView;
+		bool m_now_is_match;
 };
 
 #endif // MAINWINDOW_H

@@ -337,6 +337,12 @@ GameManager::GameManager(QObject* parent)
 	  m_concurrency(1),
 	  m_activeQueuedGameCount(0)
 {
+	//ChessPlayer* m_my_ChessPlayer[M_MAX_PLAYER];       // 最多10个引擎 player
+	//ChessPlayer* m_my_ChessPlayerHumen;                // 人类player 	
+	for (auto p : m_my_ChessPlayer) {
+		p = nullptr;
+	}
+	m_my_ChessPlayerHumen = nullptr;
 }
 
 QList<ChessGame*> GameManager::activeGames() const
@@ -410,6 +416,10 @@ void GameManager::finish()
 		m_finishing = true;
 }
 
+void GameManager::MyStartMatch(bool isWhite, int engineIndex) {
+	int a = 0;
+}
+
 void GameManager::newGame(ChessGame* game,
 			  const PlayerBuilder* white,
 			  const PlayerBuilder* black,
@@ -422,6 +432,8 @@ void GameManager::newGame(ChessGame* game,
 	Q_ASSERT(game->parent() == nullptr);
 
 	GameEntry entry = { game, white, black, startMode, cleanupMode };
+
+	//m_gameNowEntry = entry;
 
 	if(game->getIsLinkBoard()){
 		if (!white->isHuman() && black->isHuman())

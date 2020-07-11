@@ -109,8 +109,8 @@ ChessGame::ChessGame(Chess::Board* board, PgnGame* pgn, QObject* parent)
 	m_boardShouldBeFlipped(false),
 	m_pgn(pgn),
 	//isGetSetting(false),
-	m_isLinkBoard(false),
-	m_isEngingMatch(false)   // 不是引擎比赛
+	m_isLinkBoard(false)
+	//m_isEngingMatch(false)   // 不是引擎比赛
 {
 	Q_ASSERT(pgn != nullptr);
 

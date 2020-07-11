@@ -104,7 +104,8 @@ MainWindow::MainWindow(ChessGame* game)
 	m_firstTabAutoCloseEnabled(true),
 	m_myClosePreTab(false),
 	m_pcap(nullptr),
-	m_autoClickCap(nullptr)
+	m_autoClickCap(nullptr),
+	m_now_is_match(false)
 	//m_bAutomaticLinking(false)
 {
 
@@ -615,14 +616,17 @@ void MainWindow::createToolBars()
 	//this->actLinkChessBoard->setToolTip("连接其它棋盘");
 
 	//// 让引擎思考
-	//this->actEngineThink = new QAction(this);
-	//this->actEngineThink->setObjectName(QStringLiteral("EngineThink"));
-	//QIcon iconEngineThink;
-	//iconEngineThink.addFile(QStringLiteral(":/icon/thought-balloon.ico"),
-	//	QSize(), QIcon::Normal, QIcon::Off);
-	//this->actEngineThink->setIcon(iconEngineThink);
-	//this->actEngineThink->setText("思考");
-	//this->actEngineThink->setToolTip("让引擎思考当前棋局，并自动走棋");
+	this->actEngineThink = new QAction(this);
+	this->actEngineThink->setObjectName(QStringLiteral("EngineThink"));
+	QIcon iconEngineThink;
+	iconEngineThink.addFile(QStringLiteral(":/icon/thought-balloon.ico"),
+		QSize(), QIcon::Normal, QIcon::Off);
+	this->actEngineThink->setIcon(iconEngineThink);
+	this->actEngineThink->setText("思考");
+	this->actEngineThink->setToolTip("让引擎思考当前棋局，并自动走棋");
+
+	this->mainToolbar->addAction(this->actEngineThink);
+	connect(this->actEngineThink, &QAction::triggered, this, &MainWindow::onActEngineThink);
 
 	//// 让引擎分析
 	//this->actEngineAnalyze = new QAction(this);
@@ -1195,7 +1199,8 @@ void MainWindow::setCurrentGame(const TabData& gameData)
 		connect(player, SIGNAL(stoppedThinking()),
 			clock, SLOT(stop()));
 
-		if (m_game->getIsEngingMatch()){   // 引擎比赛
+		//if (m_game->getIsEngingMatch()){   // 引擎比赛
+		if(m_now_is_match){
 			m_AnalysisWidget[i]->setPlayer(player);
 		}
 		else{  // 其它都是主，副引擎
@@ -1536,6 +1541,8 @@ void MainWindow::slotNewTournament()
 	m_newTournamentAct->setEnabled(false);
 	m_stopTournamentAct->setEnabled(true);
 	resultsDialog->setTournament(t);
+
+	m_now_is_match = true;
 }
 
 void MainWindow::onTournamentFinished()
@@ -2397,6 +2404,10 @@ void MainWindow::onPlayBlackToggled(bool checked) {
 
 void MainWindow::onPlayWhich() //, Chess::Side side)
 {
+
+	//CuteChessApplication::instance()->gameManager()->MyStartMatch(Chess::Side::White, 0);
+	//return;
+
 	//(void)checked;
 	if (this->tbtnEnginePlayRed->isChecked() || this->tbtnEnginePlayBlack->isChecked()) {
 
@@ -2614,6 +2625,9 @@ void MainWindow::onLinkBlackToggled(bool checked)
 
 void MainWindow::onLinkAutomaticToggled(bool checked)
 {
+
+	m_now_is_match = false;
+
 	tbtnEnginePlayRed->setDisabled(checked);
 	tbtnEnginePlayBlack->setDisabled(checked);
 	tbtnLinkChessBoardRed->setDisabled(checked);
@@ -2661,6 +2675,8 @@ void MainWindow::onLinkWhich(bool checked)
 		onLXchessboardStop();
 	}
 }
+
+
 
 void MainWindow::onLinkBoardCombox(const QString& txt)
 {

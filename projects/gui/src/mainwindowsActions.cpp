@@ -88,6 +88,10 @@
 #include <modeltest.h>
 #endif
 
+void MainWindow::onActEngineThink()
+{
+	CuteChessApplication::instance()->gameManager()->MyStartMatch(Chess::Side::White, 0);
+}
 
 void MainWindow::moveChanged()
 {
