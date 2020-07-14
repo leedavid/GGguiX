@@ -417,6 +417,9 @@ void GameManager::finish()
 }
 
 void GameManager::MyStartMatch(bool isWhite, int engineIndex) {
+
+	// 判断humanPlayer 是不是建立了
+
 	int a = 0;
 }
 

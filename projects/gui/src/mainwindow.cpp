@@ -989,8 +989,7 @@ void MainWindow::writeSettings()
 void MainWindow::addGame(ChessGame* game)
 {
 	Tournament* tournament = qobject_cast<Tournament*>(QObject::sender());
-	//Chess::Capture* pcap = new Chess::Capture(game, this);
-
+	
 	TabData tab(game, tournament);
 
 
