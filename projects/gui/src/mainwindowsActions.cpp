@@ -90,7 +90,33 @@
 
 void MainWindow::onActEngineThink()
 {
-	CuteChessApplication::instance()->gameManager()->MyStartMatch(Chess::Side::White, 0);
+	//CuteChessApplication::instance()->gameManager()->MyStartMatch(Chess::Side::White, 0);
+
+	Chess::Side s = m_game->board()->sideToMove();
+
+	int engineIndex = 0;
+
+	if (m_my_ChessPlayerHumen == nullptr) {
+		QString error;
+		PlayerBuilder* b = new HumanBuilder("¶Ô·½", true);
+		m_my_ChessPlayerHumen = b->create(this, SIGNAL(debugMessage(QString)),
+			this, &error);
+	}
+
+	if (m_my_ChessPlayer[engineIndex] == nullptr) {
+		QString error;
+		EngineManager* engineManager = CuteChessApplication::instance()->engineManager();
+		auto config = engineManager->engineAt(engineIndex);
+		config.setPondering(true);
+		PlayerBuilder* b = new EngineBuilder(config);
+
+		m_my_ChessPlayer[engineIndex] = b->create(this, SIGNAL(debugMessage(QString)),
+			this, &error);
+	}
+
+	// 
+	int a = 0;
+
 }
 
 void MainWindow::moveChanged()

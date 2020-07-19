@@ -26,6 +26,7 @@ class ChessGame;
 class ChessPlayer;
 class PlayerBuilder;
 class GameThread;
+class EngineManager;
 
 //namespace Chess {
 //	enum Side;	
@@ -152,7 +153,7 @@ class LIB_EXPORT GameManager : public QObject
 			     StartMode startMode = StartImmediately,
 			     CleanupMode cleanupMode = DeletePlayers);
 
-		void MyStartMatch(bool isWhite, int engineIndex);
+		//void MyStartMatch(bool isWhite, int engineIndex);
 
 	public slots:
 		/*!
@@ -224,9 +225,10 @@ class LIB_EXPORT GameManager : public QObject
 		QList<GameEntry> m_gameEntries;
 		QList<ChessGame*> m_activeGames;	
 
-		static const int M_MAX_PLAYER = 10;
-		ChessPlayer* m_my_ChessPlayer[M_MAX_PLAYER];       // 最多10个引擎 player
-		ChessPlayer* m_my_ChessPlayerHumen;                // 人类player 			
+		//static const int M_MAX_PLAYER = 10;
+		//ChessPlayer* m_my_ChessPlayer[M_MAX_PLAYER];       // 最多10个引擎 player
+		//ChessPlayer* m_my_ChessPlayerHumen;                // 人类player 	
+		//EngineManager* m_engineManager;                    //
 	
 		//GameEntry m_gameNowEntry;   // 当前的GameEntry 用于连线或分析用
 };

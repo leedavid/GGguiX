@@ -109,6 +109,14 @@ MainWindow::MainWindow(ChessGame* game)
 	//m_bAutomaticLinking(false)
 {
 
+	//static const int M_MAX_PLAYER = 10;
+	//ChessPlayer* m_my_ChessPlayer[M_MAX_PLAYER];       // 最多10个引擎 player
+	//ChessPlayer* m_my_ChessPlayerHumen;                // 人类player 	
+	for (auto &p : m_my_ChessPlayer) {
+		p = nullptr;
+	}
+	m_my_ChessPlayerHumen = nullptr;
+
 	//this->setContextMenuPolicy(Qt::CustomContextMenu);  // 右键菜单
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
@@ -1169,45 +1177,78 @@ void MainWindow::setCurrentGame(const TabData& gameData)
 	m_tagsModel->setTags(gameData.m_pgn->tags());
 	gameData.m_pgn->setTagReceiver(m_tagsModel);
 
-	for (int i = 0; i < 2; i++)
-	{
-		Chess::Side side = Chess::Side::Type(i);
-		ChessPlayer* player(m_game->player(side));
-		m_players[i] = player;
 
-		connect(player, SIGNAL(debugMessage(QString)),
-			m_engineDebugLog, SLOT(appendPlainText(QString)));
+	if (m_now_is_match) {       // 引擎比赛   
+		for (int i = 0; i < 2; i++)
+		{
+			Chess::Side side = Chess::Side::Type(i);
+			ChessPlayer* player(m_game->player(side));
+			m_players[i] = player;
 
-		auto clock = m_gameViewer->chessClock(side);
+			connect(player, SIGNAL(debugMessage(QString)),
+				m_engineDebugLog, SLOT(appendPlainText(QString)));
 
-		clock->stop();
-		QString name = nameOnClock(player->name(), side);
-		clock->setPlayerName(name);
-		connect(player, SIGNAL(nameChanged(QString)),
-			clock, SLOT(setPlayerName(QString)));
+			auto clock = m_gameViewer->chessClock(side);
 
-		clock->setInfiniteTime(player->timeControl()->isInfinite());
+			clock->stop();
+			QString name = nameOnClock(player->name(), side);
+			clock->setPlayerName(name);
+			connect(player, SIGNAL(nameChanged(QString)),
+				clock, SLOT(setPlayerName(QString)));
 
-		if (player->state() == ChessPlayer::Thinking)
-			clock->start(player->timeControl()->activeTimeLeft());
-		else
-			clock->setTime(player->timeControl()->timeLeft());
+			clock->setInfiniteTime(player->timeControl()->isInfinite());
 
-		connect(player, SIGNAL(startedThinking(int)),
-			clock, SLOT(start(int)));
-		connect(player, SIGNAL(stoppedThinking()),
-			clock, SLOT(stop()));
+			if (player->state() == ChessPlayer::Thinking)
+				clock->start(player->timeControl()->activeTimeLeft());
+			else
+				clock->setTime(player->timeControl()->timeLeft());
 
-		//if (m_game->getIsEngingMatch()){   // 引擎比赛
-		if(m_now_is_match){
+			connect(player, SIGNAL(startedThinking(int)),
+				clock, SLOT(start(int)));
+			connect(player, SIGNAL(stoppedThinking()),
+				clock, SLOT(stop()));
+			    
 			m_AnalysisWidget[i]->setPlayer(player);
 		}
-		else{  // 其它都是主，副引擎
-			if (player->isHuman() == false) {
-				m_AnalysisWidget[0]->setPlayer(player);
-			}
-		}		
 	}
+	else {
+		for (int i = 0; i < 2; i++)
+		{
+			Chess::Side side = Chess::Side::Type(i);
+			ChessPlayer* player(m_game->player(side));
+			m_players[i] = player;
+
+			connect(player, SIGNAL(debugMessage(QString)),
+				m_engineDebugLog, SLOT(appendPlainText(QString)));
+
+			auto clock = m_gameViewer->chessClock(side);
+
+			clock->stop();
+			QString name = nameOnClock(player->name(), side);
+			clock->setPlayerName(name);
+			connect(player, SIGNAL(nameChanged(QString)),
+				clock, SLOT(setPlayerName(QString)));
+
+			clock->setInfiniteTime(player->timeControl()->isInfinite());
+
+			if (player->state() == ChessPlayer::Thinking)
+				clock->start(player->timeControl()->activeTimeLeft());
+			else
+				clock->setTime(player->timeControl()->timeLeft());
+
+			connect(player, SIGNAL(startedThinking(int)),
+				clock, SLOT(start(int)));
+			connect(player, SIGNAL(stoppedThinking()),
+				clock, SLOT(stop()));
+
+			
+			if (player->isHuman() == false) {    // 二个引擎都输到一起
+				m_AnalysisWidget[0]->setPlayer(player);
+			}			
+		}
+	}
+
+	
 
 	if (m_game->boardShouldBeFlipped())
 		m_gameViewer->boardScene()->flip();

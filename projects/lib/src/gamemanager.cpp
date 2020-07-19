@@ -19,9 +19,13 @@
 #include "gamemanager.h"
 #include <QThread>
 #include <algorithm>
+#include <humanbuilder.h>
 #include "playerbuilder.h"
 #include "chessgame.h"
 #include "chessplayer.h"
+#include "enginemanager.h"
+#include "enginebuilder.h"
+//#include "../gui/src/cutechessapp.h"
 
 
 class GameInitializer : public QObject
@@ -336,13 +340,14 @@ GameManager::GameManager(QObject* parent)
 	  m_finishing(false),
 	  m_concurrency(1),
 	  m_activeQueuedGameCount(0)
+	//m_engineManager(Em)
 {
 	//ChessPlayer* m_my_ChessPlayer[M_MAX_PLAYER];       // 最多10个引擎 player
 	//ChessPlayer* m_my_ChessPlayerHumen;                // 人类player 	
-	for (auto p : m_my_ChessPlayer) {
-		p = nullptr;
-	}
-	m_my_ChessPlayerHumen = nullptr;
+	//for (auto &p : m_my_ChessPlayer) {
+	//	p = nullptr;
+	//}
+	//m_my_ChessPlayerHumen = nullptr;
 }
 
 QList<ChessGame*> GameManager::activeGames() const
@@ -416,12 +421,35 @@ void GameManager::finish()
 		m_finishing = true;
 }
 
-void GameManager::MyStartMatch(bool isWhite, int engineIndex) {
+//QString error;
+//m_player[i] = m_builder[i]->create(thread()->parent(),
+//	SIGNAL(debugMessage(QString)),
+//	this, &error);
 
-	// 判断humanPlayer 是不是建立了
-
-	int a = 0;
-}
+//void GameManager::MyStartMatch(bool isWhite, int engineIndex) {
+//
+//	
+//	// 判断humanPlayer 是不是建立了
+//	if (m_my_ChessPlayerHumen == nullptr) {
+//		QString error;
+//		PlayerBuilder* b = new HumanBuilder("对方", true);
+//		m_my_ChessPlayerHumen = b->create(thread()->parent(), SIGNAL(debugMessage(QString)),
+//			this, &error);
+//	}
+//
+//	if (m_my_ChessPlayer[engineIndex] == nullptr) {
+//		QString error;
+//		//EngineManager* engineManager = CuteChessApplication::instance()->engineManager();
+//		auto config = m_engineManager->engineAt(engineIndex);
+//		config.setPondering(true);
+//		PlayerBuilder* b = new EngineBuilder(config);
+//
+//		m_my_ChessPlayer[engineIndex] = b->create(thread()->parent(), SIGNAL(debugMessage(QString)),
+//			this, &error);
+//	}
+//	
+//	int a = 0;
+//}
 
 void GameManager::newGame(ChessGame* game,
 			  const PlayerBuilder* white,

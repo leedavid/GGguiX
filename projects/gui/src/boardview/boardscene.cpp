@@ -586,21 +586,7 @@ void BoardScene::onTransitionFinished()
 	updateMoves();
 }
 
-//void BoardScene::onPromotionChosen(const Chess::Piece& promotion)
-//{
-//	m_chooser = nullptr;
-//	if (!promotion.isValid() && !m_moves.contains(m_promotionMove))
-//	{
-//		GraphicsPiece* piece = m_squares->pieceAt(m_promotionMove.sourceSquare());
-//		m_anim = pieceAnimation(piece, m_sourcePos);
-//		m_anim->start(QAbstractAnimation::DeleteWhenStopped);
-//	}
-//	else
-//	{
-//		m_promotionMove.setPromotion(promotion.type());
-//		emit humanMove(m_promotionMove, m_board->sideToMove());
-//	}
-//}
+
 
 void BoardScene::onGameFinished(ChessGame* game, Chess::Result result)
 {

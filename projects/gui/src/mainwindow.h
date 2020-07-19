@@ -302,6 +302,11 @@ signals:
 		//QLabel* m_gameTitle;
 		//Chess::ChessBrowser* m_gameView;
 		bool m_now_is_match;
+
+		// 分析或连线模式用的player
+		static const int M_MAX_PLAYER = 10;
+		ChessPlayer* m_my_ChessPlayer[M_MAX_PLAYER];       // 最多10个引擎 player
+		ChessPlayer* m_my_ChessPlayerHumen;                // 人类player 	
 };
 
 #endif // MAINWINDOW_H
