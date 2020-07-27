@@ -1583,6 +1583,12 @@ void MainWindow::slotNewTournament()
 	resultsDialog->setTournament(t);
 
 	m_now_is_match = true;
+
+	//m_AnalysisWidget[i]->setPlayer(player);
+
+	m_whiteEvalDock->setWindowTitle("红方引擎");
+	m_blackEvalDock->setWindowTitle("黑方引擎");
+
 }
 
 void MainWindow::onTournamentFinished()

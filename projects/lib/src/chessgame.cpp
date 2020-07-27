@@ -24,7 +24,7 @@
 
 #include "../../gui/src/annotation.h"
 
-const QStringList ChessGame::s_specList = QStringList() << s_emt << s_clk << s_egt << s_csl << s_cal;
+//const QStringList ChessGame::s_specList = QStringList() << s_emt << s_clk << s_egt << s_csl << s_cal;
 
 namespace {
 
@@ -60,8 +60,8 @@ QString evalString(const MoveEvaluation& eval)
 ChessGame::ChessGame(const ChessGame& game) : QObject()
 {
 	mountRefCount = 0;
-	m_currentNode = 0;
-	m_startPly = 0;
+	//m_currentNode = 0;
+	//m_startPly = 0;
 	m_currentBoard = nullptr;
 	mountBoard();
 	*this = game;
@@ -71,27 +71,27 @@ ChessGame& ChessGame::operator=(const ChessGame& game)
 {
 	if (this != &game)
 	{
-		clearTags();
+		//clearTags();
 		clear();
 		//assign non pointer variables
 		m_startingBoard = game.m_startingBoard;
-		m_tags = game.m_tags;
+		//m_tags = game.m_tags;
 		//m_tags.detach();
-		m_variationStartAnnotations = game.m_variationStartAnnotations;
+		//m_variationStartAnnotations = game.m_variationStartAnnotations;
 		//m_variationStartAnnotations.detach();
-		m_annotations = game.m_annotations;
+		//m_annotations = game.m_annotations;
 		//m_annotations.detach();
-		m_startPly = game.m_startPly;
-		m_moveNodes = game.m_moveNodes;
+		//m_startPly = game.m_startPly;
+		//m_moveNodes = game.m_moveNodes;
 		//m_moveNodes.detach();
-		m_currentNode = game.m_currentNode;
+		//m_currentNode = game.m_currentNode;
 		if (m_currentBoard && game.m_currentBoard)
 		{
 			*m_currentBoard = *game.m_currentBoard;
 		}
 		else if (m_currentBoard)
 		{
-			moveToStart();
+			//moveToStart();
 		}
 	}
 	return *this;
@@ -162,33 +162,33 @@ void ChessGame::unmountBoard()
 	}
 }
 
-void ChessGame::clearTags()
-{
-	m_tags.clear();
-}
+//void ChessGame::clearTags()
+//{
+//	m_tags.clear();
+//}
 
 void ChessGame::clear()
 {
-	m_variationStartAnnotations.clear();
-	m_annotations.clear();
+	//m_variationStartAnnotations.clear();
+	//m_annotations.clear();
 
-	m_startPly = 0;
+	//m_startPly = 0;
 
 	
 	m_startingBoard->setFenString(m_startingBoard->defaultFenString());
 	//m_startingBoard.setStandardPosition();
 	if (m_currentBoard)
 	{
-		m_currentNode = 0;
+		//m_currentNode = 0;
 		delete m_currentBoard;
 		m_currentBoard = m_startingBoard->copy();
 	}
 	else
 	{
-		m_currentNode = NO_MOVE;
+		//m_currentNode = NO_MOVE;
 	}
 
-	m_moveNodes.append(MoveNode());
+	//m_moveNodes.append(MoveNode());
 }
 
 QString ChessGame::errorString() const
@@ -740,401 +740,401 @@ void ChessGame::pauseThread()
 	m_resumeSem.acquire();
 }
 
-void ChessGame::dbIndicateAnnotationsOnBoard(MoveId moveId)
-{
-	QString annotation = squareAnnotation(moveId);
-	m_currentBoard->setSquareAnnotation(annotation);
+//void ChessGame::dbIndicateAnnotationsOnBoard(MoveId moveId)
+//{
+//	QString annotation = squareAnnotation(moveId);
+//	m_currentBoard->setSquareAnnotation(annotation);
+//
+//	annotation = arrowAnnotation(moveId);
+//	m_currentBoard->setArrowAnnotation(annotation);
+//}
+//
+//MoveId ChessGame::currentMove() const
+//{
+//	return m_currentNode;
+//}
 
-	annotation = arrowAnnotation(moveId);
-	m_currentBoard->setArrowAnnotation(annotation);
-}
+//bool ChessGame::dbMoveToId(MoveId moveId, QString* algebraicMoveList)
+//{
+//	moveId = nodeValid(moveId);
+//	if (moveId == NO_MOVE)
+//	{
+//		return false;
+//	}
+//
+//	if (m_currentNode != moveId)
+//	{
+//		//jump to node, travelling back to start adding the moves to the stack
+//		MoveId node = moveId;
+//		QStack<Chess::Move> moveStack;
+//		while (node)
+//		{
+//			moveStack.push(m_moveNodes[node].move);
+//			node = m_moveNodes[node].previousNode;
+//		}
+//
+//		//reset the board, then make the moves on the stack to create the correct position
+//		m_currentNode = moveId;
+//		//*m_currentBoard = *m_startingBoard;
+//		delete m_currentBoard;
+//		m_currentBoard = m_startingBoard->copy();
+//		while (!moveStack.isEmpty())
+//		{
+//			Chess::Move m = moveStack.pop();
+//			m_currentBoard->makeMove(m);
+//			//m_currentBoard->doMove(m);
+//			if (algebraicMoveList)
+//			{
+//				if(m.isNull())//if (m.isNullMove())  // isNull
+//				{
+//					// Avoid trouble with a null move - UCI does not specify this and Stockfish makes nonsense
+//					algebraicMoveList->clear();
+//					algebraicMoveList = nullptr;
+//				}
+//				else
+//				{
+//					algebraicMoveList->push_back(m.toAlgebraic());
+//					algebraicMoveList->push_back(" ");
+//				}
+//			}
+//		}
+//	}
+//
+//	return true;
+//}
 
-MoveId ChessGame::currentMove() const
-{
-	return m_currentNode;
-}
+//MoveId ChessGame::nodeValid(MoveId moveId) const
+//{
+//	if (moveId == CURRENT_MOVE)
+//	{
+//		moveId = m_currentNode;
+//	}
+//	if ((moveId >= 0) && (moveId < m_moveNodes.size()))
+//	{
+//		if (m_moveNodes[moveId].Removed())
+//		{
+//			return NO_MOVE;
+//		}
+//		return moveId;
+//	}
+//	return NO_MOVE;
+//}
 
-bool ChessGame::dbMoveToId(MoveId moveId, QString* algebraicMoveList)
-{
-	moveId = nodeValid(moveId);
-	if (moveId == NO_MOVE)
-	{
-		return false;
-	}
+//void ChessGame::moveToStart()
+//{
+//	m_currentNode = 0;
+//	delete m_currentBoard;
+//	m_currentBoard = m_startingBoard->copy();
+//
+//	indicateAnnotationsOnBoard(m_currentNode);
+//}
 
-	if (m_currentNode != moveId)
-	{
-		//jump to node, travelling back to start adding the moves to the stack
-		MoveId node = moveId;
-		QStack<Chess::Move> moveStack;
-		while (node)
-		{
-			moveStack.push(m_moveNodes[node].move);
-			node = m_moveNodes[node].previousNode;
-		}
+//void ChessGame::indicateAnnotationsOnBoard(MoveId moveId)
+//{
+//	dbIndicateAnnotationsOnBoard(moveId);
+//	emit signalMoveChanged();
+//}
 
-		//reset the board, then make the moves on the stack to create the correct position
-		m_currentNode = moveId;
-		//*m_currentBoard = *m_startingBoard;
-		delete m_currentBoard;
-		m_currentBoard = m_startingBoard->copy();
-		while (!moveStack.isEmpty())
-		{
-			Chess::Move m = moveStack.pop();
-			m_currentBoard->makeMove(m);
-			//m_currentBoard->doMove(m);
-			if (algebraicMoveList)
-			{
-				if(m.isNull())//if (m.isNullMove())  // isNull
-				{
-					// Avoid trouble with a null move - UCI does not specify this and Stockfish makes nonsense
-					algebraicMoveList->clear();
-					algebraicMoveList = nullptr;
-				}
-				else
-				{
-					algebraicMoveList->push_back(m.toAlgebraic());
-					algebraicMoveList->push_back(" ");
-				}
-			}
-		}
-	}
+//QString ChessGame::squareAnnotation(MoveId moveId) const
+//{
+//	QString s = specAnnotation(QRegExp(s_csl), moveId);
+//	return s;
+//}
+//
+//QString ChessGame::specAnnotations(MoveId moveId, Position position) const
+//{
+//	QString s = annotation(moveId, position);
+//	QString retval;
+//	for( auto sr: s_specList)
+//	{
+//		QRegExp r(sr);
+//		int pos = r.indexIn(s);
+//		if (pos >= 0)
+//		{
+//			retval += r.cap(0);
+//		}
+//	}
+//	return retval;
+//}
 
-	return true;
-}
+//QString ChessGame::annotation(MoveId moveId, Position position) const
+//{
+//	MoveId node = nodeValid(moveId);
+//
+//	if ((position == AfterMove) || (node == 0))
+//	{
+//		return m_annotations.value(node, QString(""));
+//	}
+//	else
+//	{
+//		return m_variationStartAnnotations.value(node, QString(""));
+//	}
+//}
 
-MoveId ChessGame::nodeValid(MoveId moveId) const
-{
-	if (moveId == CURRENT_MOVE)
-	{
-		moveId = m_currentNode;
-	}
-	if ((moveId >= 0) && (moveId < m_moveNodes.size()))
-	{
-		if (m_moveNodes[moveId].Removed())
-		{
-			return NO_MOVE;
-		}
-		return moveId;
-	}
-	return NO_MOVE;
-}
+//bool ChessGame::dbSetAnnotation(QString annotation, MoveId moveId, Position position)
+//{
+//	MoveId node = nodeValid(moveId);
+//	if (node == NO_MOVE)
+//	{
+//		return false;
+//	}
+//
+//	int moves;
+//	int comments;
+//	int nags;
+//	moveCount(&moves, &comments, &nags);
+//
+//	annotation.remove('}'); // Just make sure a comment does not destroy the database
+//
+//	if (position == AfterMove)
+//	{
+//		if (annotation.isEmpty())
+//		{
+//			m_annotations.remove(node);
+//		}
+//		else
+//		{
+//			m_annotations[node] = annotation;
+//		}
+//	}
+//	else if (canHaveStartAnnotation(node))  	// Pre-move comment
+//	{
+//		if (node == 0)
+//		{
+//			setGameComment(annotation);
+//		}
+//		else
+//		{
+//			if (annotation.isEmpty() && (node > 1)) // Do not remove empty comment
+//			{
+//				m_variationStartAnnotations.remove(node);
+//			}
+//			else
+//			{
+//				m_variationStartAnnotations[node] = annotation;
+//			}
+//		}
+//	}
+//	return true;
+//}
 
-void ChessGame::moveToStart()
-{
-	m_currentNode = 0;
-	delete m_currentBoard;
-	m_currentBoard = m_startingBoard->copy();
+//void ChessGame::moveCount(int* moves, int* comments, int* nags) const
+//{
+//	*moves = *comments = 0;
+//	if (nags) *nags = 0;
+//
+//	MoveId node = 1;
+//	while ((node = nodeValid(node)) != NO_MOVE)
+//	{
+//		*moves += 1;
+//		if (nags)
+//		{
+//			if (m_moveNodes[node].nags.count() != 0)
+//			{
+//				*nags += 1;
+//			}
+//		}
+//		node = m_moveNodes[node].nextNode;
+//	}
+//	// Count comments
+//	for (int i = 0; i < m_annotations.size(); ++i)
+//	{
+//		*comments += 1;
+//	}
+//	for (int i = 0; i < m_variationStartAnnotations.size(); ++i)
+//	{
+//		*comments += 1;
+//	}
+//}
 
-	indicateAnnotationsOnBoard(m_currentNode);
-}
+//QString ChessGame::arrowAnnotation(MoveId moveId) const
+//{
+//	QString s = specAnnotation(QRegExp(s_cal), moveId);
+//	return s;
+//}
 
-void ChessGame::indicateAnnotationsOnBoard(MoveId moveId)
-{
-	dbIndicateAnnotationsOnBoard(moveId);
-	emit signalMoveChanged();
-}
+//bool ChessGame::canHaveStartAnnotation(MoveId moveId) const
+//{
+//	MoveId node = nodeValid(moveId);
+//	return atLineStart(moveId) || atGameStart(m_moveNodes[node].previousNode);
+//}
 
-QString ChessGame::squareAnnotation(MoveId moveId) const
-{
-	QString s = specAnnotation(QRegExp(s_csl), moveId);
-	return s;
-}
+//QString ChessGame::specAnnotation(const QRegExp& r, MoveId moveId) const
+//{
+//	MoveId node = nodeValid(moveId);
+//	if (node == NO_MOVE)
+//	{
+//		return QString("");
+//	}
+//
+//	QString annotation = m_annotations[node];
+//	if (annotation.isNull())
+//	{
+//		return QString("");
+//	}
+//
+//	int pos = r.indexIn(annotation);
+//	if (pos >= 0)
+//	{
+//		return r.cap(2);
+//	}
+//
+//	return "";
+//}
 
-QString ChessGame::specAnnotations(MoveId moveId, Position position) const
-{
-	QString s = annotation(moveId, position);
-	QString retval;
-	for( auto sr: s_specList)
-	{
-		QRegExp r(sr);
-		int pos = r.indexIn(s);
-		if (pos >= 0)
-		{
-			retval += r.cap(0);
-		}
-	}
-	return retval;
-}
+//bool ChessGame::atLineStart(MoveId moveId) const
+//{
+//	MoveId node = nodeValid(moveId);
+//	if (node == NO_MOVE)
+//	{
+//		return false;
+//	}
+//	return (m_moveNodes[node].previousNode == m_moveNodes[node].parentNode)
+//		|| m_moveNodes[node].previousNode == 0;
+//}
 
-QString ChessGame::annotation(MoveId moveId, Position position) const
-{
-	MoveId node = nodeValid(moveId);
+//bool ChessGame::atGameStart(MoveId moveId) const
+//{
+//	return (nodeValid(moveId) == 0);
+//}
+//
+//void ChessGame::setGameComment(const QString& gameComment)
+//{
+//	setAnnotation(gameComment, 0);
+//}
 
-	if ((position == AfterMove) || (node == 0))
-	{
-		return m_annotations.value(node, QString(""));
-	}
-	else
-	{
-		return m_variationStartAnnotations.value(node, QString(""));
-	}
-}
+//bool ChessGame::setAnnotation(QString annotation, MoveId moveId, Position position)
+//{
+//	ChessGame state = *this;
+//	if (dbSetAnnotation(annotation, moveId, position))
+//	{
+//		dbIndicateAnnotationsOnBoard(currentMove());
+//		emit signalGameModified(true, state, tr("Set annotation"));
+//		return true;
+//	}
+//	return false;
+//}
 
-bool ChessGame::dbSetAnnotation(QString annotation, MoveId moveId, Position position)
-{
-	MoveId node = nodeValid(moveId);
-	if (node == NO_MOVE)
-	{
-		return false;
-	}
+//bool ChessGame::isEmpty() const
+//{
+//	int moves;
+//	int comments;
+//	moveCount(&moves, &comments);
+//	bool gameIsEmpty = ((moves + comments) == 0);
+//	return gameIsEmpty;
+//}
 
-	int moves;
-	int comments;
-	int nags;
-	moveCount(&moves, &comments, &nags);
+//bool ChessGame::isMainline(MoveId moveId) const
+//{
+//	if (moveId == 0)
+//	{
+//		return true;
+//	}
+//	MoveId node = nodeValid(moveId);
+//	if (node == NO_MOVE)
+//	{
+//		return false;
+//	}
+//	else
+//	{
+//		return m_moveNodes[node].parentNode == NO_MOVE;
+//	}
+//}
+//
+//bool ChessGame::atLineEnd(MoveId moveId) const
+//{
+//	MoveId node = nodeValid(moveId);
+//	if (node != NO_MOVE)
+//	{
+//		if (m_moveNodes[node].nextNode == NO_MOVE)
+//		{
+//			return true;
+//		}
+//	}
+//
+//	return false;
+//}
 
-	annotation.remove('}'); // Just make sure a comment does not destroy the database
+//Chess::NagSet ChessGame::nags(MoveId moveId) const
+//{
+//	MoveId node = nodeValid(moveId);
+//	if (node != NO_MOVE)
+//	{
+//		return m_moveNodes[node].nags;
+//	}
+//	return Chess::NagSet();
+//}
 
-	if (position == AfterMove)
-	{
-		if (annotation.isEmpty())
-		{
-			m_annotations.remove(node);
-		}
-		else
-		{
-			m_annotations[node] = annotation;
-		}
-	}
-	else if (canHaveStartAnnotation(node))  	// Pre-move comment
-	{
-		if (node == 0)
-		{
-			setGameComment(annotation);
-		}
-		else
-		{
-			if (annotation.isEmpty() && (node > 1)) // Do not remove empty comment
-			{
-				m_variationStartAnnotations.remove(node);
-			}
-			else
-			{
-				m_variationStartAnnotations[node] = annotation;
-			}
-		}
-	}
-	return true;
-}
+//bool ChessGame::canMoveVariationUp(MoveId moveId) const
+//{
+//	if (isMainline())
+//	{
+//		return false;
+//	}
+//
+//	MoveId variation = variationNumber(moveId);
+//	MoveId parentNode = m_moveNodes[moveId].parentNode;
+//
+//	const QList <MoveId>& v = m_moveNodes[parentNode].variations;
+//	int i = v.indexOf(variation);
+//	return (i > 0);
+//}
 
-void ChessGame::moveCount(int* moves, int* comments, int* nags) const
-{
-	*moves = *comments = 0;
-	if (nags) *nags = 0;
+//bool ChessGame::canMoveVariationDown(MoveId moveId) const
+//{
+//	if (isMainline())
+//	{
+//		return false;
+//	}
+//
+//	MoveId variation = variationNumber(moveId);
+//	MoveId parentNode = m_moveNodes[moveId].parentNode;
+//
+//	const QList <MoveId>& v = m_moveNodes[parentNode].variations;
+//	int i = v.indexOf(variation);
+//	return (i >= 0 && (i + 1) < v.count());
+//}
 
-	MoveId node = 1;
-	while ((node = nodeValid(node)) != NO_MOVE)
-	{
-		*moves += 1;
-		if (nags)
-		{
-			if (m_moveNodes[node].nags.count() != 0)
-			{
-				*nags += 1;
-			}
-		}
-		node = m_moveNodes[node].nextNode;
-	}
-	// Count comments
-	for (int i = 0; i < m_annotations.size(); ++i)
-	{
-		*comments += 1;
-	}
-	for (int i = 0; i < m_variationStartAnnotations.size(); ++i)
-	{
-		*comments += 1;
-	}
-}
+//MoveId ChessGame::variationNumber(MoveId moveId) const
+//{
+//	if (isMainline())
+//	{
+//		return 0;
+//	}
+//	MoveId node = nodeValid(moveId);
+//	if (node != NO_MOVE)
+//	{
+//		MoveId parentNode = m_moveNodes[node].parentNode;
+//
+//		while (m_moveNodes[node].previousNode != parentNode)
+//		{
+//			node = m_moveNodes[node].previousNode;
+//		}
+//	}
+//	return node;
+//}
 
-QString ChessGame::arrowAnnotation(MoveId moveId) const
-{
-	QString s = specAnnotation(QRegExp(s_cal), moveId);
-	return s;
-}
-
-bool ChessGame::canHaveStartAnnotation(MoveId moveId) const
-{
-	MoveId node = nodeValid(moveId);
-	return atLineStart(moveId) || atGameStart(m_moveNodes[node].previousNode);
-}
-
-QString ChessGame::specAnnotation(const QRegExp& r, MoveId moveId) const
-{
-	MoveId node = nodeValid(moveId);
-	if (node == NO_MOVE)
-	{
-		return QString("");
-	}
-
-	QString annotation = m_annotations[node];
-	if (annotation.isNull())
-	{
-		return QString("");
-	}
-
-	int pos = r.indexIn(annotation);
-	if (pos >= 0)
-	{
-		return r.cap(2);
-	}
-
-	return "";
-}
-
-bool ChessGame::atLineStart(MoveId moveId) const
-{
-	MoveId node = nodeValid(moveId);
-	if (node == NO_MOVE)
-	{
-		return false;
-	}
-	return (m_moveNodes[node].previousNode == m_moveNodes[node].parentNode)
-		|| m_moveNodes[node].previousNode == 0;
-}
-
-bool ChessGame::atGameStart(MoveId moveId) const
-{
-	return (nodeValid(moveId) == 0);
-}
-
-void ChessGame::setGameComment(const QString& gameComment)
-{
-	setAnnotation(gameComment, 0);
-}
-
-bool ChessGame::setAnnotation(QString annotation, MoveId moveId, Position position)
-{
-	ChessGame state = *this;
-	if (dbSetAnnotation(annotation, moveId, position))
-	{
-		dbIndicateAnnotationsOnBoard(currentMove());
-		emit signalGameModified(true, state, tr("Set annotation"));
-		return true;
-	}
-	return false;
-}
-
-bool ChessGame::isEmpty() const
-{
-	int moves;
-	int comments;
-	moveCount(&moves, &comments);
-	bool gameIsEmpty = ((moves + comments) == 0);
-	return gameIsEmpty;
-}
-
-bool ChessGame::isMainline(MoveId moveId) const
-{
-	if (moveId == 0)
-	{
-		return true;
-	}
-	MoveId node = nodeValid(moveId);
-	if (node == NO_MOVE)
-	{
-		return false;
-	}
-	else
-	{
-		return m_moveNodes[node].parentNode == NO_MOVE;
-	}
-}
-
-bool ChessGame::atLineEnd(MoveId moveId) const
-{
-	MoveId node = nodeValid(moveId);
-	if (node != NO_MOVE)
-	{
-		if (m_moveNodes[node].nextNode == NO_MOVE)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-Chess::NagSet ChessGame::nags(MoveId moveId) const
-{
-	MoveId node = nodeValid(moveId);
-	if (node != NO_MOVE)
-	{
-		return m_moveNodes[node].nags;
-	}
-	return Chess::NagSet();
-}
-
-bool ChessGame::canMoveVariationUp(MoveId moveId) const
-{
-	if (isMainline())
-	{
-		return false;
-	}
-
-	MoveId variation = variationNumber(moveId);
-	MoveId parentNode = m_moveNodes[moveId].parentNode;
-
-	const QList <MoveId>& v = m_moveNodes[parentNode].variations;
-	int i = v.indexOf(variation);
-	return (i > 0);
-}
-
-bool ChessGame::canMoveVariationDown(MoveId moveId) const
-{
-	if (isMainline())
-	{
-		return false;
-	}
-
-	MoveId variation = variationNumber(moveId);
-	MoveId parentNode = m_moveNodes[moveId].parentNode;
-
-	const QList <MoveId>& v = m_moveNodes[parentNode].variations;
-	int i = v.indexOf(variation);
-	return (i >= 0 && (i + 1) < v.count());
-}
-
-MoveId ChessGame::variationNumber(MoveId moveId) const
-{
-	if (isMainline())
-	{
-		return 0;
-	}
-	MoveId node = nodeValid(moveId);
-	if (node != NO_MOVE)
-	{
-		MoveId parentNode = m_moveNodes[node].parentNode;
-
-		while (m_moveNodes[node].previousNode != parentNode)
-		{
-			node = m_moveNodes[node].previousNode;
-		}
-	}
-	return node;
-}
-
-bool ChessGame::setSquareAnnotation(QString squareAnnotation, MoveId moveId)
-{
-	squareAnnotation = squareAnnotation.trimmed();
-
-	MoveId node = nodeValid(moveId);
-	if (node == NO_MOVE)
-	{
-		return false;
-	}
-
-	QString s = annotation(moveId);
-	s.remove(QRegExp(s_csl));
-
-	if (!squareAnnotation.isEmpty())
-	{
-		s.append(QString("[%csl %1]").arg(squareAnnotation));
-	}
-	dbSetAnnotation(s, moveId);
-	indicateAnnotationsOnBoard(moveId);
-	return true;
-}
+//bool ChessGame::setSquareAnnotation(QString squareAnnotation, MoveId moveId)
+//{
+//	squareAnnotation = squareAnnotation.trimmed();
+//
+//	MoveId node = nodeValid(moveId);
+//	if (node == NO_MOVE)
+//	{
+//		return false;
+//	}
+//
+//	QString s = annotation(moveId);
+//	s.remove(QRegExp(s_csl));
+//
+//	if (!squareAnnotation.isEmpty())
+//	{
+//		s.append(QString("[%csl %1]").arg(squareAnnotation));
+//	}
+//	dbSetAnnotation(s, moveId);
+//	indicateAnnotationsOnBoard(moveId);
+//	return true;
+//}
 
 //QString ChessGame::specAnnotations(MoveId moveId, Position position) const
 //{

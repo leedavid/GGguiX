@@ -98,7 +98,7 @@ signals:
 	/** Re-read configuration. */
 	void reconfigure();
 	/** Main game has been updated. */
-	void boardChange(const Chess::Board& board, const QString& line);
+	//void boardChange(const Chess::Board& board, const QString& line);
 
 	private slots:
 		void slotEditBoard();

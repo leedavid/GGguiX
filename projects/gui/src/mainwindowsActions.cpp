@@ -121,8 +121,8 @@ void MainWindow::onActEngineThink()
 
 void MainWindow::moveChanged()
 {
-	auto g = m_game;
-	MoveId m = g->currentMove();
+	//auto g = m_game;
+	//MoveId m = g->currentMove();
 
 	//m_game
 	/*
@@ -171,8 +171,8 @@ void MainWindow::moveChanged()
 
 	*/
 
-	QString line = getUCIHistory();
-	emit boardChange(*g->board(), line);
+	//QString line = getUCIHistory();
+	//emit boardChange(*g->board(), line);
 }
 
 int MainWindow::getSelEngineIndex(bool isMain) const

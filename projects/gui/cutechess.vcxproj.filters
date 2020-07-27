@@ -541,13 +541,7 @@
     <QtMoc Include="src\dockwidgetex.h">
       <Filter>Source Files\MyEval\ChessX分析窗口</Filter>
     </QtMoc>
-    <QtMoc Include="src\chessbrowser.h">
-      <Filter>Source Files\MyEval\ChessX分析窗口</Filter>
-    </QtMoc>
     <QtMoc Include="src\chartwidget.h">
-      <Filter>Source Files\MyEval\ChessX分析窗口</Filter>
-    </QtMoc>
-    <QtMoc Include="src\GameMimeData.h">
       <Filter>Source Files\MyEval\ChessX分析窗口</Filter>
     </QtMoc>
     <QtMoc Include="src\gamewindow.h">
@@ -651,9 +645,6 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="ui\engineoptiondialog.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="ui\gamewindow.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -805,6 +796,12 @@
     </ClInclude>
     <ClInclude Include="src\analysis.h">
       <Filter>Source Files\MyEval</Filter>
+    </ClInclude>
+    <ClInclude Include="src\chessbrowser.h">
+      <Filter>Source Files\MyEval\ChessX分析窗口</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameMimeData.h">
+      <Filter>Source Files\MyEval\ChessX分析窗口</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
