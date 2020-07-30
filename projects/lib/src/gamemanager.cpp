@@ -606,7 +606,7 @@ void GameManager::startGame(const GameEntry& entry)
 
 void GameManager::startQueuedGame()
 {
-	if (m_activeQueuedGameCount >= m_concurrency)
+	if (m_activeQueuedGameCount >= m_concurrency)   // 并行的游戏局数
 		return;
 	if (m_gameEntries.isEmpty())
 	{

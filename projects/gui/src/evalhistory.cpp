@@ -34,7 +34,8 @@ EvalHistory::EvalHistory(QWidget *parent)
 	auto y = m_plot->yAxis;
 	auto ticker = new QCPAxisTickerFixed;
 
-	x->setLabel(tr("棋步"));
+	//x->setLabel(tr("棋步"));
+	x->setLabel(QString());
 	x->setRange(1, 5);
 	x->setTicker(QSharedPointer<QCPAxisTicker>(ticker));
 	x->setSubTicks(false);
@@ -43,13 +44,15 @@ EvalHistory::EvalHistory(QWidget *parent)
 	x->setTickPen(QApplication::palette().text().color());
 	x->setBasePen(QApplication::palette().text().color());
 
-	y->setLabel(tr("得分"));
+	//y->setLabel(tr("得分"));
+	y->setLabel(QString());
 	y->setRange(-1, 1);
 	y->setSubTicks(false);
 	y->setLabelColor(QApplication::palette().text().color());
 	y->setTickLabelColor(QApplication::palette().text().color());
 	y->setTickPen(QApplication::palette().text().color());
 	y->setBasePen(QApplication::palette().text().color());
+
 
 	m_plot->setBackground(QApplication::palette().window());
 
