@@ -1474,7 +1474,7 @@ Result WesternBoard::result()
 		}
 
 		// 3-fold repetition
-		if (repeatCount() >= 5)
+		if (repeatCount() >= 3)
 		{
 			str = tr("循环三步，判和！");
 			return Result(Result::Draw, Side::NoSide, str);

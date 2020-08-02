@@ -82,6 +82,21 @@ void TournamentResultsDialog::update()
 		       .arg(fcp.draws())
 		       .arg(scoreRatio, 0, 'f', 3);
 	}
+	else if (tournament->playerCount() == 2) {
+		TournamentPlayer fcp = tournament->playerAt(0);
+		TournamentPlayer scp = tournament->playerAt(1);
+		int totalResults = fcp.gamesFinished();
+		double scoreRatio = std::numeric_limits<double>::quiet_NaN();
+		if (totalResults > 0)
+			scoreRatio = double(fcp.score()) / (totalResults * 2);
+		text = tr("Score of %1 vs %2: %3 - %4 - %5 [%6]\n")
+			.arg(fcp.name())
+			.arg(scp.name())
+			.arg(0)
+			.arg(0)
+			.arg(0)
+			.arg(0.0, 0, 'f', 3);
+	}
 
 	text += tournament->results();
 	text += tr("\n\n%1 of %2 games finished.")

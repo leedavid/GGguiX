@@ -246,7 +246,7 @@ namespace Chess {
 
     void AnalysisWidget::onEval(const MoveEvaluation& eval)
     {
-        int elapsed = m_lastEngineStart.elapsed();
+        //int elapsed = m_lastEngineStart.elapsed();
         //int mpv = analysis.mpv() - 1;
         int mpv = eval.pvNumber() - 1;
         //bool bestMove = analysis.bestMove();
@@ -312,6 +312,11 @@ namespace Chess {
     int Chess::AnalysisWidget::getCurEngineIndex()
     {
         return ui.engineList->currentIndex();
+    }
+
+    void AnalysisWidget::ClearEngineList()
+    {
+        ui.engineList->clear();
     }
 
     void AnalysisWidget::slotReconfigure()

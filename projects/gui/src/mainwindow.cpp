@@ -1589,6 +1589,13 @@ void MainWindow::slotNewTournament()
 	m_whiteEvalDock->setWindowTitle("红方引擎");
 	m_blackEvalDock->setWindowTitle("黑方引擎");
 
+	// 清空引擎列表再说
+	m_AnalysisWidget[0]->ClearEngineList();
+	m_AnalysisWidget[1]->ClearEngineList();
+
+	// 关闭工具条
+	this->mainToolbar->setVisible(false);
+
 }
 
 void MainWindow::onTournamentFinished()

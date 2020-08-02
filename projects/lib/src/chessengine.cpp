@@ -83,20 +83,24 @@ ChessEngine::ChessEngine(QObject* parent)
 	  m_ioDevice(nullptr),
 	  m_restartMode(EngineConfiguration::RestartAuto)
 {
-	m_pingTimer->setSingleShot(true);
-	m_pingTimer->setInterval(15000);
+	m_pingTimer->setSingleShot(true); 
+	m_pingTimer->setInterval(45000);
+	//m_pingTimer->setInterval(15000); // 
 	connect(m_pingTimer, SIGNAL(timeout()), this, SLOT(onPingTimeout()));
 
 	m_quitTimer->setSingleShot(true);
-	m_quitTimer->setInterval(5000);
+	//m_quitTimer->setInterval(5000);
+	m_quitTimer->setInterval(10000);
 	connect(m_quitTimer, SIGNAL(timeout()), this, SLOT(onQuitTimeout()));
 
 	m_idleTimer->setSingleShot(true);
-	m_idleTimer->setInterval(15000);
+	//m_idleTimer->setInterval(15000);
+	m_idleTimer->setInterval(45000);
 	connect(m_idleTimer, SIGNAL(timeout()), this, SLOT(onIdleTimeout()));
 
 	m_protocolStartTimer->setSingleShot(true);
-	m_protocolStartTimer->setInterval(35000);
+	//m_protocolStartTimer->setInterval(35000);
+	m_protocolStartTimer->setInterval(45000);
 	connect(m_protocolStartTimer, SIGNAL(timeout()),
 		this, SLOT(onProtocolStartTimeout()));
 }

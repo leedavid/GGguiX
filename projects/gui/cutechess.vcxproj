@@ -110,7 +110,7 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <Optimization>MaxSpeed</Optimization>
-      <PreprocessorDefinitions>UNICODE;_UNICODE;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;LIB_EXPORT=;CUTECHESS_VERSION="1.2.4";QT_TESTCASE_BUILDDIR=".";QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_CONCURRENT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_SVG_LIB;QT_NETWORK_LIB;QT_TEXTTOSPEECH_LIB;QT_MULTIMEDIA_LIB;USE_SOUND;USE_SPEECH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UNICODE;_UNICODE;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;LIB_EXPORT=;CUTECHESS_VERSION="1.2.5";QT_TESTCASE_BUILDDIR=".";QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_CONCURRENT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_SVG_LIB;QT_NETWORK_LIB;QT_TEXTTOSPEECH_LIB;QT_MULTIMEDIA_LIB;USE_SOUND;USE_SPEECH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -145,7 +145,7 @@
     <QtMoc>
       <QTDIR>$(QTDIR)</QTDIR>
       <OutputFile>.\.moc\moc_%(Filename).cpp</OutputFile>
-      <Define>UNICODE;_UNICODE;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;LIB_EXPORT=;CUTECHESS_VERSION="1.2.4";QT_TESTCASE_BUILDDIR=".";QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_CONCURRENT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_SVG_LIB;QT_NETWORK_LIB;QT_TEXTTOSPEECH_LIB;QT_MULTIMEDIA_LIB;USE_SOUND;USE_SPEECH;%(PreprocessorDefinitions)</Define>
+      <Define>UNICODE;_UNICODE;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;LIB_EXPORT=;CUTECHESS_VERSION="1.2.5";QT_TESTCASE_BUILDDIR=".";QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_CONCURRENT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_SVG_LIB;QT_NETWORK_LIB;QT_TEXTTOSPEECH_LIB;QT_MULTIMEDIA_LIB;USE_SOUND;USE_SPEECH;%(PreprocessorDefinitions)</Define>
       <CompilerFlavor>msvc</CompilerFlavor>
       <Include>./.moc/moc_predefs.h</Include>
       <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>

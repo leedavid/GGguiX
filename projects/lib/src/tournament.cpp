@@ -608,26 +608,36 @@ void Tournament::onGameFinished(ChessGame* game)
 	if (!blackName.isEmpty())
 		m_players[iBlack].setName(blackName);
 
-	switch (game->result().winner())
-	{
-	case Chess::Side::White:
-		addScore(iWhite, 2);
-		addScore(iBlack, 0);
-		sprtResult = (iWhite == 0) ? Sprt::Win : Sprt::Loss;
-		break;
-	case Chess::Side::Black:
-		addScore(iBlack, 2);
-		addScore(iWhite, 0);
-		sprtResult = (iBlack == 0) ? Sprt::Win : Sprt::Loss;
-		break;
-	default:
-		if (game->result().isDraw())
+	// by LGL 开局超时负的，作为和棋
+	if (game->board()->plyCount() < 30) {
+		// else if (str.startsWith("1/2-1/2"))
+		addScore(iWhite, 1);
+		addScore(iBlack, 1);
+		sprtResult = Sprt::Draw;
+	}
+	else {
+
+		switch (game->result().winner())
 		{
-			addScore(iWhite, 1);
-			addScore(iBlack, 1);
-			sprtResult = Sprt::Draw;
+		case Chess::Side::White:
+			addScore(iWhite, 2);
+			addScore(iBlack, 0);
+			sprtResult = (iWhite == 0) ? Sprt::Win : Sprt::Loss;
+			break;
+		case Chess::Side::Black:
+			addScore(iBlack, 2);
+			addScore(iWhite, 0);
+			sprtResult = (iBlack == 0) ? Sprt::Win : Sprt::Loss;
+			break;
+		default:
+			if (game->result().isDraw())
+			{
+				addScore(iWhite, 1);
+				addScore(iBlack, 1);
+				sprtResult = Sprt::Draw;
+			}
+			break;
 		}
-		break;
 	}
 
 	writeEpd(game);

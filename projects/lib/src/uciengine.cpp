@@ -86,7 +86,7 @@ UciEngine::UciEngine(QObject* parent)
 	: ChessEngine(parent),
 	  m_useDirectPv(false),
 	  m_sendOpponentsName(false),
-	  m_canPonder(false),
+	  m_canPonder(true),             // by LGL
 	  m_ponderState(NotPondering),
 	  m_movesPondered(0),
 	  m_ponderHits(0),
@@ -771,6 +771,8 @@ void UciEngine::parseLine(const QString& line)
 			return;
 		}
 
+		//m_canPonder = true;  // by LGL
+
 		if (m_canPonder && (token = nextToken(token)) == "ponder")
 		{
 			board()->makeMove(move);
@@ -834,13 +836,15 @@ void UciEngine::parseLine(const QString& line)
 			 option->name() != "UCI_LimitStrength" &&
 			 option->name() != "UCI_Elo")
 		{
-			// TODO: Deal with UCI features
+			// TODO: Deal with UCI features			
 		}
 		else
 		{
 			addOption(option);
 			return;
 		}
+
+		
 
 		delete option;
 	}

@@ -77,6 +77,8 @@ namespace Chess {
 
         int getCurEngineIndex();              // 得到当前选择引擎的编号
 
+        void ClearEngineList(); // 在比赛时，清空引擎列表
+
         //void updateBookFile(Database*);
 
     public slots:
