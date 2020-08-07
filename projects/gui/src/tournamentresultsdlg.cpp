@@ -56,7 +56,28 @@ TournamentResultsDialog::~TournamentResultsDialog()
 void TournamentResultsDialog::setTournament(Tournament* tournament)
 {
 	setWindowTitle(tournament->name());
-	m_resultsEdit->setPlainText(tournament->results());
+
+	// 实始化一下
+	QString text;
+   if (tournament->playerCount() == 2) {
+		TournamentPlayer fcp = tournament->playerAt(0);
+		TournamentPlayer scp = tournament->playerAt(1);
+		int totalResults = fcp.gamesFinished();
+		double scoreRatio = std::numeric_limits<double>::quiet_NaN();
+		if (totalResults > 0)
+			scoreRatio = double(fcp.score()) / (totalResults * 2);
+		//text = tr("Score of %1 vs %2: %3 - %4 - %5 [%6]\n")
+		text = tr("Score of %1 vs %2: 胜 %3 负 %4 和 %5 [%6]\n")
+			.arg(fcp.name())
+			.arg(scp.name())
+			.arg(0)
+			.arg(0)
+			.arg(0)
+			.arg(0.0, 0, 'f', 3);
+	}
+
+
+	m_resultsEdit->setPlainText(text + tournament->results());
 }
 
 void TournamentResultsDialog::update()
@@ -74,28 +95,13 @@ void TournamentResultsDialog::update()
 		double scoreRatio = std::numeric_limits<double>::quiet_NaN();
 		if (totalResults > 0)
 			scoreRatio = double(fcp.score()) / (totalResults * 2);
-		text = tr("Score of %1 vs %2: %3 - %4 - %5 [%6]\n")
+		text = tr("Score of %1 vs %2: 胜 %3 负 %4 和 %5 [%6]\n")
 		       .arg(fcp.name())
 		       .arg(scp.name())
 		       .arg(fcp.wins())
 		       .arg(scp.wins())
 		       .arg(fcp.draws())
 		       .arg(scoreRatio, 0, 'f', 3);
-	}
-	else if (tournament->playerCount() == 2) {
-		TournamentPlayer fcp = tournament->playerAt(0);
-		TournamentPlayer scp = tournament->playerAt(1);
-		int totalResults = fcp.gamesFinished();
-		double scoreRatio = std::numeric_limits<double>::quiet_NaN();
-		if (totalResults > 0)
-			scoreRatio = double(fcp.score()) / (totalResults * 2);
-		text = tr("Score of %1 vs %2: %3 - %4 - %5 [%6]\n")
-			.arg(fcp.name())
-			.arg(scp.name())
-			.arg(0)
-			.arg(0)
-			.arg(0)
-			.arg(0.0, 0, 'f', 3);
 	}
 
 	text += tournament->results();

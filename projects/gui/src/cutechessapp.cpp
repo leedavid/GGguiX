@@ -196,6 +196,8 @@ MainWindow* CuteChessApplication::newGameWindow(ChessGame* game)
 	mainWindow->show();
 	m_initialWindowCreated = true;
 
+	//mainWindow->toolb
+
 	return mainWindow;
 }
 

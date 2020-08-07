@@ -364,7 +364,7 @@ QString MoveEvaluation::toStrings()
 			//out += tr(" (depth %1, %2)").arg(depth()).arg(elapsed);
 
 			int speed = m_nodeCount / (time() + 1);  // 
-			if (speed < 100) {
+			if (speed < 10) {
 				speed = m_nodeCount * 1000 / (time() + 1);
 				out += QString(" 层数 %1 用时 %2 NPS %3 节点 %4").arg(depth()).arg(elapsed).arg(speed).arg(m_nodeCount);
 			}
@@ -385,7 +385,7 @@ QString MoveEvaluation::toStrings()
 			}
 
 			if (ponderhitRate()) {
-				out += QString(" 概率 %1").arg(ponderhitRate() / 10.0);
+				out += QString(" 命中 %1").arg(ponderhitRate() / 10.0);
 			}
 
 			//out += ")";

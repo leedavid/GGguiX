@@ -43,7 +43,7 @@ EvalWidget::EvalWidget(QWidget *parent)
 
 	QStringList statsHeaders;
 	statsHeaders << tr("速度") << tr("哈希")
-		     << tr("后台") << tr("概率") << tr("EGB");
+		     << tr("后台") << tr("命中") << tr("EGB");
 	m_statsTable->setHorizontalHeaderLabels(statsHeaders);
 	hHeader->setSectionResizeMode(QHeaderView::Stretch);
 	auto protoItem = new QTableWidgetItem;

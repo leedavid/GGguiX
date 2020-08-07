@@ -84,7 +84,7 @@ ChessEngine::ChessEngine(QObject* parent)
 	  m_restartMode(EngineConfiguration::RestartAuto)
 {
 	m_pingTimer->setSingleShot(true); 
-	m_pingTimer->setInterval(45000);
+	m_pingTimer->setInterval(100000);
 	//m_pingTimer->setInterval(15000); // 
 	connect(m_pingTimer, SIGNAL(timeout()), this, SLOT(onPingTimeout()));
 
@@ -95,7 +95,7 @@ ChessEngine::ChessEngine(QObject* parent)
 
 	m_idleTimer->setSingleShot(true);
 	//m_idleTimer->setInterval(15000);
-	m_idleTimer->setInterval(45000);
+	m_idleTimer->setInterval(100000);
 	connect(m_idleTimer, SIGNAL(timeout()), this, SLOT(onIdleTimeout()));
 
 	m_protocolStartTimer->setSingleShot(true);

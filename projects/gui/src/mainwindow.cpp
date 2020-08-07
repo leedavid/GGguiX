@@ -191,6 +191,8 @@ MainWindow::MainWindow(ChessGame* game)
 	{
 		showNormal();
 	}
+
+	this->mainToolbar->setVisible(true);   // by LGL
 }
 
 MainWindow::~MainWindow()
@@ -1590,8 +1592,8 @@ void MainWindow::slotNewTournament()
 	m_blackEvalDock->setWindowTitle("黑方引擎");
 
 	// 清空引擎列表再说
-	m_AnalysisWidget[0]->ClearEngineList();
-	m_AnalysisWidget[1]->ClearEngineList();
+	m_AnalysisWidget[0]->HideAllControl();
+	m_AnalysisWidget[1]->HideAllControl();
 
 	// 关闭工具条
 	this->mainToolbar->setVisible(false);

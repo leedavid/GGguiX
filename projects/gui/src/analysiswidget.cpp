@@ -314,9 +314,16 @@ namespace Chess {
         return ui.engineList->currentIndex();
     }
 
-    void AnalysisWidget::ClearEngineList()
+    void AnalysisWidget::HideAllControl()
     {
-        ui.engineList->clear();
+        //ui.engineList->clear();
+
+        ui.label->hide();
+        ui.engineList->hide();
+        ui.bookList->hide();
+        ui.vpcount->hide();
+        ui.analyzeButton->hide();
+
     }
 
     void AnalysisWidget::slotReconfigure()
@@ -331,11 +338,14 @@ namespace Chess {
         int sel = 0;
         // 是不是主引擎
         if (this->getIsMainEngine()) {
-            sel = QSettings().value("ui/linkboard_curEngineFirst").toInt();
+            sel = QSettings().value("ui/linkboard_curEngineFirst").toInt();           
         }
         else {
             sel = QSettings().value("ui/linkboard_curEngineSecond").toInt();
         }
+
+        //if (sel == 0) { sel = 1; }
+
         ui.engineList->setCurrentIndex(sel);
 
         /*
