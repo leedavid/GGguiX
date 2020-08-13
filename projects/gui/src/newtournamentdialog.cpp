@@ -294,9 +294,11 @@ Tournament* NewTournamentDialog::createTournament(GameManager* gameManager) cons
 	auto book = ui->m_gameSettings->openingBook();
 	int bookDepth = ui->m_gameSettings->bookDepth();
 
-	t->setOpeningRepetitions(ts->openingRepetition()? 2: 1);
+	t->setOpeningRepetitions(ts->openingRepetitions());
 	t->setRecoveryMode(ts->engineRecovery());
 	t->setPgnWriteUnfinishedGames(ts->savingOfUnfinishedGames());
+	t->setSwapSides(ts->swappingSides());
+	t->setResultFormat(ts->resultFormat());
 
 	const auto engines = m_addedEnginesManager->engines();
 	for (EngineConfiguration config : engines)

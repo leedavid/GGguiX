@@ -335,6 +335,9 @@
     <ClCompile Include="src\tilelayout.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
+    <ClCompile Include="src\gamerepetitionspinbox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\autoverticalscroller.h">
@@ -552,6 +555,9 @@
     </QtMoc>
     <QtMoc Include="src\gamewall.cpp">
       <Filter>Source Files\Other</Filter>
+    </QtMoc>
+    <QtMoc Include="src\gamerepetitionspinbox.h">
+      <Filter>Source Files</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>

@@ -46,7 +46,7 @@ TournamentResultsDialog::TournamentResultsDialog(QWidget* parent)
 	layout->setContentsMargins(0, 0, 0, 0);
 
 	setLayout(layout);
-	resize(700, 400);
+	resize(1100, 400);
 }
 
 TournamentResultsDialog::~TournamentResultsDialog()
@@ -105,7 +105,7 @@ void TournamentResultsDialog::update()
 	}
 
 	text += tournament->results();
-	text += tr("\n\n%1 of %2 games finished.")
+	text += tr("\n%1 of %2 games finished.")
 		.arg(tournament->finishedGameCount())
 		.arg(tournament->finalGameCount());
 	m_resultsEdit->setPlainText(text);

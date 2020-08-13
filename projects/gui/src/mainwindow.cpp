@@ -248,6 +248,7 @@ void MainWindow::createActions()
 	m_copyPgnAct = new QAction(tr("&复制 PGN"), this);
 
 	m_flipBoardAct = new QAction(tr("&上下翻转棋盘"), this);
+	m_flipBoardAct->setShortcut(Qt::CTRL + Qt::Key_F);
 
 	m_adjudicateDrawAct = new QAction(tr("&判定和棋"), this);
 	m_adjudicateWhiteWinAct = new QAction(tr("判定红胜"), this);

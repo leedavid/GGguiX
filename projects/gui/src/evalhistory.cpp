@@ -1,12 +1,10 @@
 /*
     This file is part of GGzero Chess.
     Copyright (C) 2008-2018 GGzero Chess authors
-
     GGzero Chess is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-
     GGzero Chess is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -19,6 +17,7 @@
 #pragma execution_character_set("utf-8")
 
 #include "evalhistory.h"
+#include "board/board.h"
 #include <QVBoxLayout>
 #include <QtGlobal>
 #include <qcustomplot.h>
@@ -28,7 +27,8 @@
 EvalHistory::EvalHistory(QWidget *parent)
 	: QWidget(parent),
 	  m_plot(new QCustomPlot(this)),
-	  m_game(nullptr)
+	m_game(nullptr),
+	m_invertSides(false)
 {
 	auto x = m_plot->xAxis;
 	auto y = m_plot->yAxis;
@@ -76,9 +76,7 @@ void EvalHistory::setGame(ChessGame* game)
 		return;
 	}
 
-	connect(m_game, SIGNAL(scoreChanged(int,int)),
-		this, SLOT(onScore(int,int)));
-
+	m_invertSides = (m_game->board()->startingSide() == Chess::Side::Black);
 	setScores(game->scores());
 }
 
@@ -87,6 +85,7 @@ void EvalHistory::setPgnGame(PgnGame* pgn)
 	if (pgn == nullptr || pgn->isNull())
 		return;
 
+	m_invertSides = (pgn->startingSide() == Chess::Side::Black);
 	setScores(pgn->extractScores());
 }
 
@@ -135,7 +134,8 @@ void EvalHistory::addData(int ply, int score)
 	if (score == MoveEvaluation::NULL_SCORE)
 		return;
 
-	int side = (ply % 2 == 0) ? 0 : 1;
+	int base = m_invertSides ? 1 : 0;
+	int side = (ply % 2 == base) ? 0 : 1;
 	double x = double(ply + 2) / 2;
 	double y = qBound(-15.0, double(score) / 100.0, 15.0);
 	if (side == 1)

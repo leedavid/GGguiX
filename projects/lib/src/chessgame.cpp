@@ -21,6 +21,7 @@
 #include "board/board.h"
 #include "chessplayer.h"
 #include "openingbook.h"
+#include "timecontrol.h"
 
 #include "../../gui/src/annotation.h"
 
@@ -384,6 +385,9 @@ void ChessGame::onMoveMade(const Chess::Move& move)
 	m_currentBoard->undoMove();
 
 	ChessPlayer* player = playerToWait();
+	if (player->timeControl()->isHourglass()
+		&& sender->timeControl()->isHourglass())
+		player->addTime(sender->timeControl()->lastMoveTime());
 	player->makeMove(move);
 	m_currentBoard->makeMove(move);
 

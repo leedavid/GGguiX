@@ -1,12 +1,10 @@
 /*
     This file is part of GGzero Chess.
     Copyright (C) 2008-2018 GGzero Chess authors
-
     GGzero Chess is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-
     GGzero Chess is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -14,7 +12,7 @@
 
     You should have received a copy of the GNU General Public License
     along with GGzero Chess.  If not, see <http://www.gnu.org/licenses/>.
-*/
+	*/
 
 #pragma execution_character_set("utf-8")
 
@@ -35,6 +33,8 @@ TimeControlDialog::TimeControlDialog(const TimeControl& tc,
 		this, SLOT(onTimePerMoveSelected()));
 	connect(ui->m_infiniteRadio, SIGNAL(clicked()),
 		this, SLOT(onInfiniteSelected()));
+	connect(ui->m_hourglassRadio, SIGNAL(clicked()),
+		this, SLOT(onHourglassSelected()));
 
 	if (!tc.isValid())
 		return;
@@ -43,6 +43,12 @@ TimeControlDialog::TimeControlDialog(const TimeControl& tc,
 	{
 		ui->m_infiniteRadio->setChecked(true);
 		onInfiniteSelected();
+	}
+	else if (tc.isHourglass())
+	{
+		ui->m_hourglassRadio->setChecked(true);
+		setTime(tc.timePerTc());
+		onHourglassSelected();
 	}
 	else if (tc.timePerMove() != 0)
 	{
@@ -96,6 +102,15 @@ void TimeControlDialog::onInfiniteSelected()
 	ui->m_marginSpin->setEnabled(false);
 }
 
+void TimeControlDialog::onHourglassSelected()
+{
+	ui->m_movesSpin->setEnabled(false);
+	ui->m_timeSpin->setEnabled(true);
+	ui->m_timeUnitCombo->setEnabled(true);
+	ui->m_incrementSpin->setEnabled(false);
+	ui->m_marginSpin->setEnabled(true);
+}
+
 int TimeControlDialog::timeToMs() const
 {
 	switch (ui->m_timeUnitCombo->currentIndex())
@@ -144,6 +159,12 @@ TimeControl TimeControlDialog::timeControl() const
 		tc.setMovesPerTc(ui->m_movesSpin->value());
 		tc.setTimePerTc(timeToMs());
 		tc.setTimeIncrement(ui->m_incrementSpin->value() * 1000.0);
+	}
+	else if (ui->m_hourglassRadio->isChecked())
+	{
+		tc.setHourglass(true);
+		tc.setTimePerTc(timeToMs());
+		tc.setTimeIncrement(0);
 	}
 
 	tc.setNodeLimit(ui->m_nodesSpin->value());

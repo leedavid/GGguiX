@@ -681,13 +681,19 @@ namespace Chess {
     void AnalysisWidget::slotMpvChanged(int mpv)
     {
         //isEngineRunning()
-        if (m_player->isReady()) {
-            while (m_eval.count() > mpv)
-            {
-                m_eval.removeLast();
+        //if (m_player != nullptr) {
+        if (isEngineRunning()){
+            if (m_player->isReady()) {
+                while (m_eval.count() > mpv)
+                {
+                    m_eval.removeLast();
+                }
+                m_player->SetMpv(mpv);
             }
-            m_player->SetMpv(mpv);
         }
+        //else {
+        //    int a = 0;
+        //}
        
         /*
         if (isEngineRunning())

@@ -24,6 +24,7 @@
 #include <QToolButton>
 #include <QSlider>
 #include <QMessageBox>
+#include <QSettings>
 #include <pgngame.h>
 #include <chessgame.h>
 #include <chessplayer.h>
@@ -41,7 +42,8 @@ GameViewer::GameViewer(Qt::Orientation orientation,
 	  m_viewPreviousMoveBtn(new QToolButton),
 	  m_viewNextMoveBtn(new QToolButton),
 	  m_viewLastMoveBtn(new QToolButton),
-	  m_moveIndex(0)
+	m_moveIndex(0),
+	m_humanGame(false)
 {
 	#ifdef Q_OS_MAC
 	setStyleSheet("QToolButton:!hover { border: none; }");
@@ -142,6 +144,12 @@ ChessClock* GameViewer::chessClock(Chess::Side side)
 	return m_chessClock[side];
 }
 
+void GameViewer::autoFlip()
+{
+	if (QSettings().value("ui/auto_flip_board_for_human_games", false).toBool())
+		m_boardScene->flip();
+}
+
 void GameViewer::viewLinkMove(const Chess::GenericMove& move)
 {
 	m_boardScene->LinkMove(move);
@@ -197,6 +205,13 @@ void GameViewer::setGame(ChessGame* game)
 		m_boardScene, SLOT(onGameFinished(ChessGame*, Chess::Result)));
 	m_boardView->setEnabled(!m_game->isFinished() &&
 				m_game->playerToMove()->isHuman());
+
+	m_humanGame = !m_game.isNull()
+		&& m_game->playerToMove()->isHuman()
+		&& m_game->playerToWait()->isHuman();
+
+	if (m_humanGame && m_game->playerToMove() != m_game->player(Chess::Side::White))
+		autoFlip();
 }
 
 void GameViewer::setGame(const PgnGame* pgn)
@@ -403,4 +418,7 @@ void GameViewer::onMoveMade(const Chess::GenericMove& move)
 
 	if (m_moveIndex == m_moves.count() - 1)
 		viewNextMove();
+
+	if (m_humanGame)
+		autoFlip();
 }

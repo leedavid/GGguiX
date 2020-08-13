@@ -104,6 +104,9 @@ class LIB_EXPORT ChessPlayer : public QObject
 		/*! Returns the player's time control. */
 		const TimeControl* timeControl() const;
 
+		/*! Adds \a bonus to the time left for the player */
+		void addTime(int bonus);
+
 		/*! Sets the time control for the player. */
 		void setTimeControl(const TimeControl& timeControl);
 

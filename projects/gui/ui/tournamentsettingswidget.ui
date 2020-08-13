@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>321</height>
+    <width>419</width>
+    <height>436</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,16 +45,22 @@
           <property name="checked">
            <bool>true</bool>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">m_tournamentTypeGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
          <widget class="QRadioButton" name="m_gauntletRadio">
           <property name="toolTip">
-           <string>第一个引擎与其它的引擎一一对战</string>
+           <string>First engine (or group of seeded engines) plays against the rest</string>
           </property>
           <property name="text">
            <string>车轮赛</string>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">m_tournamentTypeGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
@@ -65,6 +71,9 @@
           <property name="text">
            <string>淘汰赛</string>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">m_tournamentTypeGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
@@ -75,6 +84,9 @@
           <property name="text">
            <string>金字塔</string>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">m_tournamentTypeGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
@@ -132,36 +144,16 @@
        <enum>QFormLayout::ExpandingFieldsGrow</enum>
       </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>对手间每次相遇的对局数:</string>
-        </property>
-        <property name="buddy">
-         <cstring>m_gamesPerEncounterSpin</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="m_gamesPerEncounterSpin">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>999999</number>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>循环轮数:</string>
+         <string>回合数:</string>
         </property>
         <property name="buddy">
          <cstring>m_roundsSpin</cstring>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="0" column="1">
        <widget class="QSpinBox" name="m_roundsSpin">
         <property name="minimum">
          <number>1</number>
@@ -171,7 +163,56 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>比赛次数:</string>
+        </property>
+        <property name="buddy">
+         <cstring>m_gamesPerEncounterSpin</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="m_gamesPerEncounterSpin">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>999999</number>
+        </property>
+       </widget>
+      </item>
       <item row="2" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>每种开局使用次数:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="GameRepetitionSpinBox" name="m_repeatSpin">
+        <property name="toolTip">
+         <string>Depends on &quot;games per encounter&quot;</string>
+        </property>
+        <property name="toolTipDuration">
+         <number>-1</number>
+        </property>
+        <property name="specialValueText">
+         <string>once</string>
+        </property>
+        <property name="suffix">
+         <string> times</string>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
          <string>对局之间等待时间:</string>
@@ -181,17 +222,10 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="3" column="1">
        <widget class="QDoubleSpinBox" name="m_waitSpin">
         <property name="suffix">
          <string> 秒</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QCheckBox" name="m_repeatCheck">
-        <property name="text">
-         <string>每种开局比赛二次</string>
         </property>
        </widget>
       </item>
@@ -215,11 +249,100 @@
         </property>
        </widget>
       </item>
+       <item row="6" column="1">
+       <widget class="QCheckBox" name="m_swapCheck">
+        <property name="toolTip">
+         <string>Swap colors after each game within an encounter (default: true)</string>
+        </property>
+        <property name="text">
+         <string>Swap sides</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
      </layout>
+    </widget>
+   </item>
+    <item>
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Results</string>
+     </property>
+     <widget class="QWidget" name="horizontalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>29</y>
+        <width>401</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
+       <item>
+        <widget class="QLabel" name="m_resultFormatLabel">
+         <property name="text">
+          <string>Format</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="m_resultFormatCombo"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QLineEdit" name="m_resultFormatEdit">
+      <property name="geometry">
+       <rect>
+        <x>12</x>
+        <y>70</y>
+        <width>400</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="maxLength">
+       <number>256</number>
+      </property>
+      <property name="placeholderText">
+       <string>Result Format</string>
+      </property>
+      <property name="clearButtonEnabled">
+       <bool>false</bool>
+      </property>
+     </widget>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GameRepetitionSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>src/gamerepetitionspinbox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="m_tournamentTypeGroup"/>
+ </buttongroups>
 </ui>
