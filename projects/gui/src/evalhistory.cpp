@@ -76,6 +76,9 @@ void EvalHistory::setGame(ChessGame* game)
 		return;
 	}
 
+	connect(m_game, SIGNAL(scoreChanged(int, int)),
+		this, SLOT(onScore(int, int)));
+
 	m_invertSides = (m_game->board()->startingSide() == Chess::Side::Black);
 	setScores(game->scores());
 }
@@ -86,6 +89,10 @@ void EvalHistory::setPgnGame(PgnGame* pgn)
 		return;
 
 	m_invertSides = (pgn->startingSide() == Chess::Side::Black);
+
+	//connect(m_game, SIGNAL(scoreChanged(int, int)),
+	//	this, SLOT(onScore(int, int)));
+
 	setScores(pgn->extractScores());
 }
 

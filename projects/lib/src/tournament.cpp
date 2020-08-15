@@ -641,7 +641,7 @@ void Tournament::onGameFinished(ChessGame* game)
 		m_players[iBlack].setName(blackName);
 
 	// by LGL 开局超时负的，作为和棋
-	if (game->board()->plyCount() < 30) {
+	if (game->board()->plyCount() < 20) {
 		// else if (str.startsWith("1/2-1/2"))
 		addScore(iWhite, Chess::Side::White, 1);
 		addScore(iBlack, Chess::Side::Black, 1);
@@ -657,8 +657,8 @@ void Tournament::onGameFinished(ChessGame* game)
 			sprtResult = (iWhite == 0) ? Sprt::Win : Sprt::Loss;
 			break;
 		case Chess::Side::Black:
-			addScore(iWhite, Chess::Side::White, 2);
-			addScore(iBlack, Chess::Side::Black, 0);
+			addScore(iWhite, Chess::Side::White, 0);
+			addScore(iBlack, Chess::Side::Black, 2);
 			sprtResult = (iBlack == 0) ? Sprt::Win : Sprt::Loss;
 			break;
 		default:
