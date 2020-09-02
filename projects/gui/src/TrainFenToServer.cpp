@@ -16,6 +16,8 @@ namespace Chess {
 	{
 		_method = method;
 
+		GetSetting();
+
 		if (game != nullptr) {
 			//ChessGame cgame = *game;
 			//_game = &cgame;
@@ -66,8 +68,6 @@ namespace Chess {
 
 	bool CTrainFen::FenAdd()
 	{
-		
-		GetSetting();
 
 		//this->addOneFenToWEB("2bakN3/4aR3/4b4/1C1R5/6n2/9/C6c1/2n1B3c/4A3r/4KA3 w - - 0 1", 0, true);		
 

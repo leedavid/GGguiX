@@ -647,10 +647,17 @@ void MainWindow::onTrainFenAddCommon()
 
 void MainWindow::onTrainFenClearAll()
 {
-	if (this->getCTtrainFen()->isRunning()) {
-		this->slotDisplayStatus(3, "trainFen 正在处理中, 请稍候...");
-	}
-	else {
-		this->getCTtrainFen()->on_start2(Chess::CTrainFenMethod::REMOVE_FEN);
+	QMessageBox::StandardButton result;
+	result = QMessageBox::warning(this, QApplication::applicationName(),
+		tr("本操作将清除服务器上所有的局面.\n你确认吗?"),
+		QMessageBox::Ok | QMessageBox::Discard | QMessageBox::Cancel);
+
+	if (result == QMessageBox::Ok) {
+		if (this->getCTtrainFen()->isRunning()) {
+			this->slotDisplayStatus(3, "trainFen 正在处理中, 请稍候...");
+		}
+		else {
+			this->getCTtrainFen()->on_start2(Chess::CTrainFenMethod::REMOVE_FEN);
+		}
 	}
 }
