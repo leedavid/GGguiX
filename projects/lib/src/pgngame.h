@@ -73,6 +73,8 @@ class LIB_EXPORT PgnGame
 			QString moveString;
 			/*! A comment/annotation describing the move. */
 			QString comment;
+
+			//int score;  // 保存每步棋步的得分
 		};
 
 		/*! Creates a new PgnGame object. */

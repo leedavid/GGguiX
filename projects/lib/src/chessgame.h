@@ -86,8 +86,13 @@ class LIB_EXPORT ChessGame : public QObject
 		PgnGame* pgn() const;
 		Chess::Board* board() const;
 		QString startingFen() const;
+
 		const QVector<Chess::Move>& moves() const;
 		const QMap<int,int>& scores() const;
+		const QVector<QString>& fens() const { return m_fens; };
+
+		//QVector<QString> m_fens;           // by LGL 所有的fen
+
 		Chess::Result result() const;
 
 		void setError(const QString& message);
@@ -285,13 +290,14 @@ class LIB_EXPORT ChessGame : public QObject
 		QString m_startingFen;
 		Chess::Result m_result;
 		QVector<Chess::Move> m_moves;
+		QVector<QString> m_fens;           // by LGL 所有的fen
 		QMap<int,int> m_scores;
 		PgnGame* m_pgn;
 		QSemaphore m_pauseSem;
 		QSemaphore m_resumeSem;
 		GameAdjudicator m_adjudicator;
 
-		bool m_isLinkBoard;       // 是否要翻转棋盘, 连线下棋不要翻转	
+		bool m_isLinkBoard = false;       // 是否要翻转棋盘, 连线下棋不要翻转	
 		//bool m_isEngingMatch;     // 是不是引擎比赛, 
 
 		// X chess =================================

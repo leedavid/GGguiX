@@ -72,6 +72,81 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 				      checked);
 	});
 
+	//*************************************************
+	connect(ui->checkBox_AutoUploadFen, &QCheckBox::toggled,
+		[=](bool checked)
+		{
+			QSettings().setValue("trainFen/AutoUploadFen",
+				checked);
+		});
+
+	connect(ui->checkBoxLXupload, &QCheckBox::toggled,
+		[=](bool checked)
+		{
+			QSettings().setValue("trainFen/LXuploadFen",
+				checked);
+		});
+
+
+	connect(ui->lineEdit_UserName, &QLineEdit::textChanged,
+		[=](const QString& defaultUserName)
+		{
+			QSettings().setValue("trainFen/UserName", defaultUserName);
+		});
+
+	connect(ui->lineEdit_Password, &QLineEdit::textChanged,
+		[=](const QString& defaultPassword)
+		{
+			QSettings().setValue("trainFen/Password", defaultPassword);
+		});
+
+
+	connect(ui->lineEdit_WebAddress, &QLineEdit::textChanged,
+		[=](const QString& defaultWebAddress)
+		{
+			QSettings().setValue("trainFen/WebAddress", defaultWebAddress);
+		});
+
+	//ui->spinBox_trainID->setValue(s.value("concurrency", 1).toInt());
+
+	connect(ui->spinBox_trainID, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+		this, [=](int value)
+		{
+			QSettings().setValue("trainFen/trainID", value);			
+		});
+
+	connect(ui->spinBoxMaxScore, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+		this, [=](int value)
+		{
+			QSettings().setValue("trainFen/MaxScore", value);
+		});
+
+	connect(ui->spinBoxMinScore, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+		this, [=](int value)
+		{
+			QSettings().setValue("trainFen/MinScore", value);
+		});
+
+	connect(ui->spinBoxMaxSteps, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+		this, [=](int value)
+		{
+			QSettings().setValue("trainFen/MaxSteps", value);
+		});
+
+	connect(ui->spinBoxMinSteps, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+		this, [=](int value)
+		{
+			QSettings().setValue("trainFen/MinSteps", value);
+		});
+
+	connect(ui->spinBoxStepsGap, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+		this, [=](int value)
+		{
+			QSettings().setValue("trainFen/StepsGap", value);
+		});
+
+	//***************************************************************
+
 
 	connect(ui->m_concurrencySpin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
 		this, [=](int value)
@@ -228,6 +303,36 @@ void SettingsDialog::readSettings()
 	ui->m_defaultPgnOutFileEdit
 		->setText(s.value("default_pgn_output_file").toString());
 	s.endGroup();
+
+	//-------------------------------------
+	s.beginGroup("trainFen");
+
+	ui->checkBox_AutoUploadFen
+		->setChecked(s.value("AutoUploadFen", false).toBool());
+
+	ui->checkBoxLXupload
+		->setChecked(s.value("LXuploadFen", false).toBool());
+
+	ui->lineEdit_UserName
+		->setText(s.value("UserName").toString());
+
+	ui->lineEdit_Password
+		->setText(s.value("Password").toString());
+
+	ui->lineEdit_WebAddress
+		->setText(s.value("WebAddress").toString());
+
+	ui->spinBox_trainID->setValue(s.value("trainID", 1).toInt());
+	ui->spinBoxStepsGap->setValue(s.value("StepsGap", 1).toInt());
+
+
+	ui->spinBoxMaxScore->setValue(s.value("MaxScore", 1000).toInt());
+	ui->spinBoxMinScore->setValue(s.value("MinScore", 0).toInt());
+	ui->spinBoxMaxSteps->setValue(s.value("MaxSteps", 200).toInt());
+	ui->spinBoxMinSteps->setValue(s.value("MinSteps", 0).toInt());
+
+	s.endGroup();
+	//-------------------------------------
 
 	s.beginGroup("tournament");
 	ui->m_tournamentDefaultPgnOutFileEdit

@@ -18,7 +18,6 @@
         <file>icon/Flat-Stop.ico</file>
         <file>icon/analyze.ico</file>
         <file>icon/stop.ico</file>
-        <file>icon/Settings.ico</file>
         <file>icon/backThink.png</file>
         <file>icon/BlackLink.png</file>
         <file>icon/RedLink.png</file>
@@ -26,5 +25,9 @@
         <file>icon/com_red.png</file>
         <file>icon/autolink.png</file>
         <file>icon/pin.ico</file>
+        <file>icon/add.ico</file>
+        <file>icon/del.ico</file>
+        <file>icon/commmon.ico</file>
+        <file>icon/clear.ico</file>
     </qresource>
 </RCC>

@@ -87,6 +87,9 @@
     <Filter Include="Source Files\MyEval\ChessX分析窗口">
       <UniqueIdentifier>{240f06a1-bf2b-4cba-b913-02e4526a6b40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\TrainFen">
+      <UniqueIdentifier>{e8396ca3-fe8d-4a41-9a08-39f9a5a9942c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\pgndatabase.cpp">
@@ -338,6 +341,15 @@
     <ClCompile Include="src\gamerepetitionspinbox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\工具条.cpp">
+      <Filter>Source Files\mainWin</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TrainFenToServer.cpp">
+      <Filter>Source Files\TrainFen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DisplayStatus.cpp">
+      <Filter>Source Files\mainWin\状态栏</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\autoverticalscroller.h">
@@ -558,6 +570,9 @@
     </QtMoc>
     <QtMoc Include="src\gamerepetitionspinbox.h">
       <Filter>Source Files</Filter>
+    </QtMoc>
+    <QtMoc Include="src\TrainFenToServer.h">
+      <Filter>Source Files\TrainFen</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>

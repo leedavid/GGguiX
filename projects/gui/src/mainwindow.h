@@ -32,6 +32,7 @@
 #include "linkboard.h"
 #include "dockwidgetex.h"
 #include "translatingslider.h"
+//#include "TrainFenToServer.h"
 //#include "analysiswidget.h"
 //#include "TestThread.h"
 
@@ -41,6 +42,7 @@ namespace Chess {
 	class AnalysisWidget;
 	class GameWindow;
 	class ChessBrowser;
+	class CTrainFen;
 }
 class QMenu;
 class QAction;
@@ -75,6 +77,8 @@ class MainWindow : public QMainWindow
 		QString windowListTitle() const;		
 
 		bool isMoveValid(const Chess::GenericMove& move);
+
+		QPointer<ChessGame> GetCurrentChessGame() { return  m_game; };
 
 	public slots:
 		void addGame(ChessGame* game);
@@ -133,6 +137,13 @@ signals:
 		void slotResignGame();
 
 		void slotProcessCapMsg(Chess::stCaptureMsg msg);
+		void slotDisplayStatus(int which, QString msg);     // 显示状态信息		
+
+		void TrainFenAdd(ChessGame* game = nullptr);
+		void onTrainFenAdd();
+		void onTrainFenDelete();
+		void onTrainFenAddCommon();
+		void onTrainFenClearAll();
 
 		// 連线棋盘
 		void onLXchessboardStart();
@@ -217,6 +228,12 @@ signals:
 		QAction* actEngineSetting;			// 引擎设置参数
 
 
+		QAction* actTrainFenAdd;
+		QAction* actTrainFenDelete;
+		QAction* actTrainFenAddCommonFen;
+		QAction* actTrainFenClearAll;
+		
+
 		GameTabBar* m_tabBar;		    
 
 		GameViewer* m_gameViewer;           // 当前游戏的视图
@@ -276,6 +293,9 @@ signals:
 		Chess::Capture* m_pcap;            // 一个界面只有一个
 		Chess::Capture* m_autoClickCap;    // 全自动挂机	
 
+		Chess::CTrainFen* m_ct;            // 
+		Chess::CTrainFen* getCTtrainFen();
+
 		// 状态栏 ---------------------------------------------------------------------------
 		QLabel* m_status1;
 		QLabel* m_status2;
@@ -294,6 +314,8 @@ signals:
 			while (QTime::currentTime() < dieTime)
 				QCoreApplication::processEvents(QEventLoop::AllEvents, 100);			
 		}
+
+
 
 		OpeningBook* GetOpeningBook(int& depth) const;
 		QString preverb();      // 谚语

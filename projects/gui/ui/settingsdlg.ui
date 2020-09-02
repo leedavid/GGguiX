@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>552</width>
-    <height>467</height>
+    <width>590</width>
+    <height>513</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,23 +29,19 @@
       <attribute name="title">
        <string>通用</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_6">
+      <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
-        <layout class="QFormLayout" name="formLayout_6">
-         <item row="7" column="0">
-          <widget class="QCheckBox" name="m_humanCanPlayAfterTimeoutCheck">
+        <layout class="QGridLayout" name="gridLayout_2">
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="m_highlightLegalMovesCheck">
            <property name="text">
-            <string>超时后，人类玩家还能下棋</string>
+            <string>高亮合法棋步</string>
            </property>
            <property name="checked">
             <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QCheckBox" name="m_playersSidesOnClocksCheck">
-           <property name="text">
-            <string>在时钟显示玩家方 </string>
            </property>
           </widget>
          </item>
@@ -59,17 +55,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="m_highlightLegalMovesCheck">
-           <property name="text">
-            <string>高亮合法棋步</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
+         <item row="2" column="0">
           <widget class="QCheckBox" name="m_useFullUserNameCheck">
            <property name="text">
             <string>使用人类玩家全称</string>
@@ -79,36 +65,51 @@
            </property>
           </widget>
          </item>
-          <item row="6" column="0">
+         <item row="2" column="1">
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <widget class="QCheckBox" name="m_humanCanPlayAfterTimeoutCheck">
+             <property name="text">
+              <string>超时后，人类玩家还能下棋</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="m_playersSidesOnClocksCheck">
+           <property name="text">
+            <string>在时钟显示玩家方 </string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
           <widget class="QCheckBox" name="m_autoFlipBoardForHumanGamesCheck">
            <property name="text">
-            <string>Auto flip board for human vs human</string>
+            <string>自动翻转棋盘</string>
            </property>
           </widget>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QFormLayout" name="formLayout_3">
-         <property name="fieldGrowthPolicy">
-          <enum>QFormLayout::ExpandingFieldsGrow</enum>
-         </property>
-         <property name="horizontalSpacing">
-          <number>9</number>
-         </property>
-         <property name="verticalSpacing">
-          <number>9</number>
-         </property>
+        <layout class="QGridLayout" name="gridLayout">
          <property name="topMargin">
           <number>13</number>
          </property>
          <property name="bottomMargin">
           <number>0</number>
          </property>
-         <item row="1" column="1">
+         <property name="spacing">
+          <number>9</number>
+         </property>
+         <item row="0" column="1">
           <widget class="QLineEdit" name="m_siteEdit"/>
          </item>
-         <item row="1" column="0">
+         <item row="0" column="0">
           <widget class="QLabel" name="m_siteLabel">
            <property name="text">
             <string>PGN 地点:</string>
@@ -119,13 +120,30 @@
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QLabel" name="m_defaultPgnOutFileLabel">
+          <widget class="QLabel" name="m_tbPathLabel">
            <property name="text">
-            <string>PGN 保存对局:</string>
+            <string>残局库路径:</string>
+           </property>
+           <property name="buddy">
+            <cstring>m_tbPathEdit</cstring>
            </property>
           </widget>
          </item>
          <item row="2" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLineEdit" name="m_tbPathEdit"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="m_browseTbPathBtn">
+             <property name="text">
+              <string>浏览...</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="1">
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <widget class="QLineEdit" name="m_defaultPgnOutFileEdit">
@@ -146,31 +164,297 @@
            </item>
           </layout>
          </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="m_tbPathLabel">
+         <item row="1" column="0">
+          <widget class="QLabel" name="m_defaultPgnOutFileLabel">
            <property name="text">
-            <string>残局库路径:</string>
-           </property>
-           <property name="buddy">
-            <cstring>m_tbPathEdit</cstring>
+            <string>PGN 保存对局:</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout">
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>引擎盲区训练设置</string>
+         </property>
+         <widget class="QWidget" name="layoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>531</width>
+            <height>36</height>
+           </rect>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <property name="topMargin">
+            <number>6</number>
+           </property>
+           <property name="bottomMargin">
+            <number>6</number>
+           </property>
            <item>
-            <widget class="QLineEdit" name="m_tbPathEdit"/>
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>服务器地址:</string>
+             </property>
+            </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="m_browseTbPathBtn">
+            <widget class="QLineEdit" name="lineEdit_WebAddress">
              <property name="text">
-              <string>浏览...</string>
+              <string>192.168.0.1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_user">
+             <property name="text">
+              <string>用户名:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit_UserName">
+             <property name="text">
+              <string>userName</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>密码: </string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit_Password">
+             <property name="text">
+              <string>password</string>
+             </property>
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
              </property>
             </widget>
            </item>
           </layout>
-         </item>
-        </layout>
+         </widget>
+         <widget class="QWidget" name="layoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>60</y>
+            <width>531</width>
+            <height>32</height>
+           </rect>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <property name="topMargin">
+            <number>6</number>
+           </property>
+           <property name="bottomMargin">
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>最小步数:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBoxMinSteps">
+             <property name="maximum">
+              <number>100</number>
+             </property>
+             <property name="singleStep">
+              <number>2</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>最大步数:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBoxMaxSteps">
+             <property name="minimum">
+              <number>10</number>
+             </property>
+             <property name="maximum">
+              <number>400</number>
+             </property>
+             <property name="singleStep">
+              <number>5</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>最小分数:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBoxMinScore">
+             <property name="toolTip">
+              <string>局面分数的绝对值小于此值就不上传训练</string>
+             </property>
+             <property name="maximum">
+              <number>200</number>
+             </property>
+             <property name="singleStep">
+              <number>5</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>最大分数: </string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBoxMaxScore">
+             <property name="toolTip">
+              <string>局面分数的绝对值超过此值就不上传训练</string>
+             </property>
+             <property name="minimum">
+              <number>100</number>
+             </property>
+             <property name="maximum">
+              <number>2000</number>
+             </property>
+             <property name="singleStep">
+              <number>100</number>
+             </property>
+             <property name="value">
+              <number>1000</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="layoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>100</y>
+            <width>531</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>棋步间隔</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBoxStepsGap">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>每上传一个局面，跳过的棋步，不用每步上传</string>
+             </property>
+             <property name="minimum">
+              <number>0</number>
+             </property>
+             <property name="maximum">
+              <number>6</number>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="toolTip">
+              <string>服务器上的训练组别，缺省是1，为主训练</string>
+             </property>
+             <property name="text">
+              <string>训练组别：</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBox_trainID">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>2</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxLXupload">
+             <property name="toolTip">
+              <string>用GGzero连线是自动上传盲区</string>
+             </property>
+             <property name="text">
+              <string>连线自动上传盲区</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox_AutoUploadFen">
+             <property name="toolTip">
+              <string>引擎联赛，如果输了，就自动上传棋局到服务器训练</string>
+             </property>
+             <property name="text">
+              <string>联赛自动上传盲区</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
        </item>
        <item>
         <spacer name="verticalSpacer_2">

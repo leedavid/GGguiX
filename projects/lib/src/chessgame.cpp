@@ -94,6 +94,10 @@ ChessGame& ChessGame::operator=(const ChessGame& game)
 		{
 			//moveToStart();
 		}
+
+		this->m_startingFen = game.m_startingFen;
+		this->m_fens = game.m_fens;
+		this->m_scores = game.m_scores;		
 	}
 	return *this;
 }
@@ -114,6 +118,8 @@ ChessGame::ChessGame(Chess::Board* board, PgnGame* pgn, QObject* parent)
 	//m_isEngingMatch(false)   // 不是引擎比赛
 {
 	Q_ASSERT(pgn != nullptr);
+
+	this->m_startingFen = "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1";
 
 	for (int i = 0; i < 2; i++)
 	{
@@ -232,6 +238,7 @@ Chess::Board* ChessGame::board() const
 
 QString ChessGame::startingFen() const
 {
+	//return m_currentBoard->startingFenString();
 	return m_startingFen;
 }
 
@@ -390,6 +397,9 @@ void ChessGame::onMoveMade(const Chess::Move& move)
 		player->addTime(sender->timeControl()->lastMoveTime());
 	player->makeMove(move);
 	m_currentBoard->makeMove(move);
+
+	// 得到FEN
+	this->m_fens.append(m_currentBoard->fenString());
 
 	if (m_result.isNone())
 	{
@@ -650,6 +660,8 @@ bool ChessGame::setMoves(const PgnGame& pgn)
 		return false;
 	m_scores.clear();
 	m_moves.clear();
+	m_fens.clear();
+	//m_fens.append(m_currentBoard->fenString());  // 这个不用
 
 	for (const PgnGame::MoveData& md : pgn.moves())
 	{
@@ -662,6 +674,7 @@ bool ChessGame::setMoves(const PgnGame& pgn)
 			return true;
 
 		m_moves.append(move);
+		m_fens.append(m_currentBoard->fenString());
 	}
 
 	return true;
@@ -719,6 +732,7 @@ void ChessGame::generateOpening()
 			break;
 
 		m_moves.append(move);
+		m_fens.append(m_currentBoard->fenString());
 	}
 }
 
