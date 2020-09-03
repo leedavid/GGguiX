@@ -76,6 +76,7 @@ namespace Chess {
 		int _minSteps;
 		int _stepsGap;
 		bool _autoUpload; 
+		bool _saveBlind;
 		//ChessGame* _game;
 		QString _startFen;
 		QVector<QString> _fens;           // by LGL ËùÓĞµÄfen

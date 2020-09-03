@@ -78,20 +78,17 @@ namespace Chess {
 		//ChessGame* game = _game;
 		//QString startFen = game->startingFen();
 		//QString startFen = game->board()->startingFenString();
+		int numUp = 0;
+		bool bHaveFirst = false;
 		if (_startFen != "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1") {
 			this->addOneFenToWEB(_startFen, 0, true);
+			numUp++;
+			bHaveFirst = true;
 		}
 
-		//const QVector<Chess::Move>& moves() const;
-		//const QMap<int, int>& scores() const;
-		//const QVector<QString>& fens() const { return m_fens; };
-
-		//auto fens = game->fens();
-		//auto scores = game->scores();
-
-		//int ply = 0;
-		int score = 0;
-		//for (auto fen : _fens) {
+		int score = 0;	
+		bool find_start = false;  
+		
 		for(int ply=0; ply < _fens.count(); ply++){
 
 			QString fen = _fens[ply];
@@ -108,8 +105,11 @@ namespace Chess {
 			if (abs(score) > _maxScore) {  // 局面超过了最大分，后面就不上传了
 				break;
 			}
-			if (abs(score) < _minScore) {     // 开局库不上传训练
-				continue;
+			if (abs(score) >= _minScore) {
+				find_start = true;
+			}
+			if (find_start == false) {				
+				continue;				
 			}
 			if (ply < _minSteps) {
 				continue;
@@ -120,9 +120,15 @@ namespace Chess {
 
 			ply += _stepsGap;
 
-			this->addOneFenToWEB(fen, score, false);
 			
+			this->addOneFenToWEB(fen, score, !bHaveFirst);
+			bHaveFirst = true;
+			numUp++;
 		}
+
+
+		QString info = "本次共上传 " + QString::number(numUp) + " 个局面";
+		emit SendSignal(3,info);
 		return true;
 	}
 
@@ -341,17 +347,19 @@ namespace Chess {
 		}
 		s.endArray();
 
-		// 再写入数组
-		s.beginWriteArray("UploadFenArray");
-		for (int i = 0; i < fenlist.size(); i++) {
-			s.setArrayIndex(i);
-			s.setValue("FEN", fenlist[i]);
-		}	
-		s.endArray();
+		if (_saveBlind) {
+			// 再写入数组
+			s.beginWriteArray("UploadFenArray");
+			for (int i = 0; i < fenlist.size(); i++) {
+				s.setArrayIndex(i);
+				s.setValue("FEN", fenlist[i]);
+			}
+			s.endArray();
+		}
 
 		//emit SendSignal(1, "成功");
-		QString info = "本机已上传 " + QString::number(fenlist.size()) + " 个局面";
-		emit SendSignal(3,info);
+		//QString info = "本机已上传 " + QString::number(fenlist.size()) + " 个局面";
+		//emit SendSignal(3,info);
 
 		return true;
 	}
@@ -405,7 +413,7 @@ namespace Chess {
 		_maxSteps = s.value("trainFen/MaxSteps", 400).toInt();
 		_minSteps = s.value("trainFen/MinSteps", 0).toInt();
 		_stepsGap = s.value("trainFen/StepsGap", 0).toInt();
-		
+		_saveBlind = s.value("trainFen/BlinDSave", false).toBool();
 		return true;
 	}
 

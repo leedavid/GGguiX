@@ -87,6 +87,13 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 				checked);
 		});
 
+	connect(ui->checkBoxLXupload, &QCheckBox::toggled,
+		[=](bool checked)
+		{
+			QSettings().setValue("trainFen/BlinDSave",
+				checked);
+		});
+
 
 	connect(ui->lineEdit_UserName, &QLineEdit::textChanged,
 		[=](const QString& defaultUserName)
@@ -312,6 +319,9 @@ void SettingsDialog::readSettings()
 
 	ui->checkBoxLXupload
 		->setChecked(s.value("LXuploadFen", false).toBool());
+
+	ui->checkBoxBlinDSave
+		->setChecked(s.value("BlinDSave", false).toBool());
 
 	ui->lineEdit_UserName
 		->setText(s.value("UserName").toString());

@@ -23,7 +23,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="m_generalTab">
       <attribute name="title">
@@ -298,6 +298,9 @@
              <property name="singleStep">
               <number>5</number>
              </property>
+             <property name="value">
+              <number>100</number>
+             </property>
             </widget>
            </item>
            <item>
@@ -313,9 +316,12 @@
               <string>局面分数的绝对值小于此值就不上传训练</string>
              </property>
              <property name="maximum">
-              <number>200</number>
+              <number>50</number>
              </property>
              <property name="singleStep">
+              <number>5</number>
+             </property>
+             <property name="value">
               <number>5</number>
              </property>
             </widget>
@@ -353,7 +359,7 @@
            <rect>
             <x>10</x>
             <y>100</y>
-            <width>531</width>
+            <width>533</width>
             <height>22</height>
            </rect>
           </property>
@@ -383,7 +389,7 @@
               <number>0</number>
              </property>
              <property name="maximum">
-              <number>6</number>
+              <number>3</number>
              </property>
              <property name="value">
               <number>0</number>
@@ -430,12 +436,19 @@
             </spacer>
            </item>
            <item>
+            <widget class="QCheckBox" name="checkBoxBlinDSave">
+             <property name="text">
+              <string>保存盲区</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QCheckBox" name="checkBoxLXupload">
              <property name="toolTip">
               <string>用GGzero连线是自动上传盲区</string>
              </property>
              <property name="text">
-              <string>连线自动上传盲区</string>
+              <string>连线盲区</string>
              </property>
             </widget>
            </item>
@@ -445,7 +458,7 @@
               <string>引擎联赛，如果输了，就自动上传棋局到服务器训练</string>
              </property>
              <property name="text">
-              <string>联赛自动上传盲区</string>
+              <string>联赛盲区</string>
              </property>
              <property name="checked">
               <bool>false</bool>
