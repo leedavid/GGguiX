@@ -174,7 +174,7 @@ namespace Chess {
 		int HIGH_TIMES = _drawHignScoreNum;
 		// 先找出高分
 
-		int hign_num = 0;
+		//int hign_num = 0;
 		bool find = false;
 		int endPly = _fens.count() - 1;
 		int startPly = endPly - HIGH_TIMES;
@@ -197,10 +197,10 @@ namespace Chess {
 			else {
 				score = -1;       // 只上传算过的分数
 			}
-			totalScore += score;
+			totalScore += abs(score);   // 这儿得算是绝对分数
 		}
 
-		if (totalScore / hign_num > HIGH_SCORE) {
+		if (totalScore / HIGH_TIMES > HIGH_SCORE) {
 			find = true;
 		}
 

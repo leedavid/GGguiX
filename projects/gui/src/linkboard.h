@@ -25,7 +25,8 @@ namespace Chess {
 		enum eCapMsg {
 			eMove,				// 走步
 			eSetFen,			// 设置fen
-			eText				// 提示信息
+			eText,				// 提示信息
+			eDraw               // 网站判和了
 		};
 		eCapMsg mType;	
 		Chess::GenericMove m;
@@ -91,7 +92,7 @@ namespace Chess {
 		static volatile bool m_MayNewGame;
 
 	public:
-		LinkBoard(MainWindow* pMain, Capture* pCap, QString catName, bool isAuto);
+		LinkBoard(MainWindow* pMain, Capture* pCap, QString linkCat, bool isAuto);
 		void setStop(bool s) {
 			this->bMustStop = s;
 		};
@@ -115,7 +116,9 @@ namespace Chess {
 		HWND m_parentHwnd;                 // 棋盘父窗口
 		HWND m_hwnd;                       // 可响应鼠标走棋的窗口
 
-		QString m_catName;                 // 这个就是连线的名称
+		//QString m_catName;               // 这个就是连线的名称
+		//ELinkMethod m_linkMethod;        // 连线方式
+		QString m_linkCanName;             // 
 		bool m_isAutoClick;                // 
 			
 		QString m_ParentKeyword;           // 父窗口关键词

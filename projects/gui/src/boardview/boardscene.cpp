@@ -675,7 +675,7 @@ QPropertyAnimation* BoardScene::pieceAnimation(GraphicsPiece* piece,
 	anim->setEndValue(endPoint);
 	anim->setEasingCurve(QEasingCurve::InOutQuad);
 
-	if (m_board->GetIsAutoLinkStat()) {
+	if (m_board->GetLinkMethod() != "") {
 		anim->setDuration(0);		
 	}
 	else {

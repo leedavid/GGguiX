@@ -27,6 +27,7 @@
 #include <climits>
 #include "board/genericmove.h"
 #include "board/result.h"
+#include "board/board.h"
 class QTextStream;
 class PgnStream;
 class EcoNode;
@@ -60,7 +61,11 @@ class LIB_EXPORT PgnGame
 			Verbose
 		};
 
-		bool m_autoLink = false;
+		//bool m_autoLink = false;
+		//Chess::ELinkMethod m_linkMod = Chess::ELinkMethod::NoneLink;
+		//QString m_linkCatName = "";
+		QString GetLinkCatName() { return this->m_linkCatName; };
+		void SetLinkCatName(QString lcn) { this->m_linkCatName = lcn;  };
 
 		/*! \brief A struct for storing the game's move history. */
 		struct MoveData
@@ -215,6 +220,7 @@ class LIB_EXPORT PgnGame
 
 	private:
 		bool parseMove(PgnStream& in, bool addEco);
+		QString m_linkCatName;
 		
 		Chess::Side m_startingSide;
 		const EcoNode* m_eco;

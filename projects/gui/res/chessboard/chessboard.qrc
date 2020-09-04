@@ -28,7 +28,7 @@
         <file>icon/add.ico</file>
         <file>icon/del.ico</file>
         <file>icon/commmon.ico</file>
-        <file>icon/clear.ico</file>
-        <file>icon/dove.ico</file>
+        <file>icon/dove_green.png</file>
+        <file>icon/remove_all.png</file>
     </qresource>
 </RCC>

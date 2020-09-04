@@ -41,6 +41,7 @@ namespace Chess {
 
 	public:
 
+		//explicit Capture(QObject* parent, QString catName, bool isAuto = false);
 		explicit Capture(QObject* parent, QString catName, bool isAuto = false);
 
 		~Capture();

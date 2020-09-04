@@ -20,10 +20,10 @@ namespace Chess {
 	QMutex LinkBoard::mutex;
 	volatile bool LinkBoard::m_MayNewGame;
 
-LinkBoard::LinkBoard(MainWindow* pMain, Capture* pCap, QString catName, bool isAuto)
+LinkBoard::LinkBoard(MainWindow* pMain, Capture* pCap, QString linkCat, bool isAuto)
 	:m_pMain(pMain),
 	m_pCap(pCap),
-	m_catName(catName),
+	m_linkCanName(linkCat),
 	m_isAutoClick(isAuto)
 {
 	this->initBoard();   
@@ -247,7 +247,7 @@ bool LinkBoard::readFromCatlog(QString cat)
 {
 	
 	if (cat == nullptr) {
-		cat = m_catName;
+		cat = m_linkCanName;
 	}
 	try {
 		QString fileName = QCoreApplication::applicationDirPath() + "/image/linkboard/" + cat + "/linkinfo.data";
@@ -268,7 +268,7 @@ bool LinkBoard::readFromCatlog(QString cat)
 bool LinkBoard::saveToCatlog(QString cat)
 {
 	if (cat == nullptr) {
-		cat = m_catName;
+		cat = m_linkCanName;
 	}
 	try {
 		QString fileName = QCoreApplication::applicationDirPath() + "/image/linkboard/" + cat + "/linkinfo.data";
@@ -299,7 +299,7 @@ void LinkBoard::runAutoChess()
 		
 		//this->GetLxInfo(this->m_catName, false);   // 不保存棋子
 
-		this->GetLxInfo(this->m_catName, false);  // 保存棋子
+		this->GetLxInfo(this->m_linkCanName, false);  // 保存棋子
 
 		if (this->m_Ready_LXset == false) {
 			m_pCap->SendMessageToMain("出错啦 01", "连线方案还没有准备好！");
@@ -442,7 +442,7 @@ void LinkBoard::runAutoClip()
 	// 点击所有自动目录下的图
 	QStringList nameFilters;
 	nameFilters << "*.png";
-	QString runPath = QCoreApplication::applicationDirPath() + "/image/linkboard/" + this->m_catName;
+	QString runPath = QCoreApplication::applicationDirPath() + "/image/linkboard/" + this->m_linkCanName;
 
 	while (true) {
 		if (bMustStop) return;
@@ -572,7 +572,7 @@ void LinkBoard::ProcessBoardMove(const Chess::GenericMove& move)
 
 void LinkBoard::SetCatlogName(QString catName)
 {
-	this->m_catName = catName;
+	this->m_linkCanName = catName;
 	this->initBoard();
 }
 
@@ -1113,7 +1113,7 @@ bool LinkBoard::SaveOnePiecePic(int x, int y, QString chessName, QString subCat)
 	// 得到全目录
 	try {
 		QString runPath = QCoreApplication::applicationDirPath();
-		QString picFile = runPath + "/image/linkboard/" + this->m_catName + "/chess/" + subCat + "/" + chessName;
+		QString picFile = runPath + "/image/linkboard/" + this->m_linkCanName + "/chess/" + subCat + "/" + chessName;
 
 		int pieceSize = int(m_dx * 0.50f);
 		QRect rect(
@@ -1324,7 +1324,7 @@ bool LinkBoard::searchImage(QString findName, bool isCap, QString sub_catlog, in
 			image_template_main = this->m_MatHash.value(findName);
 		}
 		else {
-			QString runPath = QCoreApplication::applicationDirPath() + "/image/linkboard/" + this->m_catName;
+			QString runPath = QCoreApplication::applicationDirPath() + "/image/linkboard/" + this->m_linkCanName;
 			QString fFile = runPath + findName;
 			image_template_main = cv::imread(fFile.toLocal8Bit().toStdString());   // 模板图
 			// 要不要缩放
@@ -1551,7 +1551,7 @@ bool LinkBoard::searchChess(HWND hw, QString findName, QVector<cv::Point>& res, 
 			bIsInHash = true;
 		}
 		else {  // 把所有的各种棋子放入
-			QString filePath = QCoreApplication::applicationDirPath() + "/image/linkboard/" + this->m_catName + "/chess/";
+			QString filePath = QCoreApplication::applicationDirPath() + "/image/linkboard/" + this->m_linkCanName + "/chess/";
 			QDir dir(filePath);
 			if (!dir.exists()) {
 				return false;

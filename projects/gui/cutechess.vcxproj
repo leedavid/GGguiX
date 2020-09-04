@@ -110,7 +110,7 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <Optimization>MaxSpeed</Optimization>
-      <PreprocessorDefinitions>UNICODE;_UNICODE;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;LIB_EXPORT=;CUTECHESS_VERSION="1.3.2";QT_TESTCASE_BUILDDIR=".";QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_CONCURRENT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_SVG_LIB;QT_NETWORK_LIB;QT_TEXTTOSPEECH_LIB;QT_MULTIMEDIA_LIB;USE_SOUND;USE_SPEECH;QT_NETWORKAUTH_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UNICODE;_UNICODE;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;LIB_EXPORT=;CUTECHESS_VERSION="1.3.6";QT_TESTCASE_BUILDDIR=".";QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_CONCURRENT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_SVG_LIB;QT_NETWORK_LIB;QT_TEXTTOSPEECH_LIB;QT_MULTIMEDIA_LIB;USE_SOUND;USE_SPEECH;QT_NETWORKAUTH_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -390,7 +390,9 @@
     <ClCompile Include="src\translatingslider.cpp" />
     <ClCompile Include="src\xuciengine.cpp" />
     <ClCompile Include="src\xwbengine.cpp" />
-    <ClCompile Include="src\工具条.cpp" />
+    <ClCompile Include="src\盲区训练.cpp" />
+    <ClCompile Include="src\窗口初始化.cpp" />
+    <ClCompile Include="src\连线下棋.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\autoverticalscroller.h">

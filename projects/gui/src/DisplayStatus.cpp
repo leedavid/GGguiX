@@ -130,7 +130,7 @@ void MainWindow::createStatus()
 			}
 		}
 	}
-	//strList << "王者象棋" << "天天象棋";
+
 	this->cbtnLinkBoard->addItems(strList);
 	connect(this->cbtnLinkBoard, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(onLinkBoardCombox(const QString&)));
 	//this->mainToolbar->addWidget(this->cbtnLinkBoard);

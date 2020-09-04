@@ -301,10 +301,10 @@
               <number>5</number>
              </property>
              <property name="maximum">
-              <number>100</number>
+              <number>20</number>
              </property>
              <property name="singleStep">
-              <number>2</number>
+              <number>1</number>
              </property>
             </widget>
            </item>

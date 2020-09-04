@@ -25,6 +25,15 @@ namespace Chess {
 
 class BoardTransition;
 
+//enum class ELinkMethod {
+//
+//	NoneLink = 0,
+//	TianTain,
+//	KingChess,
+//	QQchess,
+//	OtherLinkMethod
+//};
+
 
 /*!
  * \brief An internal chessboard class.
@@ -89,10 +98,10 @@ class LIB_EXPORT Board
 			ShredderFen
 		};
 
-		void SetAutoLinkStat(bool isAutolink) {
-			m_bIsAutoLink = isAutolink;
+		void SetLinkCatName(QString Link) {
+			m_linkCatName = Link;
 		};
-		bool GetIsAutoLinkStat() { return m_bIsAutoLink; };
+		QString GetLinkMethod() { return m_linkCatName;  };
 
 		/*!
 		 * Creates a new Board object.
@@ -102,6 +111,12 @@ class LIB_EXPORT Board
 		 * the zobrist object and takes care of deleting it.
 		 */
 		Board(Zobrist* zobrist);
+
+		void SetSendHighScoreDraw(bool isSend) { this->m_isSendHighScoreDraw = isSend; };
+		bool GetSendHighScoreDraw() {
+			return this->m_isSendHighScoreDraw;
+		};
+
 		/*! Destructs the Board object. */
 		virtual ~Board();
 		/*! Creates and returns a deep copy of this board. */
@@ -562,6 +577,7 @@ class LIB_EXPORT Board
 		friend LIB_EXPORT QDebug operator<<(QDebug dbg, const Board* board);
 
 		bool m_initialized;
+		bool m_isSendHighScoreDraw;  // 是否发送高分和棋
 		int m_width;
 		int m_height;
 		Side m_side;
@@ -575,7 +591,10 @@ class LIB_EXPORT Board
 		QVarLengthArray<Piece> m_squares;
 		QVector<MoveData> m_moveHistory;
 		//QVector<int> m_reserve[2];
-		bool m_bIsAutoLink;   // 是不是自动连线
+		//bool m_bIsAutoLink;   // 是不是自动连线
+		//ELinkMethod m_LinkMethod;
+		QString m_linkCatName;
+
 		QString m_squareAnnotation;
 		QString m_arrowAnnotation;
 };

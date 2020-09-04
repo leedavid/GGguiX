@@ -1450,19 +1450,42 @@ Result WesternBoard::result()
 	// 如果是连线状态，则暂时不能判断
 	//if(this->m_)
 
-	if (Board::GetIsAutoLinkStat()) {
+	if (Board::GetLinkMethod() != "") {
 		// 50 move rule
-		if (m_reversibleMoveCount >= 160)
-		{
-			str = tr("60 步未吃子，判和！");
-			return Result(Result::Draw, Side::NoSide, str);
-		}
+		//if (m_reversibleMoveCount >= 160)
+		//{
+		//	str = tr("60 步未吃子，判和！");
+		//	return Result(Result::Draw, Side::NoSide, str);
+		//}
 
-		// 3-fold repetition
-		if (repeatCount() >= 10)
-		{
-			str = tr("循环三步，判和！");
-			return Result(Result::Draw, Side::NoSide, str);
+		if (Board::GetLinkMethod() == "天天象棋") {
+
+			if (m_reversibleMoveCount >= 160)
+			{
+				str = tr("60 步未吃子，判和！");
+				return Result(Result::Draw, Side::NoSide, str);
+			}
+
+			if (repeatCount() >= 5)
+			{
+				str = tr("循环五步，判和！");
+				return Result(Result::Draw, Side::NoSide, str);
+			}
+		}
+		else {
+
+			if (m_reversibleMoveCount >= 160)
+			{
+				str = tr("60 步未吃子，判和！");
+				return Result(Result::Draw, Side::NoSide, str);
+			}
+
+			// 3-fold repetition
+			if (repeatCount() >= 4)
+			{
+				str = tr("循环四步，判和！");
+				return Result(Result::Draw, Side::NoSide, str);
+			}
 		}
 	}
 	else {

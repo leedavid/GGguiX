@@ -93,7 +93,7 @@ class MainWindow : public QMainWindow
 		virtual void closeEvent(QCloseEvent* event);
 		void closeCurrentGame();
 
-		void setupAnalysisWidget(DockWidgetEx* analysisDock, Chess::AnalysisWidget* analysis);
+		//void setupAnalysisWidget(DockWidgetEx* analysisDock, Chess::AnalysisWidget* analysis);
 		void moveChanged();
 
 		int getSelEngineIndex(bool isMain) const;
@@ -165,6 +165,7 @@ signals:
 		void onActEngineThink();
 
 		void onLinkBoardCombox(const QString&);
+		//void GetLinkModeByString(const QString&);
 
 		/** Value for Move Interval is changed */
 		void slotMoveIntervalChanged(int);

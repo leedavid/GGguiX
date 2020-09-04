@@ -466,7 +466,8 @@ void GameManager::newGame(ChessGame* game,
 
 	//m_gameNowEntry = entry;
 
-	if(game->getIsLinkBoard()){
+	//if(game->getIsLinkBoard()){
+	if(game->pgn()->GetLinkCatName() != ""){
 		if (!white->isHuman() && black->isHuman())
 			game->setBoardShouldBeFlipped(false);
 		else

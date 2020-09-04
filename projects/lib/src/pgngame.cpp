@@ -56,7 +56,8 @@ QTextStream& operator<<(QTextStream& out, const PgnGame& game)
 PgnGame::PgnGame()
 	: m_startingSide(Chess::Side::White),
 	  m_eco(EcoNode::root()),
-	  m_tagReceiver(nullptr)
+	  m_tagReceiver(nullptr),
+	m_linkCatName("")
 {
 }
 
@@ -147,7 +148,10 @@ Chess::Board* PgnGame::createBoard() const
 		return nullptr;
 	}
 	
-	board->SetAutoLinkStat(m_autoLink);
+	// µÃµ½linkMethod 
+	//ard->SetAutoLinkStat(m_autoLink);
+
+	board->SetLinkCatName(this->m_linkCatName);
 	
 
 	return board;

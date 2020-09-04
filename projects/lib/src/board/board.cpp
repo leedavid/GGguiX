@@ -62,7 +62,8 @@ Board::Board(Zobrist* zobrist)
 	  m_key(0),
 	  m_zobrist(zobrist),
 	  m_sharedZobrist(zobrist),
-	m_bIsAutoLink(false)
+	m_linkCatName(""),
+	m_isSendHighScoreDraw(false)
 {
 	Q_ASSERT(zobrist != nullptr);
 
@@ -942,7 +943,7 @@ bool Board::vIsLegalMove(const Move& move)
 
 		repcount = this->repeatCount();
 
-		if (Board::GetIsAutoLinkStat()) {
+		if (Board::GetLinkMethod() != "") {
 			if (repcount >= 10) {  // 二次重复，要判断是不是犯规了
 				Board* newB = this->copy();
 				isBan = newB->vIsBan(move);

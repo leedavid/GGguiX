@@ -119,8 +119,8 @@ class LIB_EXPORT ChessGame : public QObject
 
 		//bool isGetSetting;    // 是否从设置文件中得到了设置数据
 
-		void setIsLinkBoard(bool isLink) {	m_isLinkBoard = isLink;	};        // 是否连线下棋不要翻转	
-		bool getIsLinkBoard() { return m_isLinkBoard; };
+		//void setIsLinkBoard(bool isLink) {	m_isLinkBoard = isLink;	};        // 是否连线下棋不要翻转	
+		//bool getIsLinkBoard() { return m_isLinkBoard; };
 		
 		//void setIsEngingMatch(bool isMatch) { m_isEngingMatch = isMatch; };   // 是否引擎比赛
 		//bool getIsEngingMatch() { return m_isEngingMatch; };

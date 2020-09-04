@@ -341,14 +341,20 @@
     <ClCompile Include="src\gamerepetitionspinbox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\工具条.cpp">
-      <Filter>Source Files\mainWin</Filter>
-    </ClCompile>
     <ClCompile Include="src\TrainFenToServer.cpp">
       <Filter>Source Files\TrainFen</Filter>
     </ClCompile>
     <ClCompile Include="src\DisplayStatus.cpp">
       <Filter>Source Files\mainWin\状态栏</Filter>
+    </ClCompile>
+    <ClCompile Include="src\连线下棋.cpp">
+      <Filter>Source Files\mainWin</Filter>
+    </ClCompile>
+    <ClCompile Include="src\盲区训练.cpp">
+      <Filter>Source Files\mainWin</Filter>
+    </ClCompile>
+    <ClCompile Include="src\窗口初始化.cpp">
+      <Filter>Source Files\mainWin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
