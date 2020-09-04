@@ -128,6 +128,18 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 			QSettings().setValue("trainFen/MaxScore", value);
 		});
 
+	connect(ui->spinBoxDrawHighScore, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+		this, [=](int value)
+		{
+			QSettings().setValue("trainFen/DrawHighScore", value);
+		});
+
+	connect(ui->spinBoxDrawHighScoreNum, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+		this, [=](int value)
+		{
+			QSettings().setValue("trainFen/DrawHighScoreNum", value);
+		});
+
 	connect(ui->spinBoxMinScore, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
 		this, [=](int value)
 		{
@@ -334,6 +346,9 @@ void SettingsDialog::readSettings()
 
 	ui->spinBox_trainID->setValue(s.value("trainID", 1).toInt());
 	ui->spinBoxStepsGap->setValue(s.value("StepsGap", 1).toInt());
+
+	ui->spinBoxDrawHighScore->setValue(s.value("DrawHighScore", 200).toInt());
+	ui->spinBoxDrawHighScoreNum->setValue(s.value("DrawHighScoreNum", 30).toInt());
 
 
 	ui->spinBoxMaxScore->setValue(s.value("MaxScore", 1000).toInt());

@@ -508,6 +508,19 @@ void MainWindow::createToolBars()
 	connect(this->actTrainFenAdd, &QAction::triggered, this, &MainWindow::onTrainFenAdd);
 
 
+	// 上传高分和棋的局面
+	this->actTrainFenDrawTooHigh = new QAction(this);
+	this->actTrainFenDrawTooHigh->setObjectName(QStringLiteral("actTrainFenDrawTooHigh"));
+	QIcon iconactTrainFenDrawTooHigh;
+	iconactTrainFenDrawTooHigh.addFile(QStringLiteral(":/icon/dove.ico"),
+		QSize(), QIcon::Normal, QIcon::Off);
+	this->actTrainFenDrawTooHigh->setIcon(iconactTrainFenDrawTooHigh);
+	this->actTrainFenDrawTooHigh->setText("上传高分和棋Fen");
+	this->actTrainFenDrawTooHigh->setToolTip("上传引擎显示高分，但其实和棋的局面");
+
+	this->mainToolbar->addAction(this->actTrainFenDrawTooHigh);
+	connect(this->actTrainFenDrawTooHigh, &QAction::triggered, this, &MainWindow::onTrainDrawToHigh);
+
 	// 删除当前棋局的Fen Delete
 	this->actTrainFenDelete = new QAction(this);
 	this->actTrainFenDelete->setObjectName(QStringLiteral("actTrainFenDelete"));
@@ -608,7 +621,7 @@ void MainWindow::createToolBars()
 	//	this, SLOT(onTabChanged(int)));
 }
 
-void MainWindow::TrainFenAdd(ChessGame* game)
+void MainWindow::TrainFenAddLostGame(ChessGame* game)
 {
 	//Chess::CTrainFen ct(this);
 	if (this->getCTtrainFen()->isRunning()) {
@@ -619,29 +632,76 @@ void MainWindow::TrainFenAdd(ChessGame* game)
 	}
 }
 
-
-void MainWindow::onTrainFenAdd()
-{
-	TrainFenAdd(this->GetCurrentChessGame());
-}
-
-void MainWindow::onTrainFenDelete()
+void MainWindow::TrainFenAddDrawTooHigh(ChessGame* game)
 {
 	if (this->getCTtrainFen()->isRunning()) {
 		this->slotDisplayStatus(3, "trainFen 正在处理中, 请稍候...");
 	}
 	else {
-		this->getCTtrainFen()->on_start2(Chess::CTrainFenMethod::DEL_FEN);
+		this->getCTtrainFen()->on_start2(Chess::CTrainFenMethod::ADD_Draw_Too_High, game);
+	}
+}
+
+
+void MainWindow::onTrainFenAdd()
+{
+	QMessageBox::StandardButton result;
+	result = QMessageBox::warning(this, QApplication::applicationName(),
+		tr("本操作将当前棋局上传到服务器上训练.\n你确认吗?"),
+		QMessageBox::Ok | QMessageBox::Cancel);
+
+	if (result == QMessageBox::Ok) {
+		TrainFenAddLostGame(this->GetCurrentChessGame());
+	}
+}
+
+void MainWindow::onTrainFenDelete()
+{
+	
+	QMessageBox::StandardButton result;
+	result = QMessageBox::warning(this, QApplication::applicationName(),
+		tr("本操作将删除您以前上传到服务器的局面.\n你确认吗?"),
+		QMessageBox::Ok | QMessageBox::Cancel);
+
+	if (result == QMessageBox::Ok) {
+
+		if (this->getCTtrainFen()->isRunning()) {
+			this->slotDisplayStatus(3, "trainFen 正在处理中, 请稍候...");
+		}
+		else {
+			this->getCTtrainFen()->on_start2(Chess::CTrainFenMethod::DEL_FEN);
+		}
 	}
 }
 
 void MainWindow::onTrainFenAddCommon()
 {
-	if (this->getCTtrainFen()->isRunning()) {
-		this->slotDisplayStatus(3, "trainFen 正在处理中, 请稍候...");
+	QMessageBox::StandardButton result;
+	result = QMessageBox::warning(this, QApplication::applicationName(),
+		tr("本操作将常用开局上传到服务器上训练.\n你确认吗?"),
+		QMessageBox::Ok | QMessageBox::Cancel);
+
+	if (result == QMessageBox::Ok) {
+
+
+		if (this->getCTtrainFen()->isRunning()) {
+			this->slotDisplayStatus(3, "trainFen 正在处理中, 请稍候...");
+		}
+		else {
+			this->getCTtrainFen()->on_start2(Chess::CTrainFenMethod::COMMON_FEN);
+		}
 	}
-	else {
-		this->getCTtrainFen()->on_start2(Chess::CTrainFenMethod::COMMON_FEN);
+}
+
+void MainWindow::onTrainDrawToHigh()
+{
+	QMessageBox::StandardButton result;
+	result = QMessageBox::warning(this, QApplication::applicationName(),
+		tr("请确认当前棋局是高分，但应该是和棋.\n你确认吗?"),
+		QMessageBox::Ok | QMessageBox::Cancel);
+
+	if (result == QMessageBox::Ok) {  // ADD_Draw_Too_High
+		TrainFenAddDrawTooHigh(this->GetCurrentChessGame());
 	}
 }
 
@@ -650,7 +710,7 @@ void MainWindow::onTrainFenClearAll()
 	QMessageBox::StandardButton result;
 	result = QMessageBox::warning(this, QApplication::applicationName(),
 		tr("本操作将清除服务器上所有的局面.\n你确认吗?"),
-		QMessageBox::Ok | QMessageBox::Discard | QMessageBox::Cancel);
+		QMessageBox::Ok | QMessageBox::Cancel);
 
 	if (result == QMessageBox::Ok) {
 		if (this->getCTtrainFen()->isRunning()) {

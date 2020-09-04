@@ -29,5 +29,6 @@
         <file>icon/del.ico</file>
         <file>icon/commmon.ico</file>
         <file>icon/clear.ico</file>
+        <file>icon/dove.ico</file>
     </qresource>
 </RCC>

@@ -87,6 +87,8 @@ class LIB_EXPORT Result
 		/*! Returns true if the result is Draw. */
 		bool isDraw() const;
 
+		bool isDrawTruly() const;
+
 		/*! Returns the winning side, or NoSide if there's no winner. */
 		Side winner() const;
 		/*! Returns the losing side, or NoSide if there's no loser. */

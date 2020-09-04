@@ -71,6 +71,7 @@
 #include <engineconfiguration.h>
 #include "preferences.h"
 #include "settings.h"
+//#include "result.h"
 
 #include "BoardEditor.h"
 #include "random.h"
@@ -952,16 +953,20 @@ void MainWindow::onGameFinished(ChessGame* game)
 				switch (game->result().winner()) {
 				case Chess::Side::White:
 					if (b_name.contains("ggzero", Qt::CaseInsensitive)) {
-						this->TrainFenAdd(game);
+						this->TrainFenAddLostGame(game);
 					}
 					break;
 				case Chess::Side::Black:
 					if (w_name.contains("ggzero", Qt::CaseInsensitive)) {
-						this->TrainFenAdd(game);
+						this->TrainFenAddLostGame(game);
 					}					
-					break;
+					break;			
 				default:
 					break;
+				}
+
+				if (game->result().isDrawTruly()){  // 这个是真和棋
+					this->TrainFenAddDrawTooHigh(game);
 				}
 			}
 		}
@@ -980,12 +985,12 @@ void MainWindow::onGameFinished(ChessGame* game)
 			switch (game->result().winner()) {
 			case Chess::Side::White:
 				if (b_name.contains("ggzero", Qt::CaseInsensitive)) {
-					this->TrainFenAdd(game);
+					this->TrainFenAddLostGame(game);
 				}
 				break;
 			case Chess::Side::Black:
 				if (w_name.contains("ggzero", Qt::CaseInsensitive)) {
-					this->TrainFenAdd(game);
+					this->TrainFenAddLostGame(game);
 				}
 				break;
 			default:

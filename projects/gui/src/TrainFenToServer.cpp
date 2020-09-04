@@ -66,7 +66,7 @@ namespace Chess {
 		//return bytes;
 	}
 
-	bool CTrainFen::FenAdd()
+	bool CTrainFen::FenAddLostGame()
 	{
 
 		//this->addOneFenToWEB("2bakN3/4aR3/4b4/1C1R5/6n2/9/C6c1/2n1B3c/4A3r/4KA3 w - - 0 1", 0, true);		
@@ -86,10 +86,56 @@ namespace Chess {
 			bHaveFirst = true;
 		}
 
-		int score = 0;	
-		bool find_start = false;  
+		//******************* 准备测试数据
+		//for (int i = 0; i < 100; i++) {
+
+		//}
+
+
+		// 先找出负分，向前推10个局面就行
+		int startPly = 400;
+		bool findStart = false;
+		int endPly = 0;
+		int score = 0;
+		for (int ply = 0; ply < _fens.count(); ply++) {
+
+			//QString fen = _fens[ply];
+			if (_scores.contains(ply)) {
+				score = _scores[ply];
+				if (score == MoveEvaluation::NULL_SCORE) {
+					score = -1;
+				}
+			}
+			else {
+				score = -1;       // 只上传算过的分数
+			}
+			if (!findStart) {
+				if (score < (-_minScore)) {
+					startPly = ply;
+					findStart = true;
+				}				
+			}
+
+			if (score < (-_maxScore) ) {  // we find end move
+				endPly = ply;
+				break;
+			}
+		}
+		if (endPly > _maxSteps) {
+			endPly = _maxSteps;
+		}
+
+		if (startPly >= endPly) {
+			startPly = endPly - 1;
+		}
+		startPly -= _minSteps;
+		if (startPly <= 0) {
+			startPly = 0;
+		}
 		
-		for(int ply=0; ply < _fens.count(); ply++){
+
+		
+		for(int ply= startPly; ply < endPly; ply++){
 
 			QString fen = _fens[ply];
 			if (_scores.contains(ply)) {
@@ -101,26 +147,9 @@ namespace Chess {
 			else {
 				score = -1;   // 只上传算过的分数
 			}	
-
-			if (abs(score) > _maxScore) {  // 局面超过了最大分，后面就不上传了
-				break;
-			}
-			if (abs(score) >= _minScore) {
-				find_start = true;
-			}
-			if (find_start == false) {				
-				continue;				
-			}
-			if (ply < _minSteps) {
-				continue;
-			}
-			if (ply > _maxSteps) {
-				continue;
-			}
-
-			ply += _stepsGap;
-
 			
+			ply += _stepsGap;
+						
 			this->addOneFenToWEB(fen, score, !bHaveFirst);
 			bHaveFirst = true;
 			numUp++;
@@ -129,6 +158,82 @@ namespace Chess {
 
 		QString info = "本次共上传 " + QString::number(numUp) + " 个局面";
 		emit SendSignal(3,info);
+		return true;
+	}
+
+	// 高分和棋
+	bool CTrainFen::FenAddDrawTooHigh()
+	{
+		// 
+
+	
+		bool bHaveFirst = false;
+		int numUp = 0;  // 上传的局面数
+	
+		int HIGH_SCORE = _drawHighScore;
+		int HIGH_TIMES = _drawHignScoreNum;
+		// 先找出高分
+
+		int hign_num = 0;
+		bool find = false;
+		int endPly = _fens.count() - 1;
+		int startPly = endPly - HIGH_TIMES;
+		if (startPly < 0) {
+			startPly = 0;
+		}
+	
+		int score = 0;
+		int totalScore = 0;
+
+
+		for (int ply = startPly; ply < endPly; ply++) {
+			//QString fen = _fens[ply];
+			if (_scores.contains(ply)) {
+				score = _scores[ply];
+				if (score == MoveEvaluation::NULL_SCORE) {
+					score =  -1;
+				}
+			}
+			else {
+				score = -1;       // 只上传算过的分数
+			}
+			totalScore += score;
+		}
+
+		if (totalScore / hign_num > HIGH_SCORE) {
+			find = true;
+		}
+
+		if (find == false) {
+
+			emit SendSignal(3, "本对局不是高分和棋！");
+			return false;
+		}
+
+
+		for (int ply = startPly; ply < endPly; ply++) {
+
+			QString fen = _fens[ply];
+			if (_scores.contains(ply)) {
+				score = _scores[ply];
+				if (score == MoveEvaluation::NULL_SCORE) {
+					score = -1;
+				}
+			}
+			else {
+				score = -1;   // 
+			}
+
+			//ply += _stepsGap; 这个不用
+
+			this->addOneFenToWEB(fen, score, !bHaveFirst);
+			bHaveFirst = true;
+			numUp++;
+		}
+
+
+		QString info = "本次共上传 " + QString::number(numUp) + " 个局面";
+		emit SendSignal(3, info);
 		return true;
 	}
 
@@ -414,6 +519,11 @@ namespace Chess {
 		_minSteps = s.value("trainFen/MinSteps", 0).toInt();
 		_stepsGap = s.value("trainFen/StepsGap", 0).toInt();
 		_saveBlind = s.value("trainFen/BlinDSave", false).toBool();
+
+
+		_drawHighScore = s.value("trainFen/DrawHighScore", 200).toInt();
+		_drawHignScoreNum = s.value("trainFen/DrawHighScoreNum", 30).toInt();
+
 		return true;
 	}
 
@@ -434,7 +544,10 @@ namespace Chess {
 		//{
 			switch (_method) {
 			case CTrainFenMethod::ADD_FEN:
-				FenAdd();
+				FenAddLostGame();
+				break;
+			case CTrainFenMethod::ADD_Draw_Too_High:
+				FenAddDrawTooHigh();
 				break;
 			case CTrainFenMethod::DEL_FEN:
 				FenDelete();

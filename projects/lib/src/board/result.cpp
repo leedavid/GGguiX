@@ -78,6 +78,11 @@ bool Result::isDraw() const
 		m_type != ResultError);
 }
 
+bool Result::isDrawTruly() const
+{
+	return m_type == Draw;
+}
+
 Side Result::winner() const
 {
 	return m_winner;

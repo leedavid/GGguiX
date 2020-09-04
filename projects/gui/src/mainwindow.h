@@ -139,10 +139,12 @@ signals:
 		void slotProcessCapMsg(Chess::stCaptureMsg msg);
 		void slotDisplayStatus(int which, QString msg);     // 显示状态信息		
 
-		void TrainFenAdd(ChessGame* game = nullptr);
+		void TrainFenAddLostGame(ChessGame* game = nullptr);
+		void TrainFenAddDrawTooHigh(ChessGame* game = nullptr);
 		void onTrainFenAdd();
 		void onTrainFenDelete();
 		void onTrainFenAddCommon();
+		void onTrainDrawToHigh();            // 高分和棋的情况
 		void onTrainFenClearAll();
 
 		// 連线棋盘
@@ -232,6 +234,7 @@ signals:
 		QAction* actTrainFenDelete;
 		QAction* actTrainFenAddCommonFen;
 		QAction* actTrainFenClearAll;
+		QAction* actTrainFenDrawTooHigh;     // 高分和棋
 		
 
 		GameTabBar* m_tabBar;		    

@@ -23,6 +23,7 @@ namespace Chess {
 
 	enum class CTrainFenMethod {
 		ADD_FEN = 0,
+		ADD_Draw_Too_High,    // 高分和棋
 		DEL_FEN,
 		COMMON_FEN,
 		REMOVE_FEN
@@ -52,7 +53,8 @@ namespace Chess {
 		void run() Q_DECL_OVERRIDE;
 		int getWebInfoByQuery(QUrl url, QString& res);
 
-		bool FenAdd();
+		bool FenAddLostGame();
+		bool FenAddDrawTooHigh();   // 高分和棋
 		bool FenDelete();
 		bool FenCommon();
 		bool FenRemoveAll();
@@ -75,6 +77,8 @@ namespace Chess {
 		int _maxSteps;
 		int _minSteps;
 		int _stepsGap;
+		int _drawHighScore;
+		int _drawHignScoreNum;
 		bool _autoUpload; 
 		bool _saveBlind;
 		//ChessGame* _game;
