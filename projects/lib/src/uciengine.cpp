@@ -35,6 +35,7 @@
 #include <QEventloop>
 #include <QNetworkreply>
 #include <QUrlquery>
+#include "mersenne.h"
 
 namespace {
 
@@ -303,11 +304,10 @@ void UciEngine::startThinking()
 		command += QString(" nodes %1").arg(myTc->nodeLimit());
 
 
-	QString move;
-	int score = 0;
-	if (this->IsHaveChessDBmove(move, score)) {  // by LGL
+	Chess::ChessDBmove cm;
+	if (this->IsHaveChessDBmove(cm)) {  // by LGL
 		//emitMove(move);
-		command = QString("bookmove move %1 score %2").arg(move).arg(score);		
+		command = QString("bookmove move %1 score %2").arg(cm.move).arg(cm.score);		
 	}
 
 	write(command);
@@ -1000,38 +1000,39 @@ QString UciEngine::sanPv(const QVarLengthArray<QStringRef>& tokens)
 	return pv;
 }
 
-bool UciEngine::IsHaveChessDBmove(QString& move, int& score)
+bool UciEngine::IsHaveChessDBmove(Chess::ChessDBmove& cm)
 {
 	// 
 	QSettings s;
 	QString res;
 	int r = 0;
 	
+	const bool ENDGAME = this->board()->plyCount() > 50;
 	
 
 	QString fen = this->board()->fenString();
 	int useChesdDBOpenNum = s.value("games/opening_book/depth", 10).toInt();
 	bool useBest = s.value("games/opening_book/disk_access", true).toBool();
-	Chess::CHESSDB_QUERY_TYPE t = Chess::CHESSDB_QUERY_TYPE::QUERY_TYPE_BEST;
+	Chess::CHESSDB_QUERY_TYPE t = Chess::CHESSDB_QUERY_TYPE::CHESSDB_QUERY_TYPE_ALL;
 	if (!useBest) {
 		t = Chess::CHESSDB_QUERY_TYPE::QUERY_TYPE_RANDOM;
 	}
 	// 使用云开局
 	if (this->board()->plyCount() <= useChesdDBOpenNum) {
 
-		bool useChesdDBOpen = s.value("games/ChessDB/YunOpengame", false).toBool();		
-
-		if (useChesdDBOpen) {			
+		bool useChesdDBOpen = s.value("games/ChessDB/YunOpengame", false).toBool();	
+		if (useChesdDBOpen) {	
 			r = this->Query(fen, res, t, false);
 			if (r != 200) return false;
 		}
 	}
-	else {
+	else if (ENDGAME){   // 
 
 		bool useChessDBend = s.value("games/ChessDB/YunEndgame", false).toBool();
 		if (useChessDBend) {
 			bool useDTM = s.value("games/ChessDB/YunDTM", true).toBool();
 
+			//t = Chess::CHESSDB_QUERY_TYPE::QUERY_TYPE_BEST;                     // 残局库总是搜索最佳棋步？ 这个没有分数了
 			Chess::CHESSDB_ENDGAME_TYPE et = Chess::CHESSDB_ENDGAME_TYPE::DTM;
 			if (!useDTM) {
 				et = Chess::CHESSDB_ENDGAME_TYPE::DTC;
@@ -1039,24 +1040,84 @@ bool UciEngine::IsHaveChessDBmove(QString& move, int& score)
 			r = this->Query(fen, res, t, true, et);
 			if (r != 200) return false;			
 		}
-	}
+	}	
+
+
+	QStringList MoveList = res.split("|");
+	//bool find = false;
+
+
+	QList<Chess::ChessDBmove> allEntries;
 	
 
-	score = 0;
-	QStringList MoveList = res.split("|");
-	bool find = false;
 	for (auto one_move : MoveList) {   // 每个有效步
-		// move:h2f2,score:3,rank:2,note:! (45-02),winrate:50.23
+			// move:h2f2,score:3,rank:2,note:! (45-02),winrate:50.23
 		QStringList one_move_info = one_move.split(",");
 
-		QStringList Lmove = one_move_info[0].split(":");
-		if (Lmove.count() == 2) {
-			//move = board()->moveFromString(Lmove[1]);
-			move = Lmove[1];
-			find = true;		
-		}	
+		Chess::ChessDBmove m;
+		m.rank = 2;
+		m.score = 0;
+		bool ism = false;
+		for (auto minfo : one_move_info) {
+			QStringList  Tlist = minfo.split(":");
+			if (Tlist.count() == 2) {
+				if (Tlist[0] == "move") {
+					m.move = Tlist[1];
+					ism = true;
+				}
+				else if (Tlist[0] == "score") {
+					m.score = Tlist[1].toInt();
+				}
+				else if (Tlist[0] == "rank") {
+					m.rank = Tlist[1].toInt();
+				}
+				else if (Tlist[0] == "note") {
+					m.note = Tlist[1];
+				}
+				else if (Tlist[0] == "winrate") {
+					m.winrate = Tlist[1].toFloat();
+				}
+			}			
+		}
+		if (ism) {
+			allEntries.append(m);
+		}
 	}
-	return find;
+
+	int rankBest = 2;  //  大于这个才可以走
+	// 1  求最高分
+	for (auto e : allEntries) {
+		if (e.rank >= rankBest) {
+			rankBest = e.rank;
+		}
+	}
+	// 2 将最高分集中起来
+	QList<Chess::ChessDBmove> bestEntries;
+	for (auto e : allEntries) {
+		if (e.rank >= rankBest) {
+			bestEntries << e;
+		}
+	}
+
+	// 3 再在几个最佳步中随机选择
+	int totalWeight = 0;
+	for (auto e : bestEntries) {
+		totalWeight += e.rank;
+	}
+	if (totalWeight < 0)
+		return false;
+
+	int pick = Mersenne::random() % totalWeight;
+	int currentWeight = 0;
+	for (auto e : bestEntries) {
+		currentWeight += e.rank;
+		if (currentWeight > pick) {
+			cm = e;
+			return true;
+		}
+	}
+	// move:h2f2,score:3,rank:2,note:! (45-02),winrate:50.23
+	return false;
 }
 
 int UciEngine::getWebInfoByQuery(QUrl url, QString& res)

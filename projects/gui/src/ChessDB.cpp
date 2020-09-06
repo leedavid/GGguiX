@@ -161,11 +161,11 @@ namespace Chess {
 		}
 	}
 
-	ChessDBmove::ChessDBmove()
-	{
-		rank = 0;
-		score = 0;
-		winrate = 0.0f;
-	}
+	//ChessDBmove::ChessDBmove()
+	//{
+	//	rank = 0;
+	//	score = 0;
+	//	winrate = 0.0f;
+	//}
 
 }

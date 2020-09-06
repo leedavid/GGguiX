@@ -1460,7 +1460,7 @@ Result WesternBoard::result()
 
 		if (Board::GetLinkMethod() == "天天象棋") {
 
-			if (m_reversibleMoveCount >= 160)
+			if (m_reversibleMoveCount >= 250)
 			{
 				str = tr("60 步未吃子，判和！");
 				return Result(Result::Draw, Side::NoSide, str);

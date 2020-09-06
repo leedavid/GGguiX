@@ -25,15 +25,15 @@
 
 namespace Chess {
 
-	class ChessDBmove {
-	public:
-		ChessDBmove();
-		QString move;
-		int score;
-		int rank;
-		QString note;
-		float winrate;
-	};
+	//class ChessDBmove {
+	//public:
+	//	ChessDBmove();
+	//	QString move;
+	//	int score;
+	//	int rank;
+	//	QString note;
+	//	float winrate;
+	//};
 
 	enum class CHESSDB_QUERY_TYPE {
 		QUERY_TYPE_RANDOM = 0,
@@ -44,6 +44,14 @@ namespace Chess {
 	enum class CHESSDB_ENDGAME_TYPE {
 		DTM = 0,
 		DTC
+	};
+
+	struct ChessDBmove {
+		QString move;
+		int score;
+		int rank;
+		QString note;
+		float winrate;
 	};
 }
 
@@ -130,7 +138,7 @@ class LIB_EXPORT UciEngine : public ChessEngine
 		int m_mpv;        // by LGL
 
 		// 
-		bool IsHaveChessDBmove(QString& move, int& score); // 是否有云库步
+		bool IsHaveChessDBmove(Chess::ChessDBmove& cm); // 是否有云库步
 		int getWebInfoByQuery(QUrl url, QString& res);
 		int Query(const QString& Fen, QString& Res, 
 			Chess::CHESSDB_QUERY_TYPE type = Chess::CHESSDB_QUERY_TYPE::QUERY_TYPE_BEST,

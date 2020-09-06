@@ -315,7 +315,7 @@ Chess::GenericMove OpeningBook::move(quint64 key) const
 		// 2. 将全部的最高分集中起来
 		QList<Entry> BestEntries;
 		for (const Entry& entry : entries) {
-			if (entry.vscore == bestScore) {
+			if (entry.vscore >= bestScore) {
 				BestEntries << entry;
 			}
 		}
