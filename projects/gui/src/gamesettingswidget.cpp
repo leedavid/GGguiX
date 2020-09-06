@@ -98,12 +98,16 @@ GameSettingsWidget::GameSettingsWidget(QWidget *parent)
 		ui->m_fenEdit->setEnabled(str.isEmpty());
 	});
 
-	connect(ui->m_polyglotFileEdit, &QLineEdit::textChanged, [=](const QString& str)
-	{
-		ui->m_polyglotDepthSpin->setEnabled(!str.isEmpty());
-		ui->m_ramAccessRadio->setEnabled(!str.isEmpty());
-		ui->m_diskAccessRadio->setEnabled(!str.isEmpty());
-	});
+	//connect(ui->m_polyglotFileEdit, &QLineEdit::textChanged, [=](const QString& str)
+	//{
+	//	//ui->m_polyglotDepthSpin->setEnabled(!str.isEmpty());
+	//	//ui->m_ramAccessRadio->setEnabled(!str.isEmpty());
+	//	//ui->m_diskAccessRadio->setEnabled(!str.isEmpty());
+	//		(void)str;
+	//		ui->m_polyglotDepthSpin->setEnabled(true);
+	//		ui->m_ramAccessRadio->setEnabled(true);
+	//		ui->m_BesMoveRadio->setEnabled(true);
+	//});
 
 	readSettings();
 }
@@ -190,7 +194,7 @@ OpeningBook* GameSettingsWidget::openingBook() const
 		return nullptr;
 
 	auto mode = OpeningBook::BookRandom;
-	if (ui->m_diskAccessRadio->isChecked())
+	if (ui->m_BesMoveRadio->isChecked())
 		mode = OpeningBook::BookBest;
 	auto book = new PolyglotBook(mode);
 	if (!book->read(file))
@@ -245,7 +249,16 @@ void GameSettingsWidget::readSettings()
 	ui->m_polyglotFileEdit->setText(s.value("file").toString());
 	ui->m_polyglotDepthSpin->setValue(s.value("depth", 10).toInt());
 	if (s.value("disk_access").toBool())
-		ui->m_diskAccessRadio->setChecked(true);
+		ui->m_BesMoveRadio->setChecked(true);
+	s.endGroup();
+
+	s.beginGroup("ChessDB");
+	ui->checkBoxUseYunEndgame->setChecked(s.value("YunEndgame").toBool());
+	ui->checkBoxUseYunOpengame->setChecked(s.value("YunOpengame").toBool());
+	if (s.value("YunDTM").toBool())
+		ui->radioButtonYunDTM->setChecked(true);
+	//if (s.value("YunDTC").toBool())
+	//	ui->radioButtonYunDTC->setChecked(true);
 	s.endGroup();
 
 	s.beginGroup("draw_adjudication");
@@ -320,10 +333,12 @@ void GameSettingsWidget::enableSettingsUpdates()
 	{
 		QSettings().setValue("games/opening_book/depth", depth);
 	});
-	connect(ui->m_diskAccessRadio, &QRadioButton::toggled, [=](bool checked)
+	connect(ui->m_BesMoveRadio, &QRadioButton::toggled, [=](bool checked)
 	{
 		QSettings().setValue("games/opening_book/disk_access", checked);
 	});
+
+
 
 	connect(ui->m_drawMoveNumberSpin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
 		[=](int moveNumber)
@@ -371,6 +386,24 @@ void GameSettingsWidget::enableSettingsUpdates()
 	{
 		QSettings().setValue("games/pondering", checked);
 	});
+
+	//=======================================
+	connect(ui->checkBoxUseYunEndgame, &QCheckBox::toggled, [=](bool checked)
+		{
+			QSettings().setValue("games/ChessDB/YunEndgame", checked);
+		});
+	connect(ui->checkBoxUseYunOpengame, &QCheckBox::toggled, [=](bool checked)
+		{
+			QSettings().setValue("games/ChessDB/YunOpengame", checked);
+		});
+	connect(ui->radioButtonYunDTM, &QRadioButton::toggled, [=](bool checked)
+		{
+			QSettings().setValue("games/ChessDB/YunDTM", checked);
+		});
+
+
+	//=======================================
+
 }
 
 void GameSettingsWidget::onHumanCountChanged(int count)

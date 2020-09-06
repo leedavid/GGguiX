@@ -56,6 +56,9 @@
 #include "settings.h"
 
 #include "TrainFenToServer.h"
+#include "ChessDB.h"
+
+using namespace Chess;
 
 // 连线信息
 void MainWindow::slotProcessCapMsg(Chess::stCaptureMsg msg)
@@ -63,17 +66,17 @@ void MainWindow::slotProcessCapMsg(Chess::stCaptureMsg msg)
 	// 得到当前的游戏？不是，应该得到当前的chessgame
 
 	switch (msg.mType) {
-	case Chess::stCaptureMsg::eText:
+	case Chess::eCapMsgType::eText:
 		QMessageBox::warning(this, msg.title, msg.text);
 		break;
-	case Chess::stCaptureMsg::eMove:
+	case Chess::eCapMsgType::eMove:
 		// 判断走步是不是合法
 		if (isMoveValid(msg.m) == false) {  // 防止重复输入走步
 			return;
 		}
 		m_gameViewer->viewLinkMove(msg.m);
 		break;
-	case Chess::stCaptureMsg::eSetFen:
+	case Chess::eCapMsgType::eSetFen:
 	{
 		QString fen = msg.text;
 		if (this->tbtnLinkAuto->isChecked()) {
@@ -272,18 +275,31 @@ void MainWindow::slotProcessCapMsg(Chess::stCaptureMsg msg)
 			//connect(game, SIGNAL(moveMade(Chess::GenericMove, QString, QString)),
 			//	m_scene, SLOT(makeMove(Chess::GenericMove)));
 
+			//bool b = 
 			connect(game, SIGNAL(moveMade(Chess::GenericMove, QString, QString)),
 				m_pcap, SLOT(ProcessBoardMove(const Chess::GenericMove&)));
+
+			// 如果使用云库，则也要连上
 
 			// 如果是红方走，就不需要翻转棋盘
 			//connect(m_flipBoardAct, SIGNAL(triggered()),
 			//	m_gameViewer->boardScene(), SLOT(flip()));
 
 			//m_gameViewer->boardScene()->flip();
+			//void moveMadeFen(const QString fen);  // 走子后发送一个FEN
+			//Chess::ChessDB* pdb = this->GetChessDB();
+			//if (pdb != nullptr) {
+			//	//bool a  = 
+			//	connect(game, SIGNAL(moveMadeFen(const QString&)),
+			//		pdb, SLOT(FindChessDBmoveByFEN(const QString&)));
+			//	//int c = 0;
+			//}
+
+
 		}
 	}
 	break;
-	case Chess::stCaptureMsg::eDraw:   // 网站判定信息
+	case Chess::eCapMsgType::eDraw:   // 网站判定信息
 
 		break;
 	default:

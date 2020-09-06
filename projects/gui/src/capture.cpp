@@ -36,7 +36,7 @@ namespace Chess {
 	void Capture::SendMessageToMain(const QString title, const QString msg)
 	{
 		stCaptureMsg m_msg;      // 是不是可能放在
-		m_msg.mType = stCaptureMsg::eText;
+		m_msg.mType = eCapMsgType::eText;
 		m_msg.text = title;
 		m_msg.title = msg;
 		emit CapSendSignal(m_msg);
@@ -45,7 +45,7 @@ namespace Chess {
 	void Capture::SendMoveToMain(const Chess::GenericMove m)
 	{
 		stCaptureMsg m_msg;      // 是不是可能放在
-		m_msg.mType = stCaptureMsg::eMove;
+		m_msg.mType = eCapMsgType::eMove;
 		m_msg.m = m;
 		emit CapSendSignal(m_msg);
 	}
@@ -53,7 +53,7 @@ namespace Chess {
 	void Capture::SendFenToMain(const QString fen)
 	{
 		stCaptureMsg m_msg;      // 是不是可能放在
-		m_msg.mType = stCaptureMsg::eSetFen;
+		m_msg.mType = eCapMsgType::eSetFen;
 		m_msg.text = fen;
 		emit CapSendSignal(m_msg);
 	}

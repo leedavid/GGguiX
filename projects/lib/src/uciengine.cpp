@@ -30,6 +30,12 @@
 #include "enginespinoption.h"
 #include "enginetextoption.h"
 
+#include <QNetworkrequest>
+#include <QNetworkaccessmanager>
+#include <QEventloop>
+#include <QNetworkreply>
+#include <QUrlquery>
+
 namespace {
 
 QString variantFromUci(QString str, bool uciPrefix = true)
@@ -231,6 +237,17 @@ void UciEngine::makeBookMove(const Chess::Move& move)
 
 void UciEngine::startThinking()
 {
+	// 这儿如果有云库步，则直接输出棋步
+	//if (true) {
+	//	QString moveString = "h2e2";
+	//	Chess::Move move = board()->moveFromString(moveString);
+	//	emitMove(move);
+	//}
+	
+	// {m_string=0x0000004c680fac80 info depth 1 time 17651 nodes 1 score 9 pv b2e2 m_position=0 m_size=4 }
+
+
+	
 	if (m_ponderState == PonderHit)
 	{
 		m_ponderState = NotPondering;
@@ -284,6 +301,14 @@ void UciEngine::startThinking()
 		command += QString(" depth %1").arg(myTc->plyLimit());
 	if (myTc->nodeLimit() > 0)
 		command += QString(" nodes %1").arg(myTc->nodeLimit());
+
+
+	QString move;
+	int score = 0;
+	if (this->IsHaveChessDBmove(move, score)) {  // by LGL
+		//emitMove(move);
+		command = QString("bookmove move %1 score %2").arg(move).arg(score);		
+	}
 
 	write(command);
 }
@@ -973,6 +998,144 @@ QString UciEngine::sanPv(const QVarLengthArray<QStringRef>& tokens)
 		board->undoMove();
 
 	return pv;
+}
+
+bool UciEngine::IsHaveChessDBmove(QString& move, int& score)
+{
+	// 
+	QSettings s;
+	QString res;
+	int r = 0;
+	
+	
+
+	QString fen = this->board()->fenString();
+	int useChesdDBOpenNum = s.value("games/opening_book/depth", 10).toInt();
+	bool useBest = s.value("games/opening_book/disk_access", true).toBool();
+	Chess::CHESSDB_QUERY_TYPE t = Chess::CHESSDB_QUERY_TYPE::QUERY_TYPE_BEST;
+	if (!useBest) {
+		t = Chess::CHESSDB_QUERY_TYPE::QUERY_TYPE_RANDOM;
+	}
+	// 使用云开局
+	if (this->board()->plyCount() <= useChesdDBOpenNum) {
+
+		bool useChesdDBOpen = s.value("games/ChessDB/YunOpengame", false).toBool();		
+
+		if (useChesdDBOpen) {			
+			r = this->Query(fen, res, t, false);
+			if (r != 200) return false;
+		}
+	}
+	else {
+
+		bool useChessDBend = s.value("games/ChessDB/YunEndgame", false).toBool();
+		if (useChessDBend) {
+			bool useDTM = s.value("games/ChessDB/YunDTM", true).toBool();
+
+			Chess::CHESSDB_ENDGAME_TYPE et = Chess::CHESSDB_ENDGAME_TYPE::DTM;
+			if (!useDTM) {
+				et = Chess::CHESSDB_ENDGAME_TYPE::DTC;
+			}
+			r = this->Query(fen, res, t, true, et);
+			if (r != 200) return false;			
+		}
+	}
+	
+
+	score = 0;
+	QStringList MoveList = res.split("|");
+	bool find = false;
+	for (auto one_move : MoveList) {   // 每个有效步
+		// move:h2f2,score:3,rank:2,note:! (45-02),winrate:50.23
+		QStringList one_move_info = one_move.split(",");
+
+		QStringList Lmove = one_move_info[0].split(":");
+		if (Lmove.count() == 2) {
+			//move = board()->moveFromString(Lmove[1]);
+			move = Lmove[1];
+			find = true;		
+		}	
+	}
+	return find;
+}
+
+int UciEngine::getWebInfoByQuery(QUrl url, QString& res)
+{
+	QNetworkRequest req;
+	req.setUrl(url);
+
+	QNetworkAccessManager* manager = new QNetworkAccessManager();
+	// 发送请求
+	QNetworkReply* pReplay = manager->get(req);
+
+	// 开启一个局部的事件循环，等待响应结束，退出
+	QEventLoop eventLoop;
+	QObject::connect(manager, &QNetworkAccessManager::finished, &eventLoop, &QEventLoop::quit);
+	eventLoop.exec();
+
+	// 获取响应信息
+	res = pReplay->readAll();
+
+	//获取http状态码
+
+	 // QNetworkReply
+//  // attribute函数返回QVariant对象，使用value<T>()函数返回进行向下转型
+	//qDebug() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).value<int>();
+
+
+
+	return pReplay->attribute(QNetworkRequest::HttpStatusCodeAttribute).value<int>();
+}
+
+int UciEngine::Query(const QString& tFen, 
+	QString& Res, Chess::CHESSDB_QUERY_TYPE qtype, 
+	bool endGame,
+	Chess::CHESSDB_ENDGAME_TYPE eType)
+{
+	QUrl url("http://www.chessdb.cn/chessdb.php");
+	QUrlQuery query; // key-value 对
+
+	// 转换一下fen
+	QStringList fl = tFen.split(" ");
+	if (fl.count() != 6) {
+		//emit SendSignalStatus(3, "Fen Error ChessDB");
+		return 200 + 1;
+	}
+	QString Fen = fl[0] + " " + fl[1];
+	//QString Fen = "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w";
+	//qtype = CHESSDB_QUERY_TYPE::CHESSDB_QUERY_TYPE_ALL;
+
+	switch (qtype)
+	{
+	case Chess::CHESSDB_QUERY_TYPE::CHESSDB_QUERY_TYPE_ALL:
+		query.addQueryItem("action", "queryall");
+		break;
+	case Chess::CHESSDB_QUERY_TYPE::QUERY_TYPE_BEST:
+		query.addQueryItem("action", "querybest");
+		break;
+	case Chess::CHESSDB_QUERY_TYPE::QUERY_TYPE_RANDOM:
+		query.addQueryItem("action", "query");
+		break;
+	default:
+		break;
+	}
+
+	query.addQueryItem("board", Fen);
+	//query.addQueryItem("ban", m_BanMove);
+	if (endGame) {
+		query.addQueryItem("endgame", "1");
+		//
+		if (eType == Chess::CHESSDB_ENDGAME_TYPE::DTM) {
+			query.addQueryItem("egtbmetric", "dtm");
+		}
+		else {
+			query.addQueryItem("egtbmetric", "dtc");
+		}
+	}
+
+	url.setQuery(query);
+
+	return getWebInfoByQuery(url, Res);
 }
 
 void UciEngine::sendOption(const QString& name, const QVariant& value)

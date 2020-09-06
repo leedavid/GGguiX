@@ -43,6 +43,7 @@ namespace Chess {
 	class GameWindow;
 	class ChessBrowser;
 	class CTrainFen;
+	class ChessDB;
 }
 class QMenu;
 class QAction;
@@ -79,6 +80,7 @@ class MainWindow : public QMainWindow
 		bool isMoveValid(const Chess::GenericMove& move);
 
 		QPointer<ChessGame> GetCurrentChessGame() { return  m_game; };
+		//Chess::ChessDB* GetChessDB();
 
 	public slots:
 		void addGame(ChessGame* game);
@@ -294,6 +296,7 @@ signals:
 		bool m_firstTabAutoCloseEnabled;
 		bool m_myClosePreTab;
 
+		//Chess::ChessDB* m_ChessDB;         
 		Chess::Capture* m_pcap;            // 一个界面只有一个
 		Chess::Capture* m_autoClickCap;    // 全自动挂机	
 

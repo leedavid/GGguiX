@@ -22,7 +22,7 @@ namespace Chess {
 			//ChessGame cgame = *game;
 			//_game = &cgame;
 			_startFen = game->startingFen();
-			_fens = game->fens();
+			_fens = game->fens();                 // 所有Fen列表
 			_scores = game->scores();
 		}		
 		this->start();

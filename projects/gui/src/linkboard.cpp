@@ -368,6 +368,14 @@ void LinkBoard::runAutoChess()
 				QString fen = this->m_LxBoard[1].fen;
 				this->m_pCap->SendFenToMain(fen);
 
+				// 根据fen, 得到我方走什么
+				if (fen.contains("w -")) {
+					this->m_bGuiIsWhite = true;
+				}
+				else {
+					this->m_bGuiIsWhite = false;
+				}
+
 				StartTime = timeRun.elapsed();   // 发送棋盘后重置一下棋局开始时间
 
 				//this->m_LxBoard[0].b90 = this->m_LxBoard[0].b90;
@@ -565,7 +573,19 @@ void LinkBoard::ProcessBoardMove(const Chess::GenericMove& move)
 	this->m_LxBoard[0].b90[from] = ChinesePieceType::eNoPice;
 	this->m_LxBoard[0].b90[to] = piece;
 
-	winLeftClick(m_hwnd, ffx, ffy);
+	// 这个不是走子方不用更新
+	//if (this->m_bGuiIsWhite) {
+	//	if (!(piece <= ChinesePieceType::eRKing && piece >= ChinesePieceType::eRPawn)) {
+	//		return;
+	//	}
+	//}
+	//else {
+	//	if (!(piece <= ChinesePieceType::eBKing && piece >= ChinesePieceType::eBPawn)) {
+	//		return;
+	//	}
+	//}
+
+	winLeftClick(m_hwnd, ffx, ffy);    // 好象有一半不用点击
 	//wait(1);
 	winLeftClick(m_hwnd, ttx, tty);
 }

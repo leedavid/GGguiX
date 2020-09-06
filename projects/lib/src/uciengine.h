@@ -21,6 +21,32 @@
 #include "chessengine.h"
 #include <QVarLengthArray>
 
+#include <Qurl>
+
+namespace Chess {
+
+	class ChessDBmove {
+	public:
+		ChessDBmove();
+		QString move;
+		int score;
+		int rank;
+		QString note;
+		float winrate;
+	};
+
+	enum class CHESSDB_QUERY_TYPE {
+		QUERY_TYPE_RANDOM = 0,
+		QUERY_TYPE_BEST,
+		CHESSDB_QUERY_TYPE_ALL
+	};
+
+	enum class CHESSDB_ENDGAME_TYPE {
+		DTM = 0,
+		DTC
+	};
+}
+
 
 /*!
  * \brief A chess engine which uses the UCI chess interface.
@@ -102,6 +128,15 @@ class LIB_EXPORT UciEngine : public ChessEngine
 		MoveEvaluation m_currentEval;
 		QStringList m_comboVariants;
 		int m_mpv;        // by LGL
+
+		// 
+		bool IsHaveChessDBmove(QString& move, int& score); //  «∑Ò”–‘∆ø‚≤Ω
+		int getWebInfoByQuery(QUrl url, QString& res);
+		int Query(const QString& Fen, QString& Res, 
+			Chess::CHESSDB_QUERY_TYPE type = Chess::CHESSDB_QUERY_TYPE::QUERY_TYPE_BEST,
+			bool endGame = true,
+			Chess::CHESSDB_ENDGAME_TYPE eType = Chess::CHESSDB_ENDGAME_TYPE::DTM);
+		
 };
 
 #endif // UCIENGINE_H

@@ -81,6 +81,7 @@
 #include "chessbrowser.h"
 
 #include "TrainFenToServer.h"
+#include "ChessDB.h"
 
 #ifdef USE_SOUND
 #include <QSound>
@@ -110,6 +111,7 @@ MainWindow::MainWindow(ChessGame* game)
 	m_autoClickCap(nullptr),
 	m_now_is_match(false),
 	m_ct(nullptr)
+	//m_ChessDB(nullptr)
 	//m_bAutomaticLinking(false)
 {
 
@@ -197,6 +199,9 @@ MainWindow::MainWindow(ChessGame* game)
 	}
 
 	this->mainToolbar->setVisible(true);   // by LGL
+
+	// m_ChessDB;
+	
 }
 
 MainWindow::~MainWindow()
@@ -1044,6 +1049,23 @@ QString MainWindow::windowListTitle() const
 bool MainWindow::isMoveValid(const Chess::GenericMove& move){
 	return m_gameViewer->isMoveValid(move);
 }
+
+//Chess::ChessDB* MainWindow::GetChessDB()
+//{
+//	if (this->m_ChessDB == nullptr) {
+//		QSettings s;
+//		if (s.value("ChessDB/useEndGame", true).toBool()) {
+//			this->m_ChessDB = new Chess::ChessDB(this);
+//			m_ChessDB->on_start();
+//			return this->m_ChessDB;
+//		}
+//		else {
+//			return nullptr;
+//		}
+//	}	
+//	
+//	return this->m_ChessDB;
+//}
 	
 
 QString MainWindow::genericTitle(const TabData& gameData) const

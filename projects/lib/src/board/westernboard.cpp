@@ -1466,7 +1466,7 @@ Result WesternBoard::result()
 				return Result(Result::Draw, Side::NoSide, str);
 			}
 
-			if (repeatCount() >= 5)
+			if (repeatCount() > 5)
 			{
 				str = tr("循环五步，判和！");
 				return Result(Result::Draw, Side::NoSide, str);

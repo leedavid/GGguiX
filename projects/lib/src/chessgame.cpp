@@ -358,6 +358,8 @@ void ChessGame::emitLastMove()
 
 	const auto& md = m_pgn->moves().last();
 	emit moveMade(md.move, md.moveString, md.comment);
+
+	//emit moveMadeFen("fff");
 }
 
 void ChessGame::onMoveMade(const Chess::Move& move)
@@ -400,6 +402,7 @@ void ChessGame::onMoveMade(const Chess::Move& move)
 
 	// µÃµ½FEN
 	this->m_fens.append(m_currentBoard->fenString());
+	emit moveMadeFen(m_currentBoard->fenString());
 
 	if (m_result.isNone())
 	{

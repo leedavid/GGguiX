@@ -32,6 +32,8 @@ class MoveEvaluation;
 //typedef QHash<QString, QString> TagMap;
 //typedef QHashIterator<QString, QString> TagMapIterator;
 
+
+
 class LIB_EXPORT ChessGame : public QObject
 {
 	Q_OBJECT
@@ -147,6 +149,9 @@ class LIB_EXPORT ChessGame : public QObject
 		void moveMade(const Chess::GenericMove& move,
 			      const QString& sanString,
 			      const QString& comment);
+
+		void moveMadeFen(const QString& fen);  // 走子后发送一个FEN
+
 		void moveChanged(int ply,
 				 const Chess::GenericMove& move,
 				 const QString& sanString,

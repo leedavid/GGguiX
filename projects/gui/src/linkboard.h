@@ -19,21 +19,23 @@ class MainWindow;
 
 namespace Chess {
 
-	class Capture;
+	enum class eCapMsgType {
+		eMove,				// 走步
+		eSetFen,			// 设置fen
+		eText,				// 提示信息
+		eDraw               // 网站判和了
+	};
 
 	struct stCaptureMsg {
-		enum eCapMsg {
-			eMove,				// 走步
-			eSetFen,			// 设置fen
-			eText,				// 提示信息
-			eDraw               // 网站判和了
-		};
-		eCapMsg mType;	
+		eCapMsgType mType;
 		Chess::GenericMove m;
 		QString title;
-		QString text;		
+		QString text;
 	};
 	Q_DECLARE_METATYPE(stCaptureMsg)
+
+	class Capture;	
+	
 
 	enum class LinkWhich {
 		TianTian = 0,     // 天天平台
@@ -158,6 +160,8 @@ namespace Chess {
 		bool m_flip;                       // 棋盘翻转
 		Chess::Side m_side;                // 走子方
 		stLxBoard m_LxBoard[2];
+
+		bool m_bGuiIsWhite;                // gui 是不是走红方
 
 		int m_iLowHred = 0;                // HSV 区分红黑棋子的参数
 		int m_iHighHred = 10;

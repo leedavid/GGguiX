@@ -30,7 +30,9 @@ namespace Chess {
 	signals:
 		void CapSendSignal(stCaptureMsg msg);
 
-	public slots:
+	public 
+
+	slots:
 		void ProcessBoardMove(const Chess::GenericMove& move);
 	
 		
