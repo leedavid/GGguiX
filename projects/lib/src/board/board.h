@@ -197,6 +197,9 @@ class LIB_EXPORT Board
 		 * X-Fen or Shredder FEN notation
 		 */
 		QString fenString(FenNotation notation = XFen) const;
+
+		// 判断当前是不是进入残局了
+		bool isEndGame() const;
 		/*!
 		 * Returns the FEN string of the starting position.
 		 * \note This is not always the same as \a defaultFenString().

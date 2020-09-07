@@ -537,6 +537,50 @@ QString Board::fenString(FenNotation notation) const
 	return fen + vFenString(notation);
 }
 
+bool Board::isEndGame() const
+{
+	int pieceNum = 0;
+	int i = (m_width + 2) * 2;
+	for (int y = 0; y < m_height; y++)
+	{
+		//int nempty = 0;
+		i++;
+		//if (y > 0)
+		//	fen += '/';
+		for (int x = 0; x < m_width; x++)
+		{
+			Piece pc = m_squares[i];
+
+			//if (pc.isEmpty())
+			//	nempty++;
+
+			//// Add the number of empty successive squares
+			//// to the FEN string.
+			//if (nempty > 0
+			//	&& (!pc.isEmpty() || x == m_width - 1))
+			//{
+			//	fen += QString::number(nempty);
+			//	nempty = 0;
+			//}
+
+			//if (pc.isValid())
+			//	fen += pieceSymbol(pc);
+			//else if (pc.isWall())
+			//	fen += "*";
+			if (pc.isEmpty()) {
+
+			}
+			else {
+				pieceNum++;
+			}
+
+			i++;
+		}
+		i++;
+	}
+	return pieceNum < 12;
+}
+
 bool Board::setFenString(const QString& fen)
 {
 	

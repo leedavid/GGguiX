@@ -1007,8 +1007,7 @@ bool UciEngine::IsHaveChessDBmove(Chess::ChessDBmove& cm)
 	QString res;
 	int r = 0;
 	
-	const bool ENDGAME = this->board()->plyCount() > 50;
-	
+	const bool ENDGAME = this->board()->isEndGame();   	
 
 	QString fen = this->board()->fenString();
 	int useChesdDBOpenNum = s.value("games/opening_book/depth", 10).toInt();
@@ -1044,9 +1043,7 @@ bool UciEngine::IsHaveChessDBmove(Chess::ChessDBmove& cm)
 
 
 	QStringList MoveList = res.split("|");
-	//bool find = false;
-
-
+	
 	QList<Chess::ChessDBmove> allEntries;
 	
 
@@ -1082,6 +1079,9 @@ bool UciEngine::IsHaveChessDBmove(Chess::ChessDBmove& cm)
 		if (ism) {
 			allEntries.append(m);
 		}
+		if (allEntries.count() > 10) {  // 最多10个棋步
+			break;
+		}
 	}
 
 	int rankBest = 2;  //  大于这个才可以走
@@ -1099,25 +1099,32 @@ bool UciEngine::IsHaveChessDBmove(Chess::ChessDBmove& cm)
 		}
 	}
 
-	// 3 再在几个最佳步中随机选择
-	int totalWeight = 0;
-	for (auto e : bestEntries) {
-		totalWeight += e.rank;
-	}
-	if (totalWeight < 0)
+	if (bestEntries.count() <= 0) {
 		return false;
-
-	int pick = Mersenne::random() % totalWeight;
-	int currentWeight = 0;
-	for (auto e : bestEntries) {
-		currentWeight += e.rank;
-		if (currentWeight > pick) {
-			cm = e;
-			return true;
-		}
 	}
+	int pick = Mersenne::random() % bestEntries.count();
+	cm = bestEntries[pick];
+	return true;
+
+	// 3 再在几个最佳步中随机选择
+	//int totalWeight = 0;
+	//for (auto e : bestEntries) {
+	//	totalWeight += e.rank;
+	//}
+	//if (totalWeight <= 0)
+	//	return false;
+
+	//int pick = Mersenne::random() % totalWeight;
+	//int currentWeight = 0;
+	//for (auto e : bestEntries) {
+	//	currentWeight += e.rank;
+	//	if (currentWeight > pick) {
+	//		cm = e;
+	//		return true;
+	//	}
+	//}
 	// move:h2f2,score:3,rank:2,note:! (45-02),winrate:50.23
-	return false;
+	//return false;
 }
 
 int UciEngine::getWebInfoByQuery(QUrl url, QString& res)
@@ -1125,17 +1132,49 @@ int UciEngine::getWebInfoByQuery(QUrl url, QString& res)
 	QNetworkRequest req;
 	req.setUrl(url);
 
+	QTimer timer;
+	timer.setInterval(200);  // 设置超时时间 200 ms
+	timer.setSingleShot(true);  // 单次触发
+
 	QNetworkAccessManager* manager = new QNetworkAccessManager();
 	// 发送请求
 	QNetworkReply* pReplay = manager->get(req);
 
 	// 开启一个局部的事件循环，等待响应结束，退出
 	QEventLoop eventLoop;
+	connect(&timer, &QTimer::timeout, &eventLoop, &QEventLoop::quit);
 	QObject::connect(manager, &QNetworkAccessManager::finished, &eventLoop, &QEventLoop::quit);
+	timer.start();
 	eventLoop.exec();
 
+	int nStatusCode = 400;
+	if (timer.isActive()) {  // 处理响应
+		timer.stop();
+		if (pReplay->error() != QNetworkReply::NoError) {
+			// 错误处理
+			qDebug() << "Error String : " << pReplay->errorString();
+		}
+		else {
+			QVariant variant = pReplay->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+			nStatusCode = variant.toInt();
+			// 根据状态码做进一步数据处理
+			//QByteArray bytes = pReply->readAll();
+			//qDebug() << "Status Code : " << nStatusCode;
+			if (nStatusCode == 200) {
+				res = pReplay->readAll();
+			}			
+		}
+	}
+	else {  // 处理超时
+		disconnect(pReplay, &QNetworkReply::finished, &eventLoop, &QEventLoop::quit);
+		pReplay->abort();
+		pReplay->deleteLater();
+		qDebug() << "Timeout";
+	}
+	return nStatusCode;
+
 	// 获取响应信息
-	res = pReplay->readAll();
+	//res = pReplay->readAll();
 
 	//获取http状态码
 
@@ -1145,7 +1184,7 @@ int UciEngine::getWebInfoByQuery(QUrl url, QString& res)
 
 
 
-	return pReplay->attribute(QNetworkRequest::HttpStatusCodeAttribute).value<int>();
+	//return pReplay->attribute(QNetworkRequest::HttpStatusCodeAttribute).value<int>();
 }
 
 int UciEngine::Query(const QString& tFen, 

@@ -37,6 +37,10 @@ namespace Chess {
 	{
 		QNetworkRequest req;
 		req.setUrl(url);
+		
+		QTimer timer;
+		timer.setInterval(2000);  // 设置超时时间 1000 ms
+		timer.setSingleShot(true);  // 单次触发
 
 		QNetworkAccessManager* manager = new QNetworkAccessManager();
 		// 发送请求
@@ -44,26 +48,36 @@ namespace Chess {
 
 		// 开启一个局部的事件循环，等待响应结束，退出
 		QEventLoop eventLoop;
+		connect(&timer, &QTimer::timeout, &eventLoop, &QEventLoop::quit);
 		QObject::connect(manager, &QNetworkAccessManager::finished, &eventLoop, &QEventLoop::quit);
+		timer.start();
 		eventLoop.exec();
 
-		// 获取响应信息
-		res = pReplay->readAll();
-
-		//获取http状态码
-
-		 // QNetworkReply
-	//  // attribute函数返回QVariant对象，使用value<T>()函数返回进行向下转型
-		//qDebug() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).value<int>();
-
-
-
-		return pReplay->attribute(QNetworkRequest::HttpStatusCodeAttribute).value<int>();
-
-		//QString s_date = bytes;
-		//QStringList qlist = s_date.split('|');
-
-		//return bytes;
+		int nStatusCode = 400;
+		if (timer.isActive()) {  // 处理响应
+			timer.stop();
+			if (pReplay->error() != QNetworkReply::NoError) {
+				// 错误处理
+				qDebug() << "Error String : " << pReplay->errorString();
+			}
+			else {
+				QVariant variant = pReplay->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+				nStatusCode = variant.toInt();
+				// 根据状态码做进一步数据处理
+				//QByteArray bytes = pReply->readAll();
+				//qDebug() << "Status Code : " << nStatusCode;
+				if (nStatusCode == 200) {
+					res = pReplay->readAll();
+				}				
+			}
+		}
+		else {  // 处理超时
+			disconnect(pReplay, &QNetworkReply::finished, &eventLoop, &QEventLoop::quit);
+			pReplay->abort();
+			pReplay->deleteLater();
+			qDebug() << "Timeout";
+		}
+		return nStatusCode;
 	}
 
 	bool CTrainFen::FenAddLostGame()
@@ -271,11 +285,13 @@ namespace Chess {
 		fenList.append("rnbak1C2/2r1a4/1c4nc1/p3p3p/6p2/2p6/P3P1P1P/1CN3N2/8R/R1BAKAB2 w - - 0 1");     // 对攻
 		//fenList.append("");
 		//fenList.append(""); rnbak1C2/2r1a4/1c4nc1/p3p3p/6p2/2p6/P3P1P1P/1CN3N2/8R/R1BAKAB2 w - - 0 7
-
+		int num = 0;
 		for (auto fen : fenList) {
 			this->addOneFenToWEB(fen);
-			this->msleep(100);
+			this->msleep(10);
+			num++;
 		}
+		emit emit SendSignal(3, "本次上传 " + QString::number(num) + " 个局面");
 		return true;
 	}
 
