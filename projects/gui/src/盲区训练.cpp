@@ -129,6 +129,16 @@ void MainWindow::onTrainFenDelete()
 	}
 }
 
+void MainWindow::onTrainFenTimerDelOne(bool checked)
+{
+	if (checked) {
+		this->getCTtrainFen()->on_start2(Chess::CTrainFenMethod::TIMER_DEL_FEN_ON);
+	}
+	else {
+		this->getCTtrainFen()->on_start2(Chess::CTrainFenMethod::TIMER_DEL_FEN_OFF);
+	}
+}
+
 void MainWindow::onTrainFenAddCommon()
 {
 	QMessageBox::StandardButton result;
@@ -173,6 +183,23 @@ void MainWindow::onTrainFenClearAll()
 		}
 		else {
 			this->getCTtrainFen()->on_start2(Chess::CTrainFenMethod::REMOVE_FEN);
+		}
+	}
+}
+
+void MainWindow::onTrainFenLast50()
+{
+	QMessageBox::StandardButton result;
+	result = QMessageBox::warning(this, QApplication::applicationName(),
+		tr("本操作将上传当前棋局最后50个局面.\n你确认吗?"),
+		QMessageBox::Ok | QMessageBox::Cancel);
+
+	if (result == QMessageBox::Ok) {
+		if (this->getCTtrainFen()->isRunning()) {
+			this->slotDisplayStatus(3, "trainFen 正在处理中, 请稍候...");
+		}
+		else {
+			this->getCTtrainFen()->on_start2(Chess::CTrainFenMethod::LAST_50, this->GetCurrentChessGame());
 		}
 	}
 }

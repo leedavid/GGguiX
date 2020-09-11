@@ -158,6 +158,12 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 			QSettings().setValue("trainFen/MinSteps", value);
 		});
 
+	connect(ui->spinBoxTimerDelOne, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+		this, [=](int value)
+		{
+			QSettings().setValue("trainFen/TimerDelOne", value);
+		});
+
 	connect(ui->spinBoxStepsGap, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
 		this, [=](int value)
 		{
@@ -355,6 +361,8 @@ void SettingsDialog::readSettings()
 	ui->spinBoxMinScore->setValue(s.value("MinScore", 0).toInt());
 	ui->spinBoxMaxSteps->setValue(s.value("MaxSteps", 200).toInt());
 	ui->spinBoxMinSteps->setValue(s.value("MinSteps", 0).toInt());
+
+	ui->spinBoxTimerDelOne->setValue(s.value("TimerDelOne", 0).toInt());
 
 	s.endGroup();
 	//-------------------------------------

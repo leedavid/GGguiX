@@ -1881,6 +1881,9 @@ QDataStream& operator>>(QDataStream& output, LinkBoard& board)
 		>> board.m_iLowVblack
 		>> board.m_iHighVblack;
 
+
+	board.m_sleepTimeMs = 20;
+
 	return output;
 }
 

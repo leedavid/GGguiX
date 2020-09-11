@@ -148,6 +148,7 @@ signals:
 		void onTrainFenAddCommon();
 		void onTrainDrawToHigh();            // 高分和棋的情况
 		void onTrainFenClearAll();
+		void onTrainFenLast50();             // 强制上传最后30个
 
 		// 連线棋盘
 		void onLXchessboardStart();
@@ -163,6 +164,8 @@ signals:
 		void onLinkBlackToggled(bool checked); // 电脑执红连线
 		void onLinkAutomaticToggled(bool checked);        
 		void onLinkWhich(bool checked);
+
+		void onTrainFenTimerDelOne(bool checked);  // 定期删除一个FEN
 
 		void onActEngineThink();
 
@@ -222,6 +225,7 @@ signals:
 		QToolButton* tbtnEnginePlayBlack;   // 引擎执黑
 		QToolButton* tbtnLinkChessBoardRed;      // 连接其它棋盘，红方电脑 
 		QToolButton* tbtnLinkChessBoardBlack;    // 连接其它棋盘，黑方电脑
+		QToolButton* tbtnTrainFenTimerDelOne;    // 定时删除一个fen, 防止过度训练
 
 		
 
@@ -237,8 +241,8 @@ signals:
 		QAction* actTrainFenDelete;
 		QAction* actTrainFenAddCommonFen;
 		QAction* actTrainFenClearAll;
-		QAction* actTrainFenDrawTooHigh;     // 高分和棋
-		
+		QAction* actTrainFenDrawTooHigh;      // 高分和棋
+		QAction* actTrainFenUpdateLast50;     // 上传最后30个局面		
 
 		GameTabBar* m_tabBar;		    
 

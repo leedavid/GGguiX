@@ -1079,7 +1079,7 @@ bool UciEngine::IsHaveChessDBmove(Chess::ChessDBmove& cm)
 		if (ism) {
 			allEntries.append(m);
 		}
-		if (allEntries.count() > 10) {  // 最多10个棋步
+		if (allEntries.count() >= 8) {  // 最多8个棋步
 			break;
 		}
 	}

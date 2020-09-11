@@ -26,7 +26,10 @@ namespace Chess {
 		ADD_Draw_Too_High,    // 高分和棋
 		DEL_FEN,
 		COMMON_FEN,
-		REMOVE_FEN
+		REMOVE_FEN,
+		TIMER_DEL_FEN_ON,     // 定时删除一个FEN
+		TIMER_DEL_FEN_OFF,
+		LAST_50               // 最后50个局面
 	};
 
 	class CTrainFen : public QThread
@@ -48,6 +51,9 @@ namespace Chess {
 		void SendSignal(int which, QString msg);
 		//void SendSignal(QString msg);
 
+	public slots:
+		void handleTimeout();  //超时处理函数
+
 
 	private:
 		void run() Q_DECL_OVERRIDE;
@@ -58,14 +64,20 @@ namespace Chess {
 		bool FenDelete();
 		bool FenCommon();
 		bool FenRemoveAll();
+		bool FenLast50();
+
+		void TimerFenDelOneON();
+		void TimerFenDelOneOFF();
 
 		bool GetTfenTsideFromFEN(QString fen, QString& tfen, QString& tside);
 		bool addOneFenToWEB(QString fen, int score = 0, bool first = false);
 		bool delOneFenFromWEB(QString fen);
+		bool delFirstOneFenFrom();
 
 		bool AddOneFenToSetting(QString fen);
 		bool GetAndDelOneFenFromSetting(QString& fen);  // 取一条，同时删除那条
 		bool GetSetting();
+		int getDelDelayMs();
 
 	private:
 		QString _userName;
@@ -87,6 +99,12 @@ namespace Chess {
 		QMap<int, int> _scores;
 
 		CTrainFenMethod _method;
+
+		QTimer* _timer;
+		QThread* _timerThread;
+		static int ServerFENnum;      // 
+
+		const static int MaxFEN = 490;
 
 	private:
 

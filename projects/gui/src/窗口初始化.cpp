@@ -493,6 +493,7 @@ void MainWindow::createToolBars()
 	this->tbtnEnginePlayBlack->setToolTip("电脑执黑走棋");
 	this->mainToolbar->addWidget(this->tbtnEnginePlayBlack);
 	connect(this->tbtnEnginePlayBlack, SIGNAL(toggled(bool)), this, SLOT(onPlayBlackToggled(bool)));
+	//tbtnTrainFenTimerDelOne
 
 	QWidget* empty2 = new QWidget();
 	empty2->setFixedSize(2, 20);
@@ -642,78 +643,110 @@ void MainWindow::createToolBars()
 	//this->mainToolbar->addAction(this->actEngineThink);
 	//connect(this->actEngineThink, &QAction::triggered, this, &MainWindow::onActEngineThink);
 
+	//*****************************************************************************************************
+	//QSettings 
+	QSettings s;  //superAdmin
+	QString userName = s.value("trainFen/UserName", "").toString();
+	if (userName.length() > 3) {
+		QWidget* empty3 = new QWidget();
+		empty3->setFixedSize(2, 20);
+		empty3->setStyleSheet(QString::fromUtf8("border:1px solid gray"));
+		this->mainToolbar->addWidget(empty3);
+
+		// 定时删除一个FEN，防止过度训练
+		this->tbtnTrainFenTimerDelOne = new QToolButton(this);
+		this->tbtnTrainFenTimerDelOne->setCheckable(true);
+		this->tbtnTrainFenTimerDelOne->setObjectName(QStringLiteral("tbtnTrainFenTimerDelOne"));
+		QIcon iconTrainFenTimerDelOne;
+		iconTrainFenTimerDelOne.addFile(QStringLiteral(":/icon/update.ico"), QSize(), QIcon::Normal, QIcon::Off);
+		this->tbtnTrainFenTimerDelOne->setIcon(iconTrainFenTimerDelOne);
+		this->tbtnTrainFenTimerDelOne->setToolTip("定时删除一个FEN，防止过度训练");
+		this->mainToolbar->addWidget(this->tbtnTrainFenTimerDelOne);
+		connect(this->tbtnTrainFenTimerDelOne, SIGNAL(toggled(bool)), this, SLOT(onTrainFenTimerDelOne(bool)));
+		//tbtnTrainFenTimerDelOne
+
+		// 上传当前棋局的Fen Add
+		this->actTrainFenAdd = new QAction(this);
+		this->actTrainFenAdd->setObjectName(QStringLiteral("actTrainFenAdd"));
+		QIcon iconactTrainFenAdd;
+		iconactTrainFenAdd.addFile(QStringLiteral(":/icon/add.ico"),
+			QSize(), QIcon::Normal, QIcon::Off);
+		this->actTrainFenAdd->setIcon(iconactTrainFenAdd);
+		this->actTrainFenAdd->setText("上传Fen");
+		this->actTrainFenAdd->setToolTip("将当前棋局的Fen上传至服务器训练");
+
+		this->mainToolbar->addAction(this->actTrainFenAdd);
+		connect(this->actTrainFenAdd, &QAction::triggered, this, &MainWindow::onTrainFenAdd);
 
 
-	QWidget* empty3 = new QWidget();
-	empty3->setFixedSize(2, 20);
-	empty3->setStyleSheet(QString::fromUtf8("border:1px solid gray"));
-	this->mainToolbar->addWidget(empty3);
+		// 上传高分和棋的局面
+		this->actTrainFenDrawTooHigh = new QAction(this);
+		this->actTrainFenDrawTooHigh->setObjectName(QStringLiteral("actTrainFenDrawTooHigh"));
+		QIcon iconactTrainFenDrawTooHigh;
+		iconactTrainFenDrawTooHigh.addFile(QStringLiteral(":/icon/dove_green.png"),
+			QSize(), QIcon::Normal, QIcon::Off);
+		this->actTrainFenDrawTooHigh->setIcon(iconactTrainFenDrawTooHigh);
+		this->actTrainFenDrawTooHigh->setText("上传高分和棋Fen");
+		this->actTrainFenDrawTooHigh->setToolTip("上传引擎显示高分，但其实和棋的局面");
 
-	// 上传当前棋局的Fen Add
-	this->actTrainFenAdd = new QAction(this);
-	this->actTrainFenAdd->setObjectName(QStringLiteral("actTrainFenAdd"));
-	QIcon iconactTrainFenAdd;
-	iconactTrainFenAdd.addFile(QStringLiteral(":/icon/add.ico"),
-		QSize(), QIcon::Normal, QIcon::Off);
-	this->actTrainFenAdd->setIcon(iconactTrainFenAdd);
-	this->actTrainFenAdd->setText("上传Fen");
-	this->actTrainFenAdd->setToolTip("将当前棋局的Fen上传至服务器训练");
+		this->mainToolbar->addAction(this->actTrainFenDrawTooHigh);
+		connect(this->actTrainFenDrawTooHigh, &QAction::triggered, this, &MainWindow::onTrainDrawToHigh);
 
-	this->mainToolbar->addAction(this->actTrainFenAdd);
-	connect(this->actTrainFenAdd, &QAction::triggered, this, &MainWindow::onTrainFenAdd);
+		// 删除当前棋局的Fen Delete
+		this->actTrainFenDelete = new QAction(this);
+		this->actTrainFenDelete->setObjectName(QStringLiteral("actTrainFenDelete"));
+		QIcon iconactTrainFenDelete;
+		iconactTrainFenDelete.addFile(QStringLiteral(":/icon/del.ico"),
+			QSize(), QIcon::Normal, QIcon::Off);
+		this->actTrainFenDelete->setIcon(iconactTrainFenDelete);
+		this->actTrainFenDelete->setText("删除上传的Fen");
+		this->actTrainFenDelete->setToolTip("将此前上传至服务器的Fen删除");
+
+		this->mainToolbar->addAction(this->actTrainFenDelete);
+		connect(this->actTrainFenDelete, &QAction::triggered, this, &MainWindow::onTrainFenDelete);
+
+		// 上传常用的的Fen CommonFen
+		this->actTrainFenAddCommonFen = new QAction(this);
+		this->actTrainFenAddCommonFen->setObjectName(QStringLiteral("actTrainFenAddCommonFen"));
+		QIcon iconactTrainFenAddCommonFen;
+		iconactTrainFenAddCommonFen.addFile(QStringLiteral(":/icon/commmon.ico"),
+			QSize(), QIcon::Normal, QIcon::Off);
+		this->actTrainFenAddCommonFen->setIcon(iconactTrainFenAddCommonFen);
+		this->actTrainFenAddCommonFen->setText("上传常用Fen");
+		this->actTrainFenAddCommonFen->setToolTip("上传常用Fen至服务器，增加开局多样性");
+
+		this->mainToolbar->addAction(this->actTrainFenAddCommonFen);
+		connect(this->actTrainFenAddCommonFen, &QAction::triggered, this, &MainWindow::onTrainFenAddCommon);
+
+		// 清除上传所有的Fen ClearAll
+		this->actTrainFenClearAll = new QAction(this);
+		this->actTrainFenClearAll->setObjectName(QStringLiteral("actTrainFenClearAll"));
+		QIcon iconactTrainFenClearAll;
+		iconactTrainFenClearAll.addFile(QStringLiteral(":/icon/remove_all.png"),
+			QSize(), QIcon::Normal, QIcon::Off);
+		this->actTrainFenClearAll->setIcon(iconactTrainFenClearAll);
+		this->actTrainFenClearAll->setText("清除所有的Fen");
+		this->actTrainFenClearAll->setToolTip("将服务器上的Fen全部清除");
+
+		this->mainToolbar->addAction(this->actTrainFenClearAll);
+		connect(this->actTrainFenClearAll, &QAction::triggered, this, &MainWindow::onTrainFenClearAll);
 
 
-	// 上传高分和棋的局面
-	this->actTrainFenDrawTooHigh = new QAction(this);
-	this->actTrainFenDrawTooHigh->setObjectName(QStringLiteral("actTrainFenDrawTooHigh"));
-	QIcon iconactTrainFenDrawTooHigh;
-	iconactTrainFenDrawTooHigh.addFile(QStringLiteral(":/icon/dove_green.png"),
-		QSize(), QIcon::Normal, QIcon::Off);
-	this->actTrainFenDrawTooHigh->setIcon(iconactTrainFenDrawTooHigh);
-	this->actTrainFenDrawTooHigh->setText("上传高分和棋Fen");
-	this->actTrainFenDrawTooHigh->setToolTip("上传引擎显示高分，但其实和棋的局面");
+		// actTrainFenUpdateLast30
+		this->actTrainFenUpdateLast50 = new QAction(this);
+		this->actTrainFenUpdateLast50->setObjectName(QStringLiteral("actTrainFenUpdateLast30"));
+		QIcon iconUpdateLast30;
+		iconUpdateLast30.addFile(QStringLiteral(":/icon/up50.ico"),
+			QSize(), QIcon::Normal, QIcon::Off);
+		this->actTrainFenUpdateLast50->setIcon(iconUpdateLast30);
+		this->actTrainFenUpdateLast50->setText("上传最后30 Fen");
+		this->actTrainFenUpdateLast50->setToolTip("无条件上传当前棋局的最后30个Fen");
 
-	this->mainToolbar->addAction(this->actTrainFenDrawTooHigh);
-	connect(this->actTrainFenDrawTooHigh, &QAction::triggered, this, &MainWindow::onTrainDrawToHigh);
+		this->mainToolbar->addAction(this->actTrainFenUpdateLast50);
+		connect(this->actTrainFenUpdateLast50, &QAction::triggered, this, &MainWindow::onTrainFenLast50);
+	}
 
-	// 删除当前棋局的Fen Delete
-	this->actTrainFenDelete = new QAction(this);
-	this->actTrainFenDelete->setObjectName(QStringLiteral("actTrainFenDelete"));
-	QIcon iconactTrainFenDelete;
-	iconactTrainFenDelete.addFile(QStringLiteral(":/icon/del.ico"),
-		QSize(), QIcon::Normal, QIcon::Off);
-	this->actTrainFenDelete->setIcon(iconactTrainFenDelete);
-	this->actTrainFenDelete->setText("删除上传的Fen");
-	this->actTrainFenDelete->setToolTip("将此前上传至服务器的Fen删除");
-
-	this->mainToolbar->addAction(this->actTrainFenDelete);
-	connect(this->actTrainFenDelete, &QAction::triggered, this, &MainWindow::onTrainFenDelete);
-
-	// 上传常用的的Fen CommonFen
-	this->actTrainFenAddCommonFen = new QAction(this);
-	this->actTrainFenAddCommonFen->setObjectName(QStringLiteral("actTrainFenAddCommonFen"));
-	QIcon iconactTrainFenAddCommonFen;
-	iconactTrainFenAddCommonFen.addFile(QStringLiteral(":/icon/commmon.ico"),
-		QSize(), QIcon::Normal, QIcon::Off);
-	this->actTrainFenAddCommonFen->setIcon(iconactTrainFenAddCommonFen);
-	this->actTrainFenAddCommonFen->setText("上传常用Fen");
-	this->actTrainFenAddCommonFen->setToolTip("上传常用Fen至服务器，增加开局多样性");
-
-	this->mainToolbar->addAction(this->actTrainFenAddCommonFen);
-	connect(this->actTrainFenAddCommonFen, &QAction::triggered, this, &MainWindow::onTrainFenAddCommon);
-
-	// 清除上传所有的Fen ClearAll
-	this->actTrainFenClearAll = new QAction(this);
-	this->actTrainFenClearAll->setObjectName(QStringLiteral("actTrainFenClearAll"));
-	QIcon iconactTrainFenClearAll;
-	iconactTrainFenClearAll.addFile(QStringLiteral(":/icon/remove_all.png"),
-		QSize(), QIcon::Normal, QIcon::Off);
-	this->actTrainFenClearAll->setIcon(iconactTrainFenClearAll);
-	this->actTrainFenClearAll->setText("清除所有的Fen");
-	this->actTrainFenClearAll->setToolTip("将服务器上的Fen全部清除");
-
-	this->mainToolbar->addAction(this->actTrainFenClearAll);
-	connect(this->actTrainFenClearAll, &QAction::triggered, this, &MainWindow::onTrainFenClearAll);
+	//*****************************************************************************************************
 
 
 	QWidget* empty4 = new QWidget();
@@ -735,7 +768,7 @@ void MainWindow::createToolBars()
 	this->mainToolbar->addAction(this->actEngineThink);
 	connect(this->actEngineThink, &QAction::triggered, this, &MainWindow::onActEngineThink);
 
-
+	//*****************************************************************************************************
 
 
 

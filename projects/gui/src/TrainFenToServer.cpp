@@ -11,6 +11,22 @@ namespace Chess {
 	CTrainFen::~CTrainFen()
 	{
 	}
+	int CTrainFen::ServerFENnum = CTrainFen::MaxFEN;
+
+	CTrainFen::CTrainFen(QObject* parent) :QThread(parent),
+		pMain((MainWindow*)(parent))
+	{
+		GetSetting();
+
+		connect(this, SIGNAL(SendSignal(int, QString)),
+			parent, SLOT(slotDisplayStatus(int, QString)));
+
+		//this->_timerDeltime = 1000 * 60;  // 1分钟删除一个
+		//this->_timerDeltime = 1000 ;  // 1分钟删除一个
+		//_timerOn = false;
+		this->_timer = nullptr;
+
+	}
 
 	void CTrainFen::on_start2(CTrainFenMethod method, ChessGame* game)
 	{
@@ -18,14 +34,23 @@ namespace Chess {
 
 		GetSetting();
 
-		if (game != nullptr) {
-			//ChessGame cgame = *game;
-			//_game = &cgame;
-			_startFen = game->startingFen();
-			_fens = game->fens();                 // 所有Fen列表
-			_scores = game->scores();
-		}		
-		this->start();
+		if (method == CTrainFenMethod::TIMER_DEL_FEN_ON) {
+			TimerFenDelOneON();
+		}
+		else if (method == CTrainFenMethod::TIMER_DEL_FEN_OFF) {
+			TimerFenDelOneOFF();
+		}
+		else {
+
+			if (game != nullptr) {
+				//ChessGame cgame = *game;
+				//_game = &cgame;
+				_startFen = game->startingFen();
+				_fens = game->fens();                 // 所有Fen列表
+				_scores = game->scores();
+			}
+			this->start();
+		}
 	}
 
 	//void CTrainFen::RunAddFen()
@@ -68,6 +93,18 @@ namespace Chess {
 				//qDebug() << "Status Code : " << nStatusCode;
 				if (nStatusCode == 200) {
 					res = pReplay->readAll();
+
+					// 这儿看一下服务器上剩余的FEN数量 PreFEN:   86  CurFEN:   85
+					if (res.contains("CurFEN")) {
+						QStringList token = res.split(" ");
+						if (token.count() >= 4) {
+							int num = token[3].toInt();
+							if (num >= 1 && num <= CTrainFen::MaxFEN) {
+								CTrainFen::ServerFENnum = num;
+							}
+						}	
+
+					}
 				}				
 			}
 		}
@@ -83,6 +120,7 @@ namespace Chess {
 	bool CTrainFen::FenAddLostGame()
 	{
 
+		static int totalNum = 0;
 		//this->addOneFenToWEB("2bakN3/4aR3/4b4/1C1R5/6n2/9/C6c1/2n1B3c/4A3r/4KA3 w - - 0 1", 0, true);		
 
 		// 得到当前的所有棋步，和得分，分别上传
@@ -142,12 +180,15 @@ namespace Chess {
 		if (startPly >= endPly) {
 			startPly = endPly - 1;
 		}
-		startPly -= _minSteps;
+		startPly -= _minSteps;   // 向前几个局面
 		if (startPly <= 0) {
 			startPly = 0;
 		}
 		
-
+		// 限制上传最多局面数
+		if (endPly > startPly + 60) {
+			endPly = startPly + 60;
+		}
 		
 		for(int ply= startPly; ply < endPly; ply++){
 
@@ -172,6 +213,10 @@ namespace Chess {
 
 		QString info = "本次共上传 " + QString::number(numUp) + " 个局面";
 		emit SendSignal(3,info);
+
+		totalNum += numUp; 
+		emit SendSignal(1, "当前共上传了:" + QString::number(totalNum) + " 个局面");
+
 		return true;
 	}
 
@@ -272,17 +317,29 @@ namespace Chess {
 
 		QStringList fenList;
 
-		fenList.append("rnbakabnr/9/1c5c1/p1p1p1p1p/9/6P2/P1P1P3P/1C5C1/9/RNBAKABNR b - - 0 1");
-		fenList.append("rnbakabnr/9/1c5c1/p1p1p1p1p/9/P8/2P1P1P1P/1C5C1/9/RNBAKABNR b - - 0 1");
-		fenList.append("rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1CN4C1/9/R1BAKABNR b - - 0 1");
-		fenList.append("rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2B2C1/9/RN1AKABNR b - - 0 1");
-		fenList.append("rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C4C2/9/RNBAKABNR b - - 0 1");
-		fenList.append("rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C3C3/9/RNBAKABNR b - - 0 1");
-		fenList.append("rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5CN/9/RNBAKAB1R b - - 0 1");
-		fenList.append("rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/4A4/RNBAK1BNR b - - 0 1");
-		fenList.append("rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/5C1C1/9/RNBAKABNR b - - 0 1");
-		fenList.append("4kab2/4a1c2/2n1b4/p1p1nRP1p/4p4/2P3P2/Pcr4rP/R1N1CAN2/6C2/2BAK1B2 w - - 0 1");  // 急进中兵对攻均势局面
-		fenList.append("rnbak1C2/2r1a4/1c4nc1/p3p3p/6p2/2p6/P3P1P1P/1CN3N2/8R/R1BAKAB2 w - - 0 1");     // 对攻
+		fenList.append("rnbak1C2/2r1a4/1c4nc1/p3p3p/6p2/2p6/P3P1P1P/1CN3N2/8R/R1BAKAB2 w - - 0 1");
+		fenList.append("4kab2/4a1c2/2n1b4/p1p1nRP1p/4p4/2P3P2/Pcr4rP/R1N1CAN2/6C2/2BAK1B2 w - - 0 1");
+		fenList.append("r2akabr1/4n1c2/4b1c2/pC2C3p/2P3p2/4P4/P5P1P/6N2/9/RNBAKAB2 w - - 0 1");
+		fenList.append("2rakabr1/9/1c2b1n1c/p3p3p/3R2p2/9/P1p1P1P1P/C2CB1N2/9/RN1AKAB2 b - - 0 1");
+		fenList.append("rnbakab2/9/1c4n1c/p1P1p1p1p/9/6P2/P3P3P/2C1C1N2/9/RNrAKAB1R b - - 0 1");
+		fenList.append("rnbak1C2/2r1a4/1c4nc1/p3p3p/6p2/2p6/P3P1P1P/C1N3N2/9/R1BAKAB1R w - - 0 1");
+		fenList.append("rn1akabnr/9/2c1b2c1/p3p1p1p/9/9/P3P1P1P/BCp1C1N2/3N5/R2AKABR1 w - - 0 1");
+		fenList.append("rnbakabnr/9/1c7/p1p1p3p/6p2/2P3P2/P3c3P/1C4C2/9/RNBAKABNR w - - 0 1");
+		fenList.append("rn1akabnr/9/4b2c1/p3p1p1p/2P6/9/P3P1P1P/1Cc1C4/9/R1BAKABNR w - - 0 1");
+		fenList.append("rn1akab1r/9/1c2b2c1/p3p3p/1CP3pn1/9/P3P1P1P/2N2C2N/9/R1BAKAB1R b - - 0 1");  // 急进中兵对攻均势局面
+		fenList.append("r3kabn1/4a4/1c2b4/p3p1p1p/1np6/5NP2/P3P3P/N1C1C4/3RA4/2c1KAB2 w - - 0 1");     // 对攻
+		fenList.append("r1bakabr1/6c2/1cn6/p1p1pR2p/6pn1/2P1P4/P5P1P/1C2C1N2/9/RNBAKAB2 w - - 0 1");    
+		fenList.append("r1b1kabr1/4a1c2/1cn3n2/p1p1pR2p/3NP4/2P6/P5p1P/1C2C4/9/RNBAKAB2 b - - 0 1");
+		fenList.append("2bakabr1/r5c2/1cn3n2/p1p1pR2p/4P1p2/2P6/P5P1P/1C2C1N2/9/RNBAKAB2 b - - 0 1");
+		fenList.append("rnbakabnr/9/2c4c1/p3p1p1p/2p6/2P6/P3P1P1P/1CN1C4/9/R1BAKABNR b - - 0 1");
+		fenList.append("rn1akab2/2r6/1c2b1nc1/p3p1C1p/2p3p2/2P6/P3P1P1P/1CN3N2/7R1/R1BAKAB2 b - - 0 1");
+		fenList.append("rnbaka3/2r6/1c2b1nc1/p1p1p1C1p/6p2/2P6/P3P1P1P/1CN3N2/8R/R1BAKAB2 b - - 0 1");
+		fenList.append("rnbak2C1/4a3r/1c5c1/p1p1p3p/9/2P2np2/P3P3P/1CN5N/9/R1BAKAB1R w - - 0 1");
+		fenList.append("rnbakabr1/9/2c1c1n2/2p1p1p1p/9/pNP6/4P1P1P/1C4NC1/9/R1BAKABR1 w - - 0 1");
+		fenList.append("rnbakabnr/9/2c4c1/p3p1p1p/9/2p3P2/P3P3P/NC4NC1/9/R1BAKAB1R b - - 0 1");
+		fenList.append("rnbakabnr/9/1c5c1/p1p1p3p/9/2P3p2/P3P3P/1C5C1/9/RNBAKABNR w - - 0 1");
+		fenList.append("1rbakab1r/9/c1n4c1/p1p1p3p/5np2/2P6/P3P1P1P/2N1C1C1N/9/R1BAKABR1 w - - 0 1");
+		//fenList.append("");
 		//fenList.append("");
 		//fenList.append(""); rnbak1C2/2r1a4/1c4nc1/p3p3p/6p2/2p6/P3P1P1P/1CN3N2/8R/R1BAKAB2 w - - 0 7
 		int num = 0;
@@ -336,6 +393,118 @@ namespace Chess {
 
 		if (stat != 200) return false;
 		return true;
+	}
+
+	bool CTrainFen::FenLast50()
+	{
+		static int totalNum = 0;
+		//this->addOneFenToWEB("2bakN3/4aR3/4b4/1C1R5/6n2/9/C6c1/2n1B3c/4A3r/4KA3 w - - 0 1", 0, true);		
+
+		// 得到当前的所有棋步，和得分，分别上传
+
+		//ChessGame* game = this->pMain->GetCurrentChessGame();  // _game 
+
+		//ChessGame* game = _game;
+		//QString startFen = game->startingFen();
+		//QString startFen = game->board()->startingFenString();
+		int numUp = 0;
+		bool bHaveFirst = false;
+		//if (_startFen != "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1") {
+		//	this->addOneFenToWEB(_startFen, 0, true);
+		//	numUp++;
+		//	bHaveFirst = true;
+		//}
+
+		//******************* 准备测试数据
+		//for (int i = 0; i < 100; i++) {
+
+		//}
+
+
+		// 先找出负分，向前推10个局面就行
+		//int startPly = 400;
+		//bool findStart = false;
+		int endPly = _fens.count() - 1;
+		int score = 0;
+		int Start = _fens.count() - _drawHignScoreNum;
+		if (Start < 0) Start = 0;
+
+		for (int ply = Start ; ply < _fens.count(); ply++) {
+
+			//QString fen = _fens[ply];
+			if (_scores.contains(ply)) {
+				score = _scores[ply];
+				if (score == MoveEvaluation::NULL_SCORE) {
+					score = -1;
+				}
+			}
+			else {
+				score = -1;       // 只上传算过的分数
+			}
+			if (score < (-_maxScore)) {  // we find end move
+				endPly = ply;
+				break;
+			}
+		}
+
+
+		for (int ply = Start; ply < endPly; ply++) {
+
+			QString fen = _fens[ply];
+			if (_scores.contains(ply)) {
+				score = _scores[ply];
+				if (score == MoveEvaluation::NULL_SCORE) {
+					score = -1;
+				}
+			}
+			else {
+				score = -1;   // 只上传算过的分数
+			}
+
+			ply += _stepsGap;
+
+			this->addOneFenToWEB(fen, score, !bHaveFirst);
+			bHaveFirst = true;
+			numUp++;
+		}
+
+
+		QString info = "本次共上传 " + QString::number(numUp) + " 个局面";
+		emit SendSignal(3, info);
+
+		totalNum += numUp;
+		emit SendSignal(1, "当前共上传了:" + QString::number(totalNum) + " 个局面");
+
+		return true;
+	}
+
+
+
+	void CTrainFen::TimerFenDelOneON()
+	{
+		// https://blog.csdn.net/hanzhen7541/article/details/78831424		
+		if (this->_timer == nullptr) {
+			this->_timer = new QTimer(this);			
+			this->_timerThread = new QThread();
+
+			this->_timer->moveToThread(this->_timerThread);
+
+			connect(this->_timer, SIGNAL(timeout()),
+				this, SLOT(handleTimeout()), Qt::DirectConnection);
+
+		}
+		
+		int delayms = getDelDelayMs();
+
+		this->_timer->start(delayms);
+
+		emit SendSignal(3, "定时 " + QString::number(delayms /1000) + " 秒删除一个开始！");
+	}
+
+	void CTrainFen::TimerFenDelOneOFF()
+	{		
+		this->_timer->stop();
+		emit SendSignal(3, "定时删除一个Fen 停止了");
 	}
 
 	bool CTrainFen::GetTfenTsideFromFEN(QString fen, QString& tfen, QString& tside) {
@@ -453,6 +622,33 @@ namespace Chess {
 		return true;		
 	}
 
+	bool CTrainFen::delFirstOneFenFrom()
+	{
+
+
+		QUrl url(this->_WebAddress);
+
+		QUrlQuery query; // key-value 对
+		query.addQueryItem("user", _userName);
+		query.addQueryItem("pass", _passWord);
+		query.addQueryItem("method", "remove_one");
+		query.addQueryItem("trainID", QString::number(_trainID));	
+		query.addQueryItem("first", "no");
+		url.setQuery(query);
+
+		QString res;
+		int stat = this->getWebInfoByQuery(url, res);
+		emit SendSignal(2, res);
+		// 发送信息到status上
+		if (stat == 200) {
+			emit SendSignal(3, "定时删除一个Fen成功");;
+		}
+		else {
+			emit SendSignal(3, "定时删除一个Fen失败");;
+		}
+		return true;
+	}
+
 	bool CTrainFen::AddOneFenToSetting(QString fen)
 	{
 		QSettings s;
@@ -543,16 +739,31 @@ namespace Chess {
 		return true;
 	}
 
-
-	CTrainFen::CTrainFen(QObject* parent)	:QThread(parent),
-		pMain((MainWindow*)(parent))
+	int CTrainFen::getDelDelayMs()
 	{
-		GetSetting();
+		int minDelayMs = QSettings().value("trainFen/TimerDelOne", 20).toInt() * 1000;	
 
-		connect(this, SIGNAL(SendSignal(int, QString)),
-			parent, SLOT(slotDisplayStatus(int, QString)));
-		
+		int num = (CTrainFen::MaxFEN - ServerFENnum)/2;
+		if (num < 0) {
+			num = 0;
+		}
+		return minDelayMs + 1000 * num; // 每少一个fen, 就多一秒延时
 	}
+
+	void CTrainFen::handleTimeout() {  //超时处理函数
+		static int num = 1;
+		delFirstOneFenFrom();			
+
+		this->_timer->stop();
+
+		int newDelay = getDelDelayMs();
+		this->_timer->start(newDelay);
+
+		emit SendSignal(1, "共删除: " + QString::number(num++) + " FEN 定时: " + QString::number(newDelay/1000) + " s" );
+	}
+
+
+
 
 	void CTrainFen::run() {
 
@@ -573,6 +784,16 @@ namespace Chess {
 				break;
 			case CTrainFenMethod::REMOVE_FEN:
 				FenRemoveAll();
+				break;
+			case CTrainFenMethod::TIMER_DEL_FEN_ON:
+				
+				//TimerFenDelOneON();
+				break;
+			case CTrainFenMethod::TIMER_DEL_FEN_OFF:
+				//TimerFenDelOneOFF();
+				break;
+			case CTrainFenMethod::LAST_50:
+				FenLast50();
 				break;
 			default:
 				break;

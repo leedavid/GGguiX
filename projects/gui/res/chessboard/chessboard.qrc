@@ -30,5 +30,7 @@
         <file>icon/commmon.ico</file>
         <file>icon/dove_green.png</file>
         <file>icon/remove_all.png</file>
+        <file>icon/update.ico</file>
+        <file>icon/up50.ico</file>
     </qresource>
 </RCC>
