@@ -23,7 +23,7 @@
       <bool>false</bool>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -198,7 +198,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0">
             <property name="spacing">
-             <number>-1</number>
+             <number>6</number>
             </property>
             <property name="leftMargin">
              <number>6</number>
@@ -533,7 +533,7 @@
                <string>...</string>
               </property>
               <property name="icon">
-               <iconset resource="../../resources.qrc">
+               <iconset>
                 <normaloff>:/images/FlagUK.png</normaloff>:/images/FlagUK.png</iconset>
               </property>
              </widget>
@@ -544,7 +544,7 @@
                <string>...</string>
               </property>
               <property name="icon">
-               <iconset resource="../../resources.qrc">
+               <iconset>
                 <normaloff>:/images/FlagGermany.png</normaloff>:/images/FlagGermany.png</iconset>
               </property>
              </widget>
@@ -555,7 +555,7 @@
                <string>...</string>
               </property>
               <property name="icon">
-               <iconset resource="../../resources.qrc">
+               <iconset>
                 <normaloff>:/images/FlagFrance.png</normaloff>:/images/FlagFrance.png</iconset>
               </property>
              </widget>
@@ -566,7 +566,7 @@
                <string>...</string>
               </property>
               <property name="icon">
-               <iconset resource="../../resources.qrc">
+               <iconset>
                 <normaloff>:/images/FlagPoland.png</normaloff>:/images/FlagPoland.png</iconset>
               </property>
              </widget>
@@ -577,7 +577,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="../../resources.qrc">
+               <iconset>
                 <normaloff>:/images/new_board.png</normaloff>:/images/new_board.png</iconset>
               </property>
               <property name="toolButtonStyle">
@@ -1153,7 +1153,7 @@
                  <string>...</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="../../resources.qrc">
+                 <iconset>
                   <normaloff>:/images/find_tag.png</normaloff>:/images/find_tag.png</iconset>
                 </property>
                </widget>
@@ -1192,7 +1192,7 @@
                  <string>...</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="../../resources.qrc">
+                 <iconset>
                   <normaloff>:/images/find_tag.png</normaloff>:/images/find_tag.png</iconset>
                 </property>
                </widget>

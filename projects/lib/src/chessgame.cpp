@@ -656,7 +656,7 @@ Chess::Move ChessGame::ChessDBMove(Chess::Side side, int& ev_score)
 		t = Chess::CHESSDB_QUERY_TYPE::QUERY_TYPE_RANDOM;
 	}
 	// 使用云开局
-	if (this->board()->plyCount() <= useChesdDBOpenNum) {
+	if (this->board()->plyCount() <= useChesdDBOpenNum * 2) {
 
 		bool useChesdDBOpen = s.value("games/ChessDB/YunOpengame", false).toBool();
 		if (useChesdDBOpen) {
@@ -678,6 +678,9 @@ Chess::Move ChessGame::ChessDBMove(Chess::Side side, int& ev_score)
 			r = this->Query(fen, res, t, true, et);
 			if (r != 200) return Chess::Move();
 		}
+	}
+	else {
+		return Chess::Move();
 	}
 
 	QStringList MoveList = res.split("|");
@@ -715,6 +718,15 @@ Chess::Move ChessGame::ChessDBMove(Chess::Side side, int& ev_score)
 			}
 		}
 		if (ism) {
+
+			// 如果是开局，就要去了重复步子, 残局可以走重复的步子
+			if (!ENDGAME) {
+				Chess::Move mt = this->board()->moveFromString(m.move);
+				if (m_currentBoard->isRepetition(mt)) {
+					continue;
+				}
+			}
+
 			allEntries.append(m);
 		}
 		if (allEntries.count() >= 8) {  // 最多8个棋步
@@ -756,14 +768,14 @@ Chess::Move ChessGame::ChessDBMove(Chess::Side side, int& ev_score)
 
 	if (!m_currentBoard->isLegalMove(move))
 	{
-		qWarning("Illegal opening book move for %s: %s",
+		qWarning("Illegal ChessDB opening book move for %s: %s",
 			qUtf8Printable(side.toString()),
 			qUtf8Printable(m_currentBoard->moveString(move, Chess::Board::LongAlgebraic)));
 		return Chess::Move();
 	}
 
-	if (m_currentBoard->isRepetition(move))
-		return Chess::Move();
+	//if (m_currentBoard->isRepetition(move))
+	//	return Chess::Move();
 
 	return move;
 	
@@ -776,7 +788,10 @@ int ChessGame::getWebInfoByQuery(QUrl url, QString& res)
 	req.setUrl(url);
 
 	QTimer timer;
-	timer.setInterval(200);  // 设置超时时间 200 ms
+
+	int time = QSettings().value("games/ChessDB/YunTimeLimit", 200).toInt();
+
+	timer.setInterval(time);  // 设置超时时间 200 ms
 	timer.setSingleShot(true);  // 单次触发
 
 	QNetworkAccessManager* manager = new QNetworkAccessManager();

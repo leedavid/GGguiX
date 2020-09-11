@@ -257,6 +257,8 @@ void GameSettingsWidget::readSettings()
 	ui->checkBoxUseYunOpengame->setChecked(s.value("YunOpengame").toBool());
 	if (s.value("YunDTM").toBool())
 		ui->radioButtonYunDTM->setChecked(true);
+
+	ui->spinBoxYunTimeLimit->setValue(s.value("YunTimeLimit", 200).toInt());
 	//if (s.value("YunDTC").toBool())
 	//	ui->radioButtonYunDTC->setChecked(true);
 	s.endGroup();
@@ -399,6 +401,13 @@ void GameSettingsWidget::enableSettingsUpdates()
 	connect(ui->radioButtonYunDTM, &QRadioButton::toggled, [=](bool checked)
 		{
 			QSettings().setValue("games/ChessDB/YunDTM", checked);
+		});
+
+
+	connect(ui->spinBoxYunTimeLimit, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+		[=](int time)
+		{
+			QSettings().setValue("games/ChessDB/YunTimeLimit", time);
 		});
 
 
