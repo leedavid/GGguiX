@@ -641,8 +641,8 @@ bool LinkBoard::CalImageRect()
 
 bool LinkBoard::GetLxBoardChess(int index)
 {
-	//if (this->m_Ready_LXset == false)
-	//	this->GetLxInfo(this->m_catName);
+
+	static QString lastFen = "";  // 二次检验一下FEN
 
 	if (this->m_Ready_LXset == false) return false;
 
@@ -681,7 +681,17 @@ bool LinkBoard::GetLxBoardChess(int index)
 	searchChess(m_hwnd, "rb.png", pList->RXiangList, Side::White);   // 红象
 	searchChess(m_hwnd, "rp.png", pList->RPawnList, Side::White);    // 红兵
 	
-	return GetFen(pList);
+	//return GetFen(pList);
+
+	if (!GetFen(pList)) {
+		return false;
+	}
+	
+	if (lastFen != pList->fen) {
+		lastFen = pList->fen;
+		return false;
+	}
+	return true;
 }
 
 bool LinkBoard::GetLxInfo(QString catlog, bool saveChess)
@@ -947,13 +957,13 @@ bool LinkBoard::Board2Move(GenericMove& m)
 
 			if (m_pMain->isMoveValid(m) == true) {
 
-				if (m == m_preMove) {   // 二次确认
+				//if (m == m_preMove) {   // 二次确认
 					// 走子
 					this->m_LxBoard[0].b90[from] = ChinesePieceType::eNoPice;
 					this->m_LxBoard[0].b90[to] = piece;
 					return true;
-				}	
-				m_preMove = m; 
+				//}	
+				//m_preMove = m; 
 			}
 
 		}
