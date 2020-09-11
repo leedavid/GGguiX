@@ -146,7 +146,7 @@ public:
 		void clear();
 
 		/*! Sets book evaluation. */
-		void setBookEval(bool isBookEval);
+		void setBookEval(bool isBookEval, int ev_score = 0);
 
 		/*! Sets trusted property. */
 		void setIsTrusted(bool isTrusted);

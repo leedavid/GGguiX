@@ -23,6 +23,14 @@
 #include "openingbook.h"
 #include "timecontrol.h"
 
+#include <QNetworkrequest>
+#include <QNetworkaccessmanager>
+#include <QEventloop>
+#include <QNetworkreply>
+#include <QUrlquery>
+
+#include "mersenne.h"
+
 #include "../../gui/src/annotation.h"
 
 //const QStringList ChessGame::s_specList = QStringList() << s_emt << s_clk << s_egt << s_csl << s_cal;
@@ -426,41 +434,64 @@ void ChessGame::startTurn()
 
 	emit humanEnabled(m_player[side]->isHuman());
 
-	Chess::Move move(bookMove(side));
-	if (move.isNull())
-	{
+	// 在这儿加入云Move
+	if (m_player[side]->isHuman()) {
+		//int ev_score;
+		//Chess::Move move(bookMove(side, ev_score));
+		//if (move.isNull())
+		//{
+		//	m_player[side]->go();
+		//	m_player[side.opposite()]->startPondering();
+		//}
+		//else
+		//{
+		//	m_player[side.opposite()]->clearPonderState();
+		//	m_player[side]->makeBookMove(move, ev_score);
+		//}
+
 		m_player[side]->go();
 		m_player[side.opposite()]->startPondering();
 	}
-	else
-	{
-		m_player[side.opposite()]->clearPonderState();
-		m_player[side]->makeBookMove(move);
+	else {
+		int ev_score;
+		Chess::Move move(bookMove(side, ev_score));
+		if (move.isNull())
+		{
+			m_player[side]->go();
+			m_player[side.opposite()]->startPondering();
+		}
+		else
+		{
+			m_player[side.opposite()]->clearPonderState();
+			m_player[side]->makeBookMove(move, ev_score);
+		}
 	}
+
+	
 }
 
-void ChessGame::PlayerMakeBookMove(Chess::Move move)
-{
-	//if (m_paused)
-	//	return;
-
-	Chess::Side side(m_currentBoard->sideToMove());
-	Q_ASSERT(!side.isNull());
-
-	emit humanEnabled(m_player[side]->isHuman());
-
-	//Chess::Move move(bookMove(side));
-	if (move.isNull())
-	{
-		//m_player[side]->go();
-		//m_player[side.opposite()]->startPondering();
-	}
-	else
-	{
-		m_player[side.opposite()]->clearPonderState();
-		m_player[side]->makeBookMove(move);
-	}
-}
+//void ChessGame::PlayerMakeBookMove(Chess::Move move, int ev_score)
+//{
+//	//if (m_paused)
+//	//	return;
+//
+//	Chess::Side side(m_currentBoard->sideToMove());
+//	Q_ASSERT(!side.isNull());
+//
+//	emit humanEnabled(m_player[side]->isHuman());
+//
+//	//Chess::Move move(bookMove(side));
+//	if (move.isNull())
+//	{
+//		//m_player[side]->go();
+//		//m_player[side.opposite()]->startPondering();
+//	}
+//	else
+//	{
+//		m_player[side.opposite()]->clearPonderState();
+//		m_player[side]->makeBookMove(move, ev_score);
+//	}
+//}
 
 void ChessGame::onAdjudication(const Chess::Result& result)
 {
@@ -562,18 +593,21 @@ void ChessGame::onResultClaim(const Chess::Result& result)
 //	//}
 //}
 
-Chess::Move ChessGame::bookMove(Chess::Side side)
+Chess::Move ChessGame::bookMove(Chess::Side side, int& ev_score)
 {
-	Q_ASSERT(!side.isNull());
+	Q_ASSERT(!side.isNull());	
+
+	// 云库棋步查询
+	Chess::Move m = ChessDBMove(side, ev_score);
+	if (m != Chess::Move()) {
+		return m;
+	}
+
+	ev_score = 0;
 
 	if (m_book[side] == nullptr
 	||  m_moves.size() >= m_bookDepth[side] * 2)
 		return Chess::Move();
-
-
-	//
-	//QVector<quint64> keys;
-	//bookGetNextPosKeys(keys);
 
 
 	Chess::GenericMove bookMove = m_book[side]->move(m_currentBoard->key());
@@ -593,6 +627,242 @@ Chess::Move ChessGame::bookMove(Chess::Side side)
 		return Chess::Move();
 
 	return move;
+}
+
+Chess::Move ChessGame::ChessDBMove(Chess::Side side, int& ev_score)
+{
+	//if (m_book[side] == nullptr
+	//	|| m_moves.size() >= m_bookDepth[side] * 2)
+	//	return Chess::Move();
+
+
+	//
+	//QVector<quint64> keys;
+	//bookGetNextPosKeys(keys);
+	//*****************************************************************************
+	QSettings s;
+	QString res;
+	int r = 0;
+	Chess::ChessDBmove cm;
+
+	const bool ENDGAME = this->board()->isEndGame();
+
+	QString fen = this->board()->fenString();
+	int useChesdDBOpenNum = s.value("games/opening_book/depth", 10).toInt();
+	bool useBest = s.value("games/opening_book/disk_access", true).toBool();
+
+	Chess::CHESSDB_QUERY_TYPE t = Chess::CHESSDB_QUERY_TYPE::CHESSDB_QUERY_TYPE_ALL;
+	if (!useBest) {
+		t = Chess::CHESSDB_QUERY_TYPE::QUERY_TYPE_RANDOM;
+	}
+	// 使用云开局
+	if (this->board()->plyCount() <= useChesdDBOpenNum) {
+
+		bool useChesdDBOpen = s.value("games/ChessDB/YunOpengame", false).toBool();
+		if (useChesdDBOpen) {
+			r = this->Query(fen, res, t, false);
+			if (r != 200) return Chess::Move();
+		}
+	}
+	else if (ENDGAME) {   // 
+
+		bool useChessDBend = s.value("games/ChessDB/YunEndgame", false).toBool();
+		if (useChessDBend) {
+			bool useDTM = s.value("games/ChessDB/YunDTM", true).toBool();
+
+			//t = Chess::CHESSDB_QUERY_TYPE::QUERY_TYPE_BEST;                     // 残局库总是搜索最佳棋步？ 这个没有分数了
+			Chess::CHESSDB_ENDGAME_TYPE et = Chess::CHESSDB_ENDGAME_TYPE::DTM;
+			if (!useDTM) {
+				et = Chess::CHESSDB_ENDGAME_TYPE::DTC;
+			}
+			r = this->Query(fen, res, t, true, et);
+			if (r != 200) return Chess::Move();
+		}
+	}
+
+	QStringList MoveList = res.split("|");
+
+	QList<Chess::ChessDBmove> allEntries;
+
+
+	for (auto one_move : MoveList) {   // 每个有效步
+			// move:h2f2,score:3,rank:2,note:! (45-02),winrate:50.23
+		QStringList one_move_info = one_move.split(",");
+
+		Chess::ChessDBmove m;
+		m.rank = 2;
+		m.score = 0;
+		bool ism = false;
+		for (auto minfo : one_move_info) {
+			QStringList  Tlist = minfo.split(":");
+			if (Tlist.count() == 2) {
+				if (Tlist[0] == "move") {
+					m.move = Tlist[1];
+					ism = true;
+				}
+				else if (Tlist[0] == "score") {
+					m.score = Tlist[1].toInt();
+				}
+				else if (Tlist[0] == "rank") {
+					m.rank = Tlist[1].toInt();
+				}
+				else if (Tlist[0] == "note") {
+					m.note = Tlist[1];
+				}
+				else if (Tlist[0] == "winrate") {
+					m.winrate = Tlist[1].toFloat();
+				}
+			}
+		}
+		if (ism) {
+			allEntries.append(m);
+		}
+		if (allEntries.count() >= 8) {  // 最多8个棋步
+			break;
+		}
+	}
+
+	int rankBest = 2;  //  大于这个才可以走
+	// 1  求最高分
+	for (auto e : allEntries) {
+		if (e.rank >= rankBest) {
+			rankBest = e.rank;
+		}
+	}
+	// 2 将最高分集中起来
+	QList<Chess::ChessDBmove> bestEntries;
+	for (auto e : allEntries) {
+		if (e.rank >= rankBest) {
+			bestEntries << e;
+		}
+	}
+
+	if (bestEntries.count() <= 0) {
+		return Chess::Move();
+	}
+	int pick = Mersenne::random() % bestEntries.count();
+	cm = bestEntries[pick];
+
+	Chess::Move move = this->board()->moveFromString(cm.move);
+
+	//*******************************************************************************
+	ev_score = cm.score;
+
+
+	//Chess::GenericMove bookMove = m_book[side]->move(m_currentBoard->key());
+	//Chess::Move move = m_currentBoard->moveFromGenericMove(bookMove);				// 
+	if (move.isNull())
+		return Chess::Move();
+
+	if (!m_currentBoard->isLegalMove(move))
+	{
+		qWarning("Illegal opening book move for %s: %s",
+			qUtf8Printable(side.toString()),
+			qUtf8Printable(m_currentBoard->moveString(move, Chess::Board::LongAlgebraic)));
+		return Chess::Move();
+	}
+
+	if (m_currentBoard->isRepetition(move))
+		return Chess::Move();
+
+	return move;
+	
+	//return Chess::Move();
+}
+
+int ChessGame::getWebInfoByQuery(QUrl url, QString& res)
+{
+	QNetworkRequest req;
+	req.setUrl(url);
+
+	QTimer timer;
+	timer.setInterval(200);  // 设置超时时间 200 ms
+	timer.setSingleShot(true);  // 单次触发
+
+	QNetworkAccessManager* manager = new QNetworkAccessManager();
+	// 发送请求
+	QNetworkReply* pReplay = manager->get(req);
+
+	// 开启一个局部的事件循环，等待响应结束，退出
+	QEventLoop eventLoop;
+	connect(&timer, &QTimer::timeout, &eventLoop, &QEventLoop::quit);
+	QObject::connect(manager, &QNetworkAccessManager::finished, &eventLoop, &QEventLoop::quit);
+	timer.start();
+	eventLoop.exec();
+
+	int nStatusCode = 400;
+	if (timer.isActive()) {  // 处理响应
+		timer.stop();
+		if (pReplay->error() != QNetworkReply::NoError) {
+			// 错误处理
+			qDebug() << "Error String : " << pReplay->errorString();
+		}
+		else {
+			QVariant variant = pReplay->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+			nStatusCode = variant.toInt();
+			// 根据状态码做进一步数据处理
+			//QByteArray bytes = pReply->readAll();
+			//qDebug() << "Status Code : " << nStatusCode;
+			if (nStatusCode == 200) {
+				res = pReplay->readAll();
+			}
+		}
+	}
+	else {  // 处理超时
+		disconnect(pReplay, &QNetworkReply::finished, &eventLoop, &QEventLoop::quit);
+		pReplay->abort();
+		pReplay->deleteLater();
+		qDebug() << "Timeout";
+	}
+	return nStatusCode;
+}
+
+int ChessGame::Query(const QString& tFen, QString& Res, Chess::CHESSDB_QUERY_TYPE qtype, bool endGame, Chess::CHESSDB_ENDGAME_TYPE eType)
+{
+	QUrl url("http://www.chessdb.cn/chessdb.php");
+	QUrlQuery query; // key-value 对
+
+	// 转换一下fen
+	QStringList fl = tFen.split(" ");
+	if (fl.count() != 6) {
+		//emit SendSignalStatus(3, "Fen Error ChessDB");
+		return 200 + 1;
+	}
+	QString Fen = fl[0] + " " + fl[1];
+	//QString Fen = "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w";
+	//qtype = CHESSDB_QUERY_TYPE::CHESSDB_QUERY_TYPE_ALL;
+
+	switch (qtype)
+	{
+	case Chess::CHESSDB_QUERY_TYPE::CHESSDB_QUERY_TYPE_ALL:
+		query.addQueryItem("action", "queryall");
+		break;
+	case Chess::CHESSDB_QUERY_TYPE::QUERY_TYPE_BEST:
+		query.addQueryItem("action", "querybest");
+		break;
+	case Chess::CHESSDB_QUERY_TYPE::QUERY_TYPE_RANDOM:
+		query.addQueryItem("action", "query");
+		break;
+	default:
+		break;
+	}
+
+	query.addQueryItem("board", Fen);
+	//query.addQueryItem("ban", m_BanMove);
+	if (endGame) {
+		query.addQueryItem("endgame", "1");
+		//
+		if (eType == Chess::CHESSDB_ENDGAME_TYPE::DTM) {
+			query.addQueryItem("egtbmetric", "dtm");
+		}
+		else {
+			query.addQueryItem("egtbmetric", "dtc");
+		}
+	}
+
+	url.setQuery(query);
+
+	return getWebInfoByQuery(url, Res);
 }
 
 void ChessGame::setError(const QString& message)
@@ -722,11 +992,11 @@ void ChessGame::generateOpening()
 		if (!m_currentBoard->result().isNone())
 			return;
 	}
-
+	int ev_score;
 	// Then play the opening book moves
 	for (;;)
 	{
-		Chess::Move move = bookMove(m_currentBoard->sideToMove());
+		Chess::Move move = bookMove(m_currentBoard->sideToMove(), ev_score);
 		if (move.isNull())
 			break;
 
@@ -1383,7 +1653,7 @@ void ChessGame::startGame()
 		
 		addPgnMove(move, "book");
 
-		playerToMove()->makeBookMove(move);
+		playerToMove()->makeBookMove(move, 0);
 		playerToWait()->makeMove(move);
 		m_currentBoard->makeMove(move);
 		

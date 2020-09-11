@@ -134,12 +134,12 @@ void ChessPlayer::startClock()
 	}
 }
 
-void ChessPlayer::makeBookMove(const Chess::Move& move)
+void ChessPlayer::makeBookMove(const Chess::Move& move, int ev_score)
 {
 	m_timeControl.startTimer();
 	makeMove(move);
 	m_timeControl.update(false);
-	m_eval.setBookEval(true);
+	m_eval.setBookEval(true, ev_score);
 
 	emit moveMade(move);
 }

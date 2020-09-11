@@ -14,7 +14,30 @@
 //#include "../../gui/src/gameid.h"
 #include "board/boardfactory.h"
 
-namespace Chess { class Board; }
+
+namespace Chess { 
+	class Board;
+
+	enum class CHESSDB_QUERY_TYPE {
+		QUERY_TYPE_RANDOM = 0,
+		QUERY_TYPE_BEST,
+		CHESSDB_QUERY_TYPE_ALL
+	};
+
+	enum class CHESSDB_ENDGAME_TYPE {
+		DTM = 0,
+		DTC
+	};
+
+	struct ChessDBmove {
+		QString move;
+		int score;
+		int rank;
+		QString note;
+		float winrate;
+	};
+}
+
 class ChessPlayer;
 class OpeningBook;
 class MoveEvaluation;
@@ -83,7 +106,7 @@ class LIB_EXPORT ChessGame : public QObject
 		bool boardShouldBeFlipped() const;
 		void setBoardShouldBeFlipped(bool flip);
 
-		void PlayerMakeBookMove(Chess::Move m);
+		//void PlayerMakeBookMove(Chess::Move m, int ev_score);
 
 		PgnGame* pgn() const;
 		Chess::Board* board() const;
@@ -273,7 +296,15 @@ class LIB_EXPORT ChessGame : public QObject
 
 		//void bookGetNextPosKeys(QVector<quint64>& keys);   // get next move position key list
 
-		Chess::Move bookMove(Chess::Side side);
+		Chess::Move bookMove(Chess::Side side, int& ev_score);
+		Chess::Move ChessDBMove(Chess::Side side, int& ev_score);    //  «∑Ò”–‘∆ø‚∆Â≤Ω
+
+		int getWebInfoByQuery(QUrl url, QString& res);
+		int Query(const QString& Fen, QString& Res,
+			Chess::CHESSDB_QUERY_TYPE type = Chess::CHESSDB_QUERY_TYPE::QUERY_TYPE_BEST,
+			bool endGame = true,
+			Chess::CHESSDB_ENDGAME_TYPE eType = Chess::CHESSDB_ENDGAME_TYPE::DTM);
+
 		bool resetBoard();
 		void initializePgn();
 		void addPgnMove(const Chess::Move& move, const QString& comment);

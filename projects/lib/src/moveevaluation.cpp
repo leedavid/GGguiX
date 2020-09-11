@@ -210,9 +210,10 @@ void MoveEvaluation::clear()
 	m_ponderMove.clear();
 }
 
-void MoveEvaluation::setBookEval(bool isBookEval)
+void MoveEvaluation::setBookEval(bool isBookEval, int ev_score)
 {
 	m_isBookEval = isBookEval;
+	m_score = ev_score;
 }
 
 void MoveEvaluation::setIsTrusted(bool isTrusted)
