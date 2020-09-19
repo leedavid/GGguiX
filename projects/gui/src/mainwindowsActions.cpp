@@ -194,6 +194,7 @@ void MainWindow::slotGameChanged(bool bModified)
 	//UpdateMaterial();
 	//UpdateGameText();
 	//UpdateGameTitle();
+	(void)bModified;
 	moveChanged();
 }
 

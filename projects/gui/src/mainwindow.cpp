@@ -748,6 +748,7 @@ void MainWindow::onGameFinished(ChessGame* game)
 	// It's fine if it already exists.
 	//CreateDirectory(directory.c_str());
 
+	/*
 	if (!game->pgn()->isNull()
 		&& game->pgn()->moves().length() > 12) {  // 至少5步才保存
 
@@ -764,6 +765,7 @@ void MainWindow::onGameFinished(ChessGame* game)
 		QString fenFile = expDir + Chess::Random::Get().GetString(12) + ".pgn";		
 		game->pgn()->writeOnePgnGame(fenFile);
 	}
+	*/
 
 
 	// save game notation of non-tournament games to default PGN file
@@ -775,8 +777,21 @@ void MainWindow::onGameFinished(ChessGame* game)
 		QString fileName = QSettings().value("games/default_pgn_output_file", QString())
 					      .toString();
 
-		if (!fileName.isEmpty())
-			game->pgn()->write(fileName);
+		
+
+		if (!fileName.isEmpty()) {
+
+			// 
+			QStringList fs = fileName.split(".");
+			QDateTime dateTime(QDateTime::currentDateTime());
+			QString qStr = dateTime.toString("yyy-MM-dd");
+
+			if (fs.count() >= 2) {
+
+				QString newName = fs[0] + " " + qStr + ".pgn";	
+				game->pgn()->write(newName);
+			}
+		}
 			//TODO: reaction on error
 	}
 
