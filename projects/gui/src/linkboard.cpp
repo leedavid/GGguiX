@@ -28,7 +28,7 @@ LinkBoard::LinkBoard(MainWindow* pMain, Capture* pCap, QString linkCat, bool isA
 {
 	this->initBoard();   
 }
-
+// https://cloud.tencent.com/developer/article/1199352
 void LinkBoard::initBoard()
 {
 #if 0

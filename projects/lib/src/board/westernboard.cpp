@@ -1462,13 +1462,13 @@ Result WesternBoard::result()
 
 			if (m_reversibleMoveCount >= 250)
 			{
-				str = tr("60 步未吃子，判和！");
+				str = tr("60 回合未吃子，判和！");
 				return Result(Result::Draw, Side::NoSide, str);
 			}
 
-			if (repeatCount() > 20)
+			if (repeatCount() > 10)
 			{
-				str = tr("循环五步，判和！");
+				str = tr("循环五次，判和！");
 				return Result(Result::Draw, Side::NoSide, str);
 			}
 		}
@@ -1476,14 +1476,14 @@ Result WesternBoard::result()
 
 			if (m_reversibleMoveCount >= 160)
 			{
-				str = tr("60 步未吃子，判和！");
+				str = tr("60 回合未吃子，判和！");
 				return Result(Result::Draw, Side::NoSide, str);
 			}
 
 			// 3-fold repetition
 			if (repeatCount() >= 4)
 			{
-				str = tr("循环四步，判和！");
+				str = tr("循环四次，判和！");
 				return Result(Result::Draw, Side::NoSide, str);
 			}
 		}
@@ -1492,7 +1492,7 @@ Result WesternBoard::result()
 		// 50 move rule
 		if (m_reversibleMoveCount >= 120)
 		{
-			str = tr("60 步未吃子，判和！");
+			str = tr("60 回合未吃子，判和！");
 			return Result(Result::Draw, Side::NoSide, str);
 		}
 

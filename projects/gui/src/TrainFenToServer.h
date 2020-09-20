@@ -61,6 +61,7 @@ namespace Chess {
 
 		bool FenAddLostGame();
 		bool FenAddDrawTooHigh();   // 高分和棋
+		void InfoStatic();         // 发送统计信息
 		bool FenDelete();
 		bool FenCommon();
 		bool FenRemoveAll();
@@ -104,7 +105,12 @@ namespace Chess {
 		QThread* _timerThread;
 		static int ServerFENnum;      // 
 
+		static int DelFenNum;  
+		static int AddFenNum;
+		static int DelFenDelayMs;
+
 		const static int MaxFEN = 490;
+
 
 	private:
 

@@ -248,6 +248,7 @@ void GameSettingsWidget::readSettings()
 	s.beginGroup("opening_book");
 	ui->m_polyglotFileEdit->setText(s.value("file").toString());
 	ui->m_polyglotDepthSpin->setValue(s.value("depth", 10).toInt());
+	ui->m_GGzeroDepthSpin->setValue(s.value("GGzerodepth", 0).toInt());     // 佳佳引擎可以单独设置开局步数
 	if (s.value("disk_access").toBool())
 		ui->m_BesMoveRadio->setChecked(true);
 	s.endGroup();
@@ -335,6 +336,14 @@ void GameSettingsWidget::enableSettingsUpdates()
 	{
 		QSettings().setValue("games/opening_book/depth", depth);
 	});
+
+	connect(ui->m_GGzeroDepthSpin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+		[=](int depth)
+		{
+			QSettings().setValue("games/opening_book/GGzerodepth", depth);
+		});
+
+
 	connect(ui->m_BesMoveRadio, &QRadioButton::toggled, [=](bool checked)
 	{
 		QSettings().setValue("games/opening_book/disk_access", checked);

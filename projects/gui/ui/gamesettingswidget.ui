@@ -224,7 +224,33 @@
            <string> 回合</string>
           </property>
           <property name="minimum">
-           <number>1</number>
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>3</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>GG引擎</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="m_GGzeroDepthSpin">
+          <property name="toolTip">
+           <string>GGzero引擎的回合数</string>
+          </property>
+          <property name="suffix">
+           <string> 回合</string>
+          </property>
+          <property name="prefix">
+           <string/>
           </property>
          </widget>
         </item>

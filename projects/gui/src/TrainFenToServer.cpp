@@ -13,6 +13,10 @@ namespace Chess {
 	}
 	int CTrainFen::ServerFENnum = CTrainFen::MaxFEN;
 
+	int CTrainFen::DelFenNum = 0;
+	int CTrainFen::AddFenNum = 0;
+	int CTrainFen::DelFenDelayMs = 0;
+
 	CTrainFen::CTrainFen(QObject* parent) :QThread(parent),
 		pMain((MainWindow*)(parent))
 	{
@@ -120,7 +124,7 @@ namespace Chess {
 	bool CTrainFen::FenAddLostGame()
 	{
 
-		static int totalNum = 0;
+		//static int totalNum = 0;
 		//this->addOneFenToWEB("2bakN3/4aR3/4b4/1C1R5/6n2/9/C6c1/2n1B3c/4A3r/4KA3 w - - 0 1", 0, true);		
 
 		// 得到当前的所有棋步，和得分，分别上传
@@ -214,11 +218,13 @@ namespace Chess {
 		QString info = "本次共上传 " + QString::number(numUp) + " 个局面";
 		emit SendSignal(3,info);
 
-		totalNum += numUp; 
-		emit SendSignal(1, "当前共上传了:" + QString::number(totalNum) + " 个局面");
+		CTrainFen::AddFenNum += numUp;
+		InfoStatic();
 
 		return true;
 	}
+
+	//
 
 	// 高分和棋
 	bool CTrainFen::FenAddDrawTooHigh()
@@ -296,6 +302,15 @@ namespace Chess {
 		return true;
 	}
 
+	void CTrainFen::InfoStatic()
+	{
+		emit SendSignal(1, 
+			"当前:" + QString::number(CTrainFen::ServerFENnum)
+			+ " 上传:" + QString::number(CTrainFen::AddFenNum) 
+			+ " 删除:" + QString::number(CTrainFen::DelFenNum)
+		    + " 延时: " + QString::number(CTrainFen::DelFenDelayMs/1000));
+	}
+
 	bool CTrainFen::FenDelete()
 	{
 		QString fen;
@@ -307,7 +322,10 @@ namespace Chess {
 			msleep(100);
 			total--;
 		}
-		emit SendSignal(1, "共从网站删除 " + QString::number(num) + " 个FEN");		
+
+		CTrainFen::DelFenNum += num;
+		InfoStatic();
+
 		return true;
 	}
 
@@ -349,6 +367,10 @@ namespace Chess {
 			num++;
 		}
 		emit emit SendSignal(3, "本次上传 " + QString::number(num) + " 个局面");
+
+		CTrainFen::AddFenNum += num;
+		InfoStatic();
+
 		return true;
 	}
 
@@ -397,7 +419,7 @@ namespace Chess {
 
 	bool CTrainFen::FenLast50()
 	{
-		static int totalNum = 0;
+		//static int totalNum = 0;
 		//this->addOneFenToWEB("2bakN3/4aR3/4b4/1C1R5/6n2/9/C6c1/2n1B3c/4A3r/4KA3 w - - 0 1", 0, true);		
 
 		// 得到当前的所有棋步，和得分，分别上传
@@ -472,8 +494,8 @@ namespace Chess {
 		QString info = "本次共上传 " + QString::number(numUp) + " 个局面";
 		emit SendSignal(3, info);
 
-		totalNum += numUp;
-		emit SendSignal(1, "当前共上传了:" + QString::number(totalNum) + " 个局面");
+		CTrainFen::AddFenNum += numUp;
+		InfoStatic();
 
 		return true;
 	}
@@ -747,19 +769,20 @@ namespace Chess {
 		if (num < 0) {
 			num = 0;
 		}
-		return minDelayMs + 1000 * num; // 每少一个fen, 就多一秒延时
+		return minDelayMs + 1000 * num/2; // 每少一个fen, 就多0.5秒延时
 	}
 
 	void CTrainFen::handleTimeout() {  //超时处理函数
-		static int num = 1;
+		//static int num = 1;
 		delFirstOneFenFrom();			
 
 		this->_timer->stop();
 
-		int newDelay = getDelDelayMs();
-		this->_timer->start(newDelay);
+		CTrainFen::DelFenDelayMs = getDelDelayMs();
+		this->_timer->start(CTrainFen::DelFenDelayMs);
+		CTrainFen::DelFenNum++;
 
-		emit SendSignal(1, "共删除: " + QString::number(num++) + " FEN 定时: " + QString::number(newDelay/1000) + " s" );
+		InfoStatic();
 	}
 
 

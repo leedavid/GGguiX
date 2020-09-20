@@ -605,6 +605,15 @@ Chess::Move ChessGame::bookMove(Chess::Side side, int& ev_score)
 
 	ev_score = 0;
 
+	const QString playName = this->player(side)->name();
+	if (playName.contains("ggzero", Qt::CaseInsensitive)) {
+		QSettings s;
+		int ggdepth = s.value("games/opening_book/GGzerodepth", 0).toInt();
+		if (ggdepth != m_bookDepth[side]) {
+			m_bookDepth[side] = ggdepth;
+		}
+	}
+
 	if (m_book[side] == nullptr
 	||  m_moves.size() >= m_bookDepth[side] * 2)
 		return Chess::Move();
@@ -649,6 +658,16 @@ Chess::Move ChessGame::ChessDBMove(Chess::Side side, int& ev_score)
 
 	QString fen = this->board()->fenString();
 	int useChesdDBOpenNum = s.value("games/opening_book/depth", 10).toInt();
+
+	// 看一下是playname, GGzero可单独设置开局库步数
+	const QString playName = this->player(side)->name();
+	if (playName.contains("ggzero", Qt::CaseInsensitive)) {
+		int ggdepth = s.value("games/opening_book/GGzerodepth", 0).toInt();
+		if (ggdepth != useChesdDBOpenNum) {
+			useChesdDBOpenNum = ggdepth;
+		}
+	}
+
 	bool useBest = s.value("games/opening_book/disk_access", true).toBool();
 
 	Chess::CHESSDB_QUERY_TYPE t = Chess::CHESSDB_QUERY_TYPE::CHESSDB_QUERY_TYPE_ALL;
@@ -993,6 +1012,8 @@ void ChessGame::setAdjudicator(const GameAdjudicator& adjudicator)
 
 void ChessGame::generateOpening()
 {
+	return;
+	
 	if (m_book[Chess::Side::White] == nullptr || m_book[Chess::Side::Black] == nullptr)
 		return;
 	if (!resetBoard())
