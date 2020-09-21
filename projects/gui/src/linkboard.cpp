@@ -24,15 +24,144 @@ LinkBoard::LinkBoard(MainWindow* pMain, Capture* pCap, QString linkCat, bool isA
 	:m_pMain(pMain),
 	m_pCap(pCap),
 	m_linkCanName(linkCat),
-	m_isAutoClick(isAuto)
+	m_isAutoClick(isAuto),
+	mouseClickMethod(LinkMouseClickMethod::Message)
 {
 	this->initBoard();   
 }
 // https://cloud.tencent.com/developer/article/1199352
 void LinkBoard::initBoard()
 {
+	this->readFromCatlog();
+
 #if 0
-	if (m_catName == "中游象棋") {        // 天天象棋
+	if (m_linkCanName == "测试一") {        // 独醉连线
+		m_precision_chess = 0.70f; // was 0.52
+		m_precision_auto = 0.98f;
+		m_UseAdb = false;
+		m_sleepTimeMs = 50;
+		m_scaleX = 1.0f;
+		m_scaleY = 1.0f;
+
+		//m_Ready_LXset = false;
+		////m_chessWinOK = false;
+
+		//m_chessClip = 0.25f;
+
+		//this->m_board = BoardFactory::create("standard");
+		//this->m_board_second = BoardFactory::create("standard");
+		//m_board->reset();
+		//m_board_second->reset();
+
+
+		//this->m_LxInfo.m_LX_name = "兵河五四小棋盘";
+		m_ParentKeyword = "异速联客户端";                          // 父窗口关键词
+		m_Parentclass = "#32770";             // 父窗口类
+		m_titleKeyword = "Output Painter Window"; // "BHGUI(test) - 新棋局";
+		m_class = "OPContainerClass";
+		//m_class = "AfxOleControl42"; // "Afx:00400000:b:00010003:00000006:0A1D05FB";
+
+		//this->m_LxInfo.offx = 29.0f;
+		//this->m_LxInfo.offy = 138.0f;
+		//this->m_LxInfo.m_dx = 28.0f;
+		//this->m_LxInfo.m_dy = 28.0f;
+
+		m_offx_che = 79.0f;
+		m_offy_che = 210.0f;
+		m_dx = 40.0f;
+		m_dy = 40.0f;
+
+		this->m_Ready_LXset = false;
+
+		//this->m_LxInfo.m_PieceCatlog = "0";
+		//this->m_connectedBoard_OK = false;  // 
+
+		m_side = Side::NoSide;
+
+		m_flip = false;
+
+		m_iLowHred = 0;
+		m_iHighHred = 10;
+
+		m_iLowSred = 77;
+		m_iHighSred = 255;
+
+		m_iLowVred = 95;
+		m_iHighVred = 255;
+
+		m_iLowHblack = 0;
+		m_iHighHblack = 51;
+
+		m_iLowSblack = 0;
+		m_iHighSblack = 90;
+
+		m_iLowVblack = 0;
+		m_iHighVblack = 140;
+		/* qq 新象
+		m_precision_chess = 0.57f; // was 0.52
+		m_precision_auto = 0.98f;
+		m_UseAdb = false;
+		m_sleepTimeMs = 50;
+		m_scaleX = 1.0f;
+		m_scaleY = 1.0f;
+
+		//m_Ready_LXset = false;
+		////m_chessWinOK = false;
+
+		//m_chessClip = 0.25f;
+
+		//this->m_board = BoardFactory::create("standard");
+		//this->m_board_second = BoardFactory::create("standard");
+		//m_board->reset();
+		//m_board_second->reset();
+
+
+		//this->m_LxInfo.m_LX_name = "兵河五四小棋盘";
+		m_ParentKeyword = "QQ新中国象棋";                          // 父窗口关键词
+		m_Parentclass = "";             // 父窗口类
+		m_titleKeyword = "CGameView"; // "BHGUI(test) - 新棋局";
+		m_class = "Afx:400000:0";
+		//m_class = "AfxOleControl42"; // "Afx:00400000:b:00010003:00000006:0A1D05FB";
+
+		//this->m_LxInfo.offx = 29.0f;
+		//this->m_LxInfo.offy = 138.0f;
+		//this->m_LxInfo.m_dx = 28.0f;
+		//this->m_LxInfo.m_dy = 28.0f;
+
+		m_offx_che = 266.0f;
+		m_offy_che = 88.0f;
+		m_dx = 57.0f;
+		m_dy = 57.0f;
+
+		this->m_Ready_LXset = false;
+
+		//this->m_LxInfo.m_PieceCatlog = "0";
+		//this->m_connectedBoard_OK = false;  //
+
+		m_side = Side::NoSide;
+
+		m_flip = false;
+
+		m_iLowHred = 0;
+		m_iHighHred = 10;
+
+		m_iLowSred = 77;
+		m_iHighSred = 255;
+
+		m_iLowVred = 95;
+		m_iHighVred = 255;
+
+		m_iLowHblack = 0;
+		m_iHighHblack = 51;
+
+		m_iLowSblack = 0;
+		m_iHighSblack = 90;
+
+		m_iLowVblack = 0;
+		m_iHighVblack = 140;
+		*/
+	}
+	else if (m_linkCanName == "天天象棋") {        // 天天象棋
 		m_precision_chess = 0.57f; // was 0.52
 		m_precision_auto = 0.98f;
 		m_UseAdb = false;
@@ -158,7 +287,7 @@ void LinkBoard::initBoard()
 		m_iHighVblack = 140;
 		*/
 	}
-	else if (m_catName == "王者象棋") {   // 王者象棋
+	else if (m_linkCanName == "王者象棋") {   // 王者象棋
 		m_precision_chess = 0.42f; // was 0.52
 		m_precision_auto = 0.98f;
 		m_UseAdb = false;
@@ -225,7 +354,7 @@ void LinkBoard::initBoard()
 
 #endif		
 
-	this->readFromCatlog();
+	
 	CalImageRect();
 	m_Ready_LXset = false;
 	m_side = Side::NoSide;
@@ -293,7 +422,7 @@ void LinkBoard::runAutoChess()
 	bool bWeMustSendInitFen = false;
 	this->m_hwnd = nullptr; 
 
-	this->m_Ready_LXset = true;      // 连线信息OK
+	this->m_Ready_LXset = true;      // 连线信息OK  was true
 
 	if (this->m_Ready_LXset == false) {
 		
@@ -530,6 +659,26 @@ void LinkBoard::runAutoClip()
 	}
 }
 
+
+void LinkBoard::mouseLeftClickEvent(int x, int y) {
+
+	RECT r1;
+	::GetWindowRect(this->m_parentHwnd, &r1);
+
+
+	
+	int X = (x + r1.left) * 65536 / 2560 + 1;
+	int Y = (y + r1.top) * 65536 / 1440 + 1;
+
+	SetCursorPos(x+r1.left, y+r1.top);
+	wait(10);
+	mouse_event(MOUSEEVENTF_LEFTDOWN + MOUSEEVENTF_LEFTUP, X, Y, 0, 0);
+	wait(10);
+
+	//mouse_event(MOUSEEVENTF_LEFTDOWN + MOUSEEVENTF_LEFTUP + MOUSEEVENTF_ABSOLUTE, X, Y, 0, 0);
+}
+
+
 void LinkBoard::ProcessBoardMove(const Chess::GenericMove& move)
 {
 	int fx = move.sourceSquare().file();
@@ -584,10 +733,87 @@ void LinkBoard::ProcessBoardMove(const Chess::GenericMove& move)
 	//		return;
 	//	}
 	//}
+	//::ShowWindow(m_hwnd, SW_NORMAL);
 
-	winLeftClick(m_hwnd, ffx, ffy);    // 好象有一半不用点击
-	//wait(1);
-	winLeftClick(m_hwnd, ttx, tty);
+	if (m_linkCanName == "测试一") {
+
+		//SetForegroundWindow(this->m_parentHwnd);
+		//wait(5);
+		//SetCursorPos(ffx, ffy);
+		//wait(5);
+		//mouse_event(MOUSEEVENTF_LEFTDOWN, ffx, ffy, 0, 0);
+		//wait(5);
+		//mouse_event(MOUSEEVENTF_LEFTUP, ffx, ffy, 0, 0);
+
+		//wait(5);
+		//SetCursorPos(ttx, tty);
+		//wait(5);
+		//mouse_event(MOUSEEVENTF_LEFTDOWN, ttx, tty, 0, 0);
+		//wait(5);
+		//mouse_event(MOUSEEVENTF_LEFTUP, ttx, tty, 0, 0);
+		//wait(5);
+		//int a = 0;
+
+		//SetForegroundWindow(this->m_parentHwnd);
+
+		//wait(10);
+
+		this->mouseLeftClickEvent(ffx, ffy);
+		wait(2);
+		this->mouseLeftClickEvent(ttx, tty);
+
+		//wait(10);
+
+		//int a = 0;
+	}
+	else {
+
+		winLeftClick(m_hwnd, ffx, ffy);    // 好象有一半不用点击	
+		winLeftClick(m_hwnd, ttx, tty);
+	}
+
+	/*
+	for (int i = 0; i++; i < 2) {
+		HWND tt = (HWND)0x000000000C1A4A;
+		winLeftClick(tt, ffx, ffy);
+		
+		winLeftClick(tt, ttx, tty);
+
+		tt = (HWND)0x000000000171C88;
+		winLeftClick(tt, ffx, ffy);
+		winLeftClick(tt, ttx, tty);
+
+		tt = (HWND)0x00000000F24B6;
+		winLeftClick(tt, ffx, ffy);
+		winLeftClick(tt, ttx, tty);
+
+		tt = (HWND)0x0000000071A5A;
+		winLeftClick(tt, ffx, ffy);
+		winLeftClick(tt, ttx, tty);
+
+		tt = (HWND)0x00000000C1A4A;
+		winLeftClick(tt, ffx, ffy);
+		winLeftClick(tt, ttx, tty);
+
+		tt = (HWND)0x000081A32;
+		winLeftClick(tt, ffx, ffy);
+		winLeftClick(tt, ttx, tty);
+
+		tt = (HWND)0x000280126;
+		winLeftClick(tt, ffx, ffy);
+		winLeftClick(tt, ttx, tty);
+
+		tt = (HWND)0x00071A48;
+		winLeftClick(tt, ffx, ffy);
+		winLeftClick(tt, ttx, tty);
+
+		tt = (HWND)0x0000000000061A4C;
+		winLeftClick(tt, ffx, ffy);
+		winLeftClick(tt, ttx, tty);
+
+		int a = 0;
+	}
+	*/
 }
 
 void LinkBoard::SetCatlogName(QString catName)
@@ -744,6 +970,8 @@ bool LinkBoard::GetLxInfo(QString catlog, bool saveChess)
 
 	this->CalImageRect();
 	
+	//saveChess = true;
+
 	if (saveChess) {
 		this->SaveAllPiecePicture();
 	}	
@@ -796,6 +1024,8 @@ bool LinkBoard::getChessboardHwnd(bool onlyBChe, bool getChess)
 	if (!hParent) {
 		return false;
 	}
+
+	m_parentHwnd = hParent;
 
 	pClass = NULL;
 	pCaption = NULL;
@@ -1160,12 +1390,68 @@ bool LinkBoard::SaveOnePiecePic(int x, int y, QString chessName, QString subCat)
 }
 
 
-void LinkBoard::winLeftClick(HWND hwnd, int x, int y, int off_x, int off_y)
+void LinkBoard::winLeftClick(HWND hwnd, int x, int y, int off_x, int off_y, int waitMS)
 {
+	// 如果是其它点击方式
+	
+	
 	LONG temp = MAKELONG(x+off_x, y+off_y);
 	::SendMessage(hwnd, WM_LBUTTONDOWN, 0, temp);
-	//wait(1);
+	  wait(waitMS);
 	::SendMessage(hwnd, WM_LBUTTONUP, 0, temp);
+}
+
+
+void LinkBoard::simWinLeftClick(int x, int y, int waitMS)
+{
+	
+	
+	//HWND hWnd = this->m_hwnd;
+	//LPARAM lParam = MAKELPARAM(x, y);
+	//PostMessage(hWnd, WM_RBUTTONDOWN, MK_RBUTTON, lParam);
+	//PostMessage(hWnd, WM_RBUTTONUP, MK_RBUTTON, lParam);
+
+	const RECT rs1 = { x - 1, y - 1, x + 1, y + 1 };
+	const RECT rs0 = { 0, 0, 0,  0};
+	//ClipCursor(&rs1);
+	SetCursorPos(x, y);
+	mouse_event(MOUSEEVENTF_LEFTDOWN , 0, 0, 0, 0);
+
+	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+	//ClipCursor(&rs0);
+	return;
+	
+	
+	
+	//INPUT* buffer = new INPUT[3]; //allocate a buffer
+	INPUT buffer[3];
+
+	buffer->type = INPUT_MOUSE;
+	buffer->mi.dx = x;
+	buffer->mi.dy = y;
+	buffer->mi.mouseData = 0;
+	buffer->mi.dwFlags = (MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE);
+	buffer->mi.time = 0;
+	buffer->mi.dwExtraInfo = 0;
+
+	(buffer + 1)->type = INPUT_MOUSE;
+	(buffer + 1)->mi.dx = x;
+	(buffer + 1)->mi.dy = y;
+	(buffer + 1)->mi.mouseData = 0;
+	(buffer + 1)->mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
+	(buffer + 1)->mi.time = 0;
+	(buffer + 1)->mi.dwExtraInfo = 0;
+
+	(buffer + 2)->type = INPUT_MOUSE;
+	(buffer + 2)->mi.dx = x;
+	(buffer + 2)->mi.dy = y;
+	(buffer + 2)->mi.mouseData = 0;
+	(buffer + 2)->mi.dwFlags = MOUSEEVENTF_LEFTUP;
+	(buffer + 2)->mi.time = 0;
+	(buffer + 2)->mi.dwExtraInfo = 0;
+
+	SendInput(3, buffer, sizeof(INPUT));
+
 }
 
 void LinkBoard::wait(int msec)

@@ -311,6 +311,7 @@ void MainWindow::slotProcessCapMsg(Chess::stCaptureMsg msg)
 
 void MainWindow::onLXchessboardStart() {
 
+	
 	QString catName = this->cbtnLinkBoard->currentText();
 
 	if (m_pcap == nullptr)
@@ -377,6 +378,7 @@ void MainWindow::onPlayRedToggled(bool checked) {
 
 // 黑方电脑思考按钮
 void MainWindow::onPlayBlackToggled(bool checked) {
+
 
 
 

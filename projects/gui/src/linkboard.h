@@ -25,6 +25,13 @@ namespace Chess {
 		eText,				// 提示信息
 		eDraw               // 网站判和了
 	};
+	
+	
+	enum class LinkMouseClickMethod {
+		Message = 0,
+		Sim
+	};
+	
 
 	struct stCaptureMsg {
 		eCapMsgType mType;
@@ -107,6 +114,7 @@ namespace Chess {
 
 	private:
 		
+		void mouseLeftClickEvent(int x, int y);
 
 		volatile bool bMustStop;           // 马上停止
 
@@ -117,6 +125,8 @@ namespace Chess {
 
 		HWND m_parentHwnd;                 // 棋盘父窗口
 		HWND m_hwnd;                       // 可响应鼠标走棋的窗口
+
+		LinkMouseClickMethod mouseClickMethod;              // 窗口点击方式
 
 		//QString m_catName;               // 这个就是连线的名称
 		//ELinkMethod m_linkMethod;        // 连线方式
@@ -210,7 +220,10 @@ namespace Chess {
 		bool  SaveOnePiecePic(int x, int y, QString chessName, QString subCat);
 
 		void initBoard();
-		void winLeftClick(HWND hwnd, int x, int y, int off_x = 0, int off_y = 0);
+		void winLeftClick(HWND hwnd, int x, int y, int off_x = 0, int off_y = 0, int waitMS = 0);
+
+		void simWinLeftClick(int x, int y, int waitMS = 0);
+
 		void wait(int msec);
 
 		bool SearchAndClick(QString findName, bool isCap, QString sub_catlog = nullptr, HWND hw = nullptr, float threshold = 1.0f);
