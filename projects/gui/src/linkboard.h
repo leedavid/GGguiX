@@ -112,7 +112,11 @@ namespace Chess {
 
 		void SetCatlogName(QString catName);
 
+	
+
 	private:
+
+		void SendMouseMoveToBoard(bool haveInput=false, int ffx = 0, int ffy = 0, int ttx=0, int tty = 0, QString fen = "");
 		
 		void mouseLeftClickEvent(int x, int y);
 
@@ -121,7 +125,7 @@ namespace Chess {
 		MainWindow* m_pMain;
 		Capture* m_pCap; 
 
-
+		QElapsedTimer timeRun;  // 超时定时器
 
 		HWND m_parentHwnd;                 // 棋盘父窗口
 		HWND m_hwnd;                       // 可响应鼠标走棋的窗口
@@ -211,7 +215,8 @@ namespace Chess {
 		void Find_window2(HWND parent, int level);
 
 		bool Board2Move(Chess::GenericMove& m);
-		bool GetFen(stLxBoard* pList);
+		bool FillListAndGetFen(stLxBoard* pList);
+		QString GetFenFromB90(ChinesePieceType b90[]);
 		bool fillB90(ChinesePieceType b90[], QVector<cv::Point>& plist, ChinesePieceType chess);
 		int getB90(cv::Point p);
 		QChar Qpiece_to_char(ChinesePieceType chess);

@@ -838,8 +838,8 @@ void MainWindow::onGameFinished(ChessGame* game)
 		}
 	}
 
-	// 连线结束要不要自动上传
-	bool autoUploadLX  = s.value("trainFen/AutoUploadFen").toBool();
+	// 连线结束要不要自动上传  trainFen/LXuploadFen
+	bool autoUploadLX  = s.value("trainFen/LXuploadFen").toBool();
 	if (autoUploadLX) {
 		// 如果当是连线
 		//if (game->getIsLinkBoard()) {
