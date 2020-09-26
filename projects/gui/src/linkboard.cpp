@@ -446,7 +446,7 @@ void LinkBoard::runAutoChess()
 	}
 
 	QString MoveSendingFen;
-	Chess::GenericMove MoveSendingMove;
+	//Chess::GenericMove MoveSendingMove;
 	this->m_LxBoard[0].fen = "none";
 
 	
@@ -532,21 +532,24 @@ void LinkBoard::runAutoChess()
 
 
 			Chess::GenericMove m;
-			if (this->Board2Move(m)) {
+			if (this->Board2Move(m)) {   // 根据棋盘，得到当前的走步，这个走步是对方走的
 				//SendMoveToMain(m);
 				MoveSendingFen = this->m_LxBoard[1].fen;
-				MoveSendingMove = m;
+				//MoveSendingMove = m;
+
+				this->m_pCap->SendMoveToMain(m);
 
 				this->m_LxBoard[0].fen = MoveSendingFen;      // 保存走子后的fen	
 
 				StartTime = timeRun.elapsed();                // 发送棋盘后重置一下棋局开始时间
 			}
 
-			if (this->m_LxBoard[1].fen == MoveSendingFen) {   // 棋盘没有改动
-				if (MoveSendingMove.isNull() == false) {
-					this->m_pCap->SendMoveToMain(m);
-				}
-			}
+			//if (this->m_LxBoard[1].fen == MoveSendingFen) {   // 棋盘没有改动
+				//if (MoveSendingMove.isNull() == false) {
+				//	this->m_pCap->SendMoveToMain(m);
+				//	MoveSendingMove.setNull();
+				//}
+			//}
 
 		}
 		wait(m_sleepTimeMs);
@@ -670,7 +673,7 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 {
 	const int TotalTimes = 3;
 	static int _ffx, _ffy, _ttx, _tty;
-	static QString OrgFen;
+	static QString targetFen;
 	static int sentTimes = 0;
 	static bool SendMoveOK = true;
 	static quint64 LastSendTime = 0;
@@ -679,7 +682,7 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 		_ffy = ffy;
 		_ttx = ttx;
 		_tty = tty;
-		OrgFen = fen;
+		targetFen = fen;
 		sentTimes = 0;
 		SendMoveOK = false;
 		LastSendTime = timeRun.elapsed();
@@ -699,7 +702,7 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 	//timeRun.start();'
 	//quint64 StartTime = timeRun.elapsed();
 
-	if (this->m_LxBoard[1].fen == OrgFen) {
+	if (this->m_LxBoard[1].fen != targetFen) {
 
 		LastSendTime = timeRun.elapsed();
 		
@@ -818,10 +821,14 @@ void LinkBoard::ProcessBoardMove(const Chess::GenericMove& move)
 	int ttx = m_offx_che + tx * m_dx;
 	int tty = m_offy_che + (9 - ty) * m_dy;
 
-	this->SendMouseMoveToBoard(true, ffx, ffy, ttx, tty, this->GetFenFromB90(this->m_LxBoard[0].b90));
+	// orgFEN
+	//this->SendMouseMoveToBoard(true, ffx, ffy, ttx, tty, this->GetFenFromB90(this->m_LxBoard[0].b90));
 
 	this->m_LxBoard[0].b90[from] = ChinesePieceType::eNoPice;
 	this->m_LxBoard[0].b90[to] = piece;
+
+	// tagetFFEN
+	this->SendMouseMoveToBoard(true, ffx, ffy, ttx, tty, this->GetFenFromB90(this->m_LxBoard[0].b90));
 
 	// 这个不是走子方不用更新
 	//if (this->m_bGuiIsWhite) {
