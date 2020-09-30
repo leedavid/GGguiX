@@ -116,7 +116,9 @@ namespace Chess {
 
 	private:
 
-		void SendMouseMoveToBoard(bool haveInput=false, int ffx = 0, int ffy = 0, int ttx=0, int tty = 0, QString fen = "");
+		void SendMouseMoveToBoard(bool haveInput=false, int ffx = 0, int ffy = 0, int ttx=0, int tty = 0, 
+			int from = 0, ChinesePieceType fromC = ChinesePieceType::eNoPice,
+			int to = 0, ChinesePieceType ToC = ChinesePieceType::eNoPice);
 		
 		void mouseLeftClickEvent(int x, int y);
 
@@ -176,6 +178,8 @@ namespace Chess {
 		stLxBoard m_LxBoard[2];
 
 		bool m_bGuiIsWhite;                // gui 是不是走红方
+
+		bool weMoveingChess;               // 我方正在走棋            
 
 		int m_iLowHred = 0;                // HSV 区分红黑棋子的参数
 		int m_iHighHred = 10;

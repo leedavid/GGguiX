@@ -25,6 +25,7 @@ LinkBoard::LinkBoard(MainWindow* pMain, Capture* pCap, QString linkCat, bool isA
 	m_pCap(pCap),
 	m_linkCanName(linkCat),
 	m_isAutoClick(isAuto),
+	weMoveingChess(false),
 	mouseClickMethod(LinkMouseClickMethod::Message)
 {
 	this->initBoard();   
@@ -496,6 +497,9 @@ void LinkBoard::runAutoChess()
 
 			// 发送初始fen				
 			if (bWeMustSendInitFen) {
+
+				weMoveingChess = false;
+
 				QString fen = this->m_LxBoard[1].fen;
 				this->m_pCap->SendFenToMain(fen);
 
@@ -530,26 +534,32 @@ void LinkBoard::runAutoChess()
 				}
 			}
 
+			// 是不是对方走棋了
+			if (!weMoveingChess) {
+				if (this->m_LxBoard[0].fen != this->m_LxBoard[1].fen) {
 
-			Chess::GenericMove m;
-			if (this->Board2Move(m)) {   // 根据棋盘，得到当前的走步，这个走步是对方走的
-				//SendMoveToMain(m);
-				MoveSendingFen = this->m_LxBoard[1].fen;
-				//MoveSendingMove = m;
+					Chess::GenericMove m;
+					if (this->Board2Move(m)) {   // 根据棋盘，得到当前的走步，这个走步是对方走的
+						//SendMoveToMain(m);
+						MoveSendingFen = this->m_LxBoard[1].fen;
+						//MoveSendingMove = m;
 
-				this->m_pCap->SendMoveToMain(m);
+						this->m_pCap->SendMoveToMain(m);
 
-				this->m_LxBoard[0].fen = MoveSendingFen;      // 保存走子后的fen	
+						this->m_LxBoard[0].fen = MoveSendingFen;      // 保存走子后的fen	
 
-				StartTime = timeRun.elapsed();                // 发送棋盘后重置一下棋局开始时间
+						StartTime = timeRun.elapsed();                // 发送棋盘后重置一下棋局开始时间
+					}
+
+					//if (this->m_LxBoard[1].fen == MoveSendingFen) {   // 棋盘没有改动
+						//if (MoveSendingMove.isNull() == false) {
+						//	this->m_pCap->SendMoveToMain(m);
+						//	MoveSendingMove.setNull();
+						//}
+					//}
+				}
+
 			}
-
-			//if (this->m_LxBoard[1].fen == MoveSendingFen) {   // 棋盘没有改动
-				//if (MoveSendingMove.isNull() == false) {
-				//	this->m_pCap->SendMoveToMain(m);
-				//	MoveSendingMove.setNull();
-				//}
-			//}
 
 		}
 		wait(m_sleepTimeMs);
@@ -559,6 +569,8 @@ void LinkBoard::runAutoChess()
 			LinkBoard::m_MayNewGame = false;;
 			LinkBoard::mutex.unlock();
 			this->m_MatHash.clear(); // 清空一下
+
+			weMoveingChess = false;
 		}
 
 		SendMouseMoveToBoard(false);
@@ -668,14 +680,14 @@ void LinkBoard::runAutoClip()
 	}
 }
 
-
+/*
 void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, int tty, QString fen)
 {
-	const int TotalTimes = 3;
+	//const int TotalTimes = 500;
 	static int _ffx, _ffy, _ttx, _tty;
 	static QString targetFen;
-	static int sentTimes = 0;
-	static bool SendMoveOK = true;
+	//static int sentTimes = 0;
+	//static bool SendMoveOK = true;
 	static quint64 LastSendTime = 0;
 	if (haveInput) {
 		_ffx = ffx;
@@ -683,83 +695,160 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 		_ttx = ttx;
 		_tty = tty;
 		targetFen = fen;
-		sentTimes = 0;
-		SendMoveOK = false;
+		//SendMoveOK = false;
+		weMoveingChess = true;
 		LastSendTime = timeRun.elapsed();
 	}
 
-	if (SendMoveOK) {
+	//if (SendMoveOK) {
+	//	return;
+	//}
+	if (!weMoveingChess) {
 		return;
 	}
 
-	if (!haveInput) {
-		double delay = (timeRun.elapsed() - LastSendTime) / 1000.0;
-		if (delay  < 1.0) {
+	const quint64 TIME_OUT = 5 * 1000;
+
+
+	//double delay = (timeRun.elapsed() - LastSendTime) / 1000.0;
+	//if (delay > 5.0) {
+
+    if((timeRun.elapsed() - LastSendTime) > TIME_OUT){
+		weMoveingChess = false;
+		//return;
+	}
+
+
+	if (this->m_LxBoard[1].fen != targetFen) {
+		if (m_linkCanName == "测试一") {
+			this->mouseLeftClickEvent(ffx, ffy);	
+			this->mouseLeftClickEvent(ttx, tty);
+		}
+		else {
+			winLeftClick(m_hwnd, ffx, ffy);    // 好象有一半不用点击	
+			winLeftClick(m_hwnd, ttx, tty);
+		}	
+	}
+	else  {
+		weMoveingChess = false;
+	}
+}
+*/
+
+void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, int tty, int from, ChinesePieceType fromC, int to, ChinesePieceType ToC)
+{
+	static int _ffx, _ffy, _ttx, _tty;
+	static int _from, _to;
+	static ChinesePieceType _fChess, _tChess;
+	//static QString targetFen;
+	//static int sentTimes = 0;
+	//static bool SendMoveOK = true;
+	static quint64 LastSendTime = 0;
+	static int sendTimes = 0;
+
+	if (haveInput) {
+		_ffx = ffx;
+		_ffy = ffy;
+		_ttx = ttx;
+		_tty = tty;
+		//targetFen = fen;
+
+		_from = from;
+		_to = to;
+		_fChess = fromC;
+		_tChess = ToC;
+
+		//SendMoveOK = false;
+		weMoveingChess = true;
+		sendTimes = 0;
+		LastSendTime = timeRun.elapsed();
+	}
+
+	//if (SendMoveOK) {
+	//	return;
+	//}
+	if (!weMoveingChess) {
+		return;
+	}
+
+	//const quint64 TIME_OUT = 4 * 1000;
+
+
+	double delay = (timeRun.elapsed() - LastSendTime) / 1000.0;
+	if (sendTimes++ > 2) {
+		if (delay < 0.5) {
 			return;
 		}
 	}
+	
 
-	//timeRun.start();'
-	//quint64 StartTime = timeRun.elapsed();
+	// 如果走子完成了
+	if (this->m_LxBoard[1].b90[_to] == _fChess || sendTimes > 20) {
 
-	if (this->m_LxBoard[1].fen != targetFen) {
+		this->m_LxBoard[0].b90[_from] = ChinesePieceType::eNoPice;
+		this->m_LxBoard[0].b90[_to] = _fChess;
 
-		LastSendTime = timeRun.elapsed();
-		
-		//if (sentTimes >= 3) {
-		//	int a = 0;
-		//}
-		
-		sentTimes++;
-		if (sentTimes > TotalTimes) {
-			return;
-		}
+		weMoveingChess = false;
+		return;
+	}
+
+	//if ((timeRun.elapsed() - LastSendTime) > TIME_OUT) {
+	//if(sendTimes < 20 && delay > ) {
+
+	//	this->m_LxBoard[0].b90[_from] = ChinesePieceType::eNoPice;
+	//	this->m_LxBoard[0].b90[_to] = _fChess;
+
+	//	weMoveingChess = false;
+	//	//return;
+	//}
+
+	
+	
+
+	// 还没有点击走子
+	if (this->m_LxBoard[1].b90[_from] != ChinesePieceType::eNoPice) {
 
 		if (m_linkCanName == "测试一") {
-
-			//SetForegroundWindow(this->m_parentHwnd);
-			//wait(5);
-			//SetCursorPos(ffx, ffy);
-			//wait(5);
-			//mouse_event(MOUSEEVENTF_LEFTDOWN, ffx, ffy, 0, 0);
-			//wait(5);
-			//mouse_event(MOUSEEVENTF_LEFTUP, ffx, ffy, 0, 0);
-
-			//wait(5);
-			//SetCursorPos(ttx, tty);
-			//wait(5);
-			//mouse_event(MOUSEEVENTF_LEFTDOWN, ttx, tty, 0, 0);
-			//wait(5);
-			//mouse_event(MOUSEEVENTF_LEFTUP, ttx, tty, 0, 0);
-			//wait(5);
-			//int a = 0;
-
-			//SetForegroundWindow(this->m_parentHwnd);
-
-			//wait(10);
-
 			this->mouseLeftClickEvent(ffx, ffy);
-			wait(2);
-			this->mouseLeftClickEvent(ttx, tty);
-
-			//wait(10);
-
-			//int a = 0;
+			//this->mouseLeftClickEvent(ttx, tty);
 		}
 		else {
+			winLeftClick(m_hwnd, ffx, ffy);    // 好象有一半不用点击	
+			//winLeftClick(m_hwnd, ttx, tty);
+		}
+	}
 
-			//return;
+	// 还没有放下棋子
+	if (this->m_LxBoard[1].b90[_to] != _fChess) {
 
+		if (m_linkCanName == "测试一") {
+			//this->mouseLeftClickEvent(ffx, ffy);
+			this->mouseLeftClickEvent(ttx, tty);
+		}
+		else {
+			//winLeftClick(m_hwnd, ffx, ffy);    // 好象有一半不用点击	
+			winLeftClick(m_hwnd, ttx, tty);
+		}
+	}
+
+	LastSendTime = timeRun.elapsed();
+	//sendTimes++;
+
+	/*
+	if (this->m_LxBoard[1].b90[_from] == _fChess) {
+		if (m_linkCanName == "测试一") {
+			this->mouseLeftClickEvent(ffx, ffy);
+			this->mouseLeftClickEvent(ttx, tty);
+		}
+		else {
 			winLeftClick(m_hwnd, ffx, ffy);    // 好象有一半不用点击	
 			winLeftClick(m_hwnd, ttx, tty);
 		}
-
-		
-		
 	}
 	else {
-		SendMoveOK = true;
+		weMoveingChess = false;
 	}
+	*/
 }
 
 void LinkBoard::mouseLeftClickEvent(int x, int y) {
@@ -791,11 +880,13 @@ void LinkBoard::ProcessBoardMove(const Chess::GenericMove& move)
 
 	int from = (9 - fy) * 9 + fx;
 	int to = (9 - ty) * 9 + tx;
-	ChinesePieceType piece = this->m_LxBoard[0].b90[from];
-	if (piece <= ChinesePieceType::eBKing && piece >= ChinesePieceType::eBPawn) {
+	ChinesePieceType fromPiece = this->m_LxBoard[0].b90[from];
+	ChinesePieceType ToPiece = this->m_LxBoard[0].b90[to];
+
+	if (fromPiece <= ChinesePieceType::eBKing && fromPiece >= ChinesePieceType::eBPawn) {
 		m_side = Chess::Side::White;
 	}
-	else if (piece <= ChinesePieceType::eRKing && piece >= ChinesePieceType::eRPawn) {
+	else if (fromPiece <= ChinesePieceType::eRKing && fromPiece >= ChinesePieceType::eRPawn) {
 		m_side = Chess::Side::Black;
 	}
 	else {
@@ -822,13 +913,21 @@ void LinkBoard::ProcessBoardMove(const Chess::GenericMove& move)
 	int tty = m_offy_che + (9 - ty) * m_dy;
 
 	// orgFEN
-	//this->SendMouseMoveToBoard(true, ffx, ffy, ttx, tty, this->GetFenFromB90(this->m_LxBoard[0].b90));
+	// this->SendMouseMoveToBoard(true, ffx, ffy, ttx, tty, this->GetFenFromB90(this->m_LxBoard[0].b90));
 
-	this->m_LxBoard[0].b90[from] = ChinesePieceType::eNoPice;
-	this->m_LxBoard[0].b90[to] = piece;
+	// 这儿还没有走到位，不能更新
+	//this->m_LxBoard[0].b90[from] = ChinesePieceType::eNoPice;
+	//this->m_LxBoard[0].b90[to] = fromPiece;
 
+	// QString targetFen = this->GetFenFromB90(this->m_LxBoard[0].b90);
+
+	// 复位棋子
+	//this->m_LxBoard[0].b90[from] = fromPiece;
+	//this->m_LxBoard[0].b90[to] = ToPiece;
+
+	// 只有走到位了，才走棋子
 	// tagetFFEN
-	this->SendMouseMoveToBoard(true, ffx, ffy, ttx, tty, this->GetFenFromB90(this->m_LxBoard[0].b90));
+	this->SendMouseMoveToBoard(true, ffx, ffy, ttx, tty, from, fromPiece, to, ToPiece);
 
 	// 这个不是走子方不用更新
 	//if (this->m_bGuiIsWhite) {
