@@ -175,7 +175,7 @@ namespace Chess {
 
 		bool m_flip;                       // 棋盘翻转
 		Chess::Side m_side;                // 走子方
-		stLxBoard m_LxBoard[2];
+		stLxBoard m_LxBoard[3];
 
 		bool m_bGuiIsWhite;                // gui 是不是走红方
 

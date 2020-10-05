@@ -765,11 +765,11 @@ namespace Chess {
 	{
 		int minDelayMs = QSettings().value("trainFen/TimerDelOne", 20).toInt() * 1000;	
 
-		int num = (CTrainFen::MaxFEN - ServerFENnum)/2;
+		int num = (CTrainFen::MaxFEN - ServerFENnum);
 		if (num < 0) {
 			num = 0;
 		}
-		return minDelayMs + 1000 * num/2; // 每少一个fen, 就多0.5秒延时
+		return minDelayMs + 1000 * num/5; // 每少一个fen, 就多0.5秒延时
 	}
 
 	void CTrainFen::handleTimeout() {  //超时处理函数

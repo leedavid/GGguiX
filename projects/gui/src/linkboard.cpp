@@ -473,7 +473,7 @@ void LinkBoard::runAutoChess()
 		//cv::imshow("source", this->m_image_source);
 		//cv::waitKey();
 
-		if (GetLxBoardChess(1)) {   // 读出第二个棋盘''
+		if (GetLxBoardChess(2)) {   // 读出第二个棋盘''
 
 			QString fen = this->m_LxBoard[1].fen;
 			if (fen == "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR b - - 0 1") { // 是初始局面，这个是对方在走第一步
@@ -746,6 +746,9 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 	static quint64 LastSendTime = 0;
 	static int sendTimes = 0;
 
+	static bool fromOK = false;
+	static bool toOK = false;
+
 	if (haveInput) {
 		_ffx = ffx;
 		_ffy = ffy;
@@ -762,6 +765,9 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 		weMoveingChess = true;
 		sendTimes = 0;
 		LastSendTime = timeRun.elapsed();
+
+		fromOK = false;
+		toOK = false;
 	}
 
 	//if (SendMoveOK) {
@@ -775,15 +781,15 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 
 
 	double delay = (timeRun.elapsed() - LastSendTime) / 1000.0;
-	if (sendTimes++ > 2) {
-		if (delay < 0.5) {
+	if (sendTimes > 1) {
+		if (delay < 0.3) {
 			return;
 		}
 	}
 	
 
 	// 如果走子完成了
-	if (this->m_LxBoard[1].b90[_to] == _fChess || sendTimes > 20) {
+	if ((fromOK && toOK) || sendTimes > 200) {
 
 		this->m_LxBoard[0].b90[_from] = ChinesePieceType::eNoPice;
 		this->m_LxBoard[0].b90[_to] = _fChess;
@@ -806,7 +812,7 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 	
 
 	// 还没有点击走子
-	if (this->m_LxBoard[1].b90[_from] != ChinesePieceType::eNoPice) {
+	if (this->m_LxBoard[1].b90[_from] == _fChess) {
 
 		if (m_linkCanName == "测试一") {
 			this->mouseLeftClickEvent(ffx, ffy);
@@ -816,11 +822,16 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 			winLeftClick(m_hwnd, ffx, ffy);    // 好象有一半不用点击	
 			//winLeftClick(m_hwnd, ttx, tty);
 		}
+		//wait(5);
+	}
+	if (this->m_LxBoard[1].b90[_from] == ChinesePieceType::eNoPice) {
+		fromOK = true;
 	}
 
 	// 还没有放下棋子
-	if (this->m_LxBoard[1].b90[_to] != _fChess) {
+	if (this->m_LxBoard[1].b90[_to] == _tChess) {
 
+		//wait(5);
 		if (m_linkCanName == "测试一") {
 			//this->mouseLeftClickEvent(ffx, ffy);
 			this->mouseLeftClickEvent(ttx, tty);
@@ -830,8 +841,14 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 			winLeftClick(m_hwnd, ttx, tty);
 		}
 	}
+	if (this->m_LxBoard[1].b90[_to] == _fChess){
+		toOK = true;
+	}
 
 	LastSendTime = timeRun.elapsed();
+	sendTimes++;
+
+
 	//sendTimes++;
 
 	/*
@@ -1135,6 +1152,9 @@ bool LinkBoard::GetLxBoardChess(int index)
 			lastFen = pList->fen;
 			return false;
 		}
+
+		// 复制过来
+		m_LxBoard[1] = m_LxBoard[2];
 		return true;
 	}
 	catch (...) {
@@ -1652,7 +1672,7 @@ void LinkBoard::winLeftClick(HWND hwnd, int x, int y, int off_x, int off_y, int 
 	
 	LONG temp = MAKELONG(x+off_x, y+off_y);
 	::SendMessage(hwnd, WM_LBUTTONDOWN, 0, temp);
-	  wait(waitMS);
+	 // wait(waitMS);
 	::SendMessage(hwnd, WM_LBUTTONUP, 0, temp);
 }
 
