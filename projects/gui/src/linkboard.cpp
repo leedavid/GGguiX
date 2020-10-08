@@ -539,16 +539,16 @@ void LinkBoard::runAutoChess()
 				if (this->m_LxBoard[0].fen != this->m_LxBoard[1].fen) {
 
 					Chess::GenericMove m;
-					if (this->Board2Move(m)) {   // 根据棋盘，得到当前的走步，这个走步是对方走的
+					if (this->Board2Move(m)) {                           // 根据棋盘，得到当前的走步，这个走步是对方走的
 						//SendMoveToMain(m);
 						MoveSendingFen = this->m_LxBoard[1].fen;
 						//MoveSendingMove = m;
 
 						this->m_pCap->SendMoveToMain(m);
 
-						this->m_LxBoard[0].fen = MoveSendingFen;      // 保存走子后的fen	
+						this->m_LxBoard[0].fen = MoveSendingFen;         // 保存走子后的fen	
 
-						StartTime = timeRun.elapsed();                // 发送棋盘后重置一下棋局开始时间
+						StartTime = timeRun.elapsed();                   // 发送棋盘后重置一下棋局开始时间
 					}
 
 					//if (this->m_LxBoard[1].fen == MoveSendingFen) {   // 棋盘没有改动
@@ -809,7 +809,7 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 	//}
 
 	
-	
+	mutexBoard.lock();
 
 	// 还没有点击走子
 	if (this->m_LxBoard[1].b90[_from] == _fChess) {
@@ -844,6 +844,8 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 	if (this->m_LxBoard[1].b90[_to] == _fChess){
 		toOK = true;
 	}
+
+	mutexBoard.unlock();
 
 	LastSendTime = timeRun.elapsed();
 	sendTimes++;
@@ -1154,7 +1156,9 @@ bool LinkBoard::GetLxBoardChess(int index)
 		}
 
 		// 复制过来
+		mutexBoard.lock();
 		m_LxBoard[1] = m_LxBoard[2];
+		mutexBoard.unlock();
 		return true;
 	}
 	catch (...) {

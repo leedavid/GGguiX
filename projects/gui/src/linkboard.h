@@ -177,6 +177,8 @@ namespace Chess {
 		Chess::Side m_side;                // 走子方
 		stLxBoard m_LxBoard[3];
 
+		QMutex mutexBoard;                 // 棋盘锁
+
 		bool m_bGuiIsWhite;                // gui 是不是走红方
 
 		bool weMoveingChess;               // 我方正在走棋            
