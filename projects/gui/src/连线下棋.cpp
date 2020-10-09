@@ -75,6 +75,10 @@ void MainWindow::slotProcessCapMsg(Chess::stCaptureMsg msg)
 			return;
 		}
 		m_gameViewer->viewLinkMove(msg.m);
+
+		// 
+
+
 		break;
 	case Chess::eCapMsgType::eSetFen:
 	{

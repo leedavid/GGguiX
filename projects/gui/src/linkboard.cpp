@@ -446,7 +446,7 @@ void LinkBoard::runAutoChess()
 		}
 	}
 
-	QString MoveSendingFen;
+	//QString MoveSendingFen;
 	//Chess::GenericMove MoveSendingMove;
 	this->m_LxBoard[0].fen = "none";
 
@@ -536,17 +536,17 @@ void LinkBoard::runAutoChess()
 
 			// 是不是对方走棋了
 			if (!weMoveingChess) {
-				if (this->m_LxBoard[0].fen != this->m_LxBoard[1].fen) {
+				//if (this->m_LxBoard[0].fen != this->m_LxBoard[1].fen) {
 
 					Chess::GenericMove m;
 					if (this->Board2Move(m)) {                           // 根据棋盘，得到当前的走步，这个走步是对方走的
 						//SendMoveToMain(m);
-						MoveSendingFen = this->m_LxBoard[1].fen;
+						//MoveSendingFen = this->m_LxBoard[1].fen;
 						//MoveSendingMove = m;
 
 						this->m_pCap->SendMoveToMain(m);
 
-						this->m_LxBoard[0].fen = MoveSendingFen;         // 保存走子后的fen	
+						//this->m_LxBoard[0].fen = MoveSendingFen;       // 保存走子后的fen	
 
 						StartTime = timeRun.elapsed();                   // 发送棋盘后重置一下棋局开始时间
 					}
@@ -557,7 +557,7 @@ void LinkBoard::runAutoChess()
 						//	MoveSendingMove.setNull();
 						//}
 					//}
-				}
+				//}
 
 			}
 
@@ -789,10 +789,10 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 	
 
 	// 如果走子完成了
-	if ((fromOK && toOK) || sendTimes > 200) {
+	if ((fromOK && toOK) || sendTimes > 20) {
 
-		this->m_LxBoard[0].b90[_from] = ChinesePieceType::eNoPice;
-		this->m_LxBoard[0].b90[_to] = _fChess;
+		//this->m_LxBoard[1].b90[_from] = ChinesePieceType::eNoPice;
+		//this->m_LxBoard[1].b90[_to] = _fChess;
 
 		weMoveingChess = false;
 		return;
@@ -902,6 +902,9 @@ void LinkBoard::ProcessBoardMove(const Chess::GenericMove& move)
 	ChinesePieceType fromPiece = this->m_LxBoard[0].b90[from];
 	ChinesePieceType ToPiece = this->m_LxBoard[0].b90[to];
 
+	//ChinesePieceType fromPiece1 = this->m_LxBoard[1].b90[from];
+	//ChinesePieceType ToPiece1 = this->m_LxBoard[1].b90[to];
+
 	if (fromPiece <= ChinesePieceType::eBKing && fromPiece >= ChinesePieceType::eBPawn) {
 		m_side = Chess::Side::White;
 	}
@@ -913,23 +916,7 @@ void LinkBoard::ProcessBoardMove(const Chess::GenericMove& move)
 		return;
 	}
 
-	// 更新一下当前棋盘
 
-	if (m_flip) {
-		fx = 8 - fx;
-		fy = 9 - fy;
-		tx = 8 - tx;
-		ty = 9 - ty;
-	}
-
-
-	//cLXinfo* pInfo = &this->m_LxInfo;
-
-	int ffx = m_offx_che + fx * m_dx;
-	int ffy = m_offy_che + (9 - fy) * m_dy;
-
-	int ttx = m_offx_che + tx * m_dx;
-	int tty = m_offy_che + (9 - ty) * m_dy;
 
 	// orgFEN
 	// this->SendMouseMoveToBoard(true, ffx, ffy, ttx, tty, this->GetFenFromB90(this->m_LxBoard[0].b90));
@@ -946,7 +933,43 @@ void LinkBoard::ProcessBoardMove(const Chess::GenericMove& move)
 
 	// 只有走到位了，才走棋子
 	// tagetFFEN
+
+	this->m_LxBoard[0].b90[from] = ChinesePieceType::eNoPice;
+	this->m_LxBoard[0].b90[to] = fromPiece;
+	this->m_LxBoard[0].fen = this->GetFenFromB90(this->m_LxBoard[0].b90);
+
+	weMoveingChess = false;
+	if (m_flip) {
+		if (m_side == Chess::Side::Black) {
+			return;   // 这个不用发送走步
+		}
+	}
+	else {
+		if (m_side == Chess::Side::White) {
+			return;
+		}
+	}
+
+	// 更新一下当前棋盘
+
+	if (m_flip) {
+		fx = 8 - fx;
+		fy = 9 - fy;
+		tx = 8 - tx;
+		ty = 9 - ty;
+	}
+
+	//cLXinfo* pInfo = &this->m_LxInfo;
+
+	int ffx = m_offx_che + fx * m_dx;
+	int ffy = m_offy_che + (9 - fy) * m_dy;
+
+	int ttx = m_offx_che + tx * m_dx;
+	int tty = m_offy_che + (9 - ty) * m_dy;
+
 	this->SendMouseMoveToBoard(true, ffx, ffy, ttx, tty, from, fromPiece, to, ToPiece);
+
+	
 
 	// 这个不是走子方不用更新
 	//if (this->m_bGuiIsWhite) {
@@ -1385,7 +1408,7 @@ bool LinkBoard::Board2Move(GenericMove& m)
 	int tx = -1;
 	int ty = -1;
 
-
+	bool find = false;
 	for (int y = 0; y < 10; y++) {
 		for (int x = 0; x < 9; x++) {
 			ChinesePieceType chess2 = pre_board[y * 9 + x];
@@ -1400,9 +1423,11 @@ bool LinkBoard::Board2Move(GenericMove& m)
 					tx = x;
 					ty = y;
 				}
+				find = true;
 			}
 		}
 	}
+	if (find == false) return false;
 
 	if (fx != -1 && fy != -1 && tx != -1 && ty != -1) {
 		int from = fy * 9 + fx;
@@ -1435,8 +1460,8 @@ bool LinkBoard::Board2Move(GenericMove& m)
 
 				//if (m == m_preMove) {   // 二次确认
 					// 走子
-					this->m_LxBoard[0].b90[from] = ChinesePieceType::eNoPice;
-					this->m_LxBoard[0].b90[to] = piece;
+					//this->m_LxBoard[0].b90[from] = ChinesePieceType::eNoPice;
+					//this->m_LxBoard[0].b90[to] = piece;
 					return true;
 				//}	
 				//m_preMove = m; 
@@ -1516,6 +1541,14 @@ bool LinkBoard::FillListAndGetFen(stLxBoard* pList)
 	return true;
 }
 
+QChar Qpiece_to_char(ChinesePieceType chess)
+{
+	static const  QChar PieceString[]
+		= { '0','p','b','a','c','n','r','k','P','B','A','C','N','R','K' };
+	return PieceString[(int)chess];
+}
+
+
 QString LinkBoard::GetFenFromB90(ChinesePieceType b90[])
 {
 	QString fen;
@@ -1546,6 +1579,7 @@ QString LinkBoard::GetFenFromB90(ChinesePieceType b90[])
 	return fen;
 }
 
+
 bool LinkBoard::fillB90(ChinesePieceType b90[], QVector<cv::Point>& plist, ChinesePieceType chess)
 {
 	for (auto p : plist) {
@@ -1574,12 +1608,7 @@ int LinkBoard::getB90(cv::Point p)
 	return s90;
 }
 
-QChar LinkBoard::Qpiece_to_char(ChinesePieceType chess)
-{
-	static const  QChar PieceString[]
-		= { '0','p','b','a','c','n','r','k','P','B','A','C','N','R','K' };
-	return PieceString[(int)chess];
-}
+
 
 bool LinkBoard::SaveAllPiecePicture(QString subCat)
 {
@@ -2488,5 +2517,7 @@ QDataStream& operator>>(QDataStream& output, LinkBoard& board)
 
 	return output;
 }
+
+
 
 }

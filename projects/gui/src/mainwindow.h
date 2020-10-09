@@ -103,6 +103,7 @@ class MainWindow : public QMainWindow
 signals:
 	/** Re-read configuration. */
 	void reconfigure();
+	void processCapMessOK();           // 处理走步信息可以了
 	/** Main game has been updated. */
 	//void boardChange(const Chess::Board& board, const QString& line);
 

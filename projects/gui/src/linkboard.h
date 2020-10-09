@@ -90,6 +90,8 @@ namespace Chess {
 		ChinesePieceType b90[90];
 		Side side;
 		QString fen;
+
+		//QString GetFenFromB90();
 	};
 
 
@@ -225,7 +227,7 @@ namespace Chess {
 		QString GetFenFromB90(ChinesePieceType b90[]);
 		bool fillB90(ChinesePieceType b90[], QVector<cv::Point>& plist, ChinesePieceType chess);
 		int getB90(cv::Point p);
-		QChar Qpiece_to_char(ChinesePieceType chess);
+		//QChar Qpiece_to_char(ChinesePieceType chess);
 
 		bool  SaveAllPiecePicture(QString subCat = nullptr);  // 得到所有的棋子的图片
 		bool  SaveOnePiecePic(int x, int y, QString chessName, QString subCat);
