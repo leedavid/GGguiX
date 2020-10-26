@@ -199,9 +199,128 @@ QList<OpeningBook::Entry> OpeningBook::entriesFromDisk(quint64 key) const
 	//qint64 ikey = 0xa1ead1f6470e07ee;
 	//quint64 ukey = 0xa1ead1f6470e07ee;
 
-	QString sql = "select * from bhobk where vkey = ?";
-	query.prepare(sql);
-	qint64 ikey = key;
+	//db.
+
+	
+	//query.prepare(sql);
+	//qint64 ikey = (qint64)key;
+
+	/// <summary>
+	/// double
+	/// </summary>
+	/// <param name="key"></param>
+	/// <returns></returns>
+	/*
+	double dkey;
+	memcpy(&dkey, &key, sizeof(dkey));
+
+	if (key < 0) {
+		int a = 0;
+	}
+
+	//float fkey = (float)dkey;
+
+	query.bindValue(0, dkey);
+	*/
+
+	///
+	/// blob 
+	/// 
+	/// 
+	/// 
+	/// 
+	//LLONG_MAX
+	
+	//qint64 ikey = (qint64)key;
+
+	/*
+	CREATE TABLE "bhobk" (
+		"id"	INTEGER,
+		"vkey"	TEXT,
+		"vmove"	INTEGER,
+		"vscore"	INTEGER,
+		"vwin"	INTEGER,
+		"vdraw"	INTEGER,
+		"vlost"	INTEGER,
+		"vvalid"	INTEGER,
+		"vmemo"	BLOB,
+		"vindex"	INTEGER,
+		PRIMARY KEY("id" AUTOINCREMENT)
+		);
+		*/
+
+	//ALTER TABLE bhobk MODIFY vkey TEXT;
+
+	//qint64
+	if (key > _I64_MAX) {
+		//int a = 0;
+
+		double dkey;
+		memcpy(&dkey, &key, sizeof(qint64));
+
+		//QString num = QString::number(dkey, 'g', 13);
+
+		//double dd = num.toDouble();
+
+		//double dd = -7.28156095377995e+199;
+
+		QString sql = "select * from bhobk where vkey > ? AND vkey < ?";
+		query.prepare(sql);
+
+		//dkey = -7.28156095377995e+199;
+
+		double la = dkey * 1.01;
+		double sm = dkey * 0.99;
+
+		//query.bindValue(":sm", dd2);
+		//query.bindValue(":la", dd1);
+
+		query.addBindValue(sm);
+		query.addBindValue(la);
+	}
+
+	// -7.2815609537799462e+199
+	//else if (key < _I64_MIN) {
+	//	double dkey;
+	//	memcpy(&dkey, &key, sizeof(qint64));
+	//	query.bindValue(0, dkey);
+	//}
+	else {
+		//QString sql = "select * from bhobk where vkey = ?";
+		QString sql = "select * from bhobk where vkey = :val";
+		query.prepare(sql);
+		query.bindValue(":val", key);
+	}
+
+
+
+
+	//write
+	//QByteArray target;
+	//QDataStream s(&target, QIODevice::ReadWrite);
+	//qint32 value = someValue;
+	//s << key;
+	//query.bindValue(0, s);
+
+
+	//read
+	//qint32 value;
+	//QByteArray source;
+	//QDataStream s(&source, QIODevice::ReadWrite);
+	//s >> value;
+
+
+	//QByteArray array;
+	//array.append((const char*)&ikey, sizeof(ikey));
+
+	//QByteArray array(sizeof(quint64), '\0');
+	//memcpy(array.data(), &ikey, sizeof(quint64));
+
+	//query.bindValue(0, s);
+
+
+	/////////////////////////////////////////////////////////////////
+	/*
 	if (ikey > 0) {		
 		query.bindValue(0, key);
 	}
@@ -210,6 +329,7 @@ QList<OpeningBook::Entry> OpeningBook::entriesFromDisk(quint64 key) const
 		memcpy(&dkey, &key, sizeof(qint64));	// SQlite3 不认负的 uint64 key
 		query.bindValue(0, dkey);
 	}
+	*/
 
 
 	if (query.exec()) {
@@ -247,6 +367,10 @@ QList<OpeningBook::Entry> OpeningBook::entriesFromDisk(quint64 key) const
 			//if (entry.vscore == 0) {
 			//	entry.vscore = 1;            // 最小给一个1分，防止除0出错
 			//}
+
+			if (entry.vscore <= 0) {
+				entry.vscore = 1;            // 最小给一个1分，防止除0出错
+			}
 
 			if(entry.vscore > 0 && entry.valid == 1){  // 只选择大于0分，且是有效的棋步走棋
 				entries << entry;
