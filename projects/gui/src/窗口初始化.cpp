@@ -275,8 +275,8 @@ void MainWindow::createActions()
 	m_showSettingsAct = new QAction(tr("&通用设置"), this);
 	m_showSettingsAct->setMenuRole(QAction::PreferencesRole);
 
-	m_showSettingsActX = new QAction(tr("&其它设置"), this);
-	m_showSettingsActX->setMenuRole(QAction::PreferencesRole);
+	//m_showSettingsActX = new QAction(tr("&其它设置"), this);
+	//m_showSettingsActX->setMenuRole(QAction::PreferencesRole);
 
 	m_showGameDatabaseWindowAct = new QAction(tr("&对局数据库"), this);
 
@@ -362,8 +362,8 @@ void MainWindow::createActions()
 	connect(m_showSettingsAct, SIGNAL(triggered()),
 		app, SLOT(showSettingsDialog()));
 
-	connect(m_showSettingsActX, SIGNAL(triggered()),
-		this, SLOT(showSettingsDialogX()));
+	//connect(m_showSettingsActX, SIGNAL(triggered()),
+	//	this, SLOT(showSettingsDialogX()));
 
 	connect(m_showTournamentResultsAct, SIGNAL(triggered()),
 		app, SLOT(showTournamentResultsDialog()));
@@ -411,7 +411,7 @@ void MainWindow::createMenus()
 
 	m_toolsMenu = menuBar()->addMenu(tr("&设置"));
 	m_toolsMenu->addAction(m_showSettingsAct);
-	m_toolsMenu->addAction(m_showSettingsActX);
+	//m_toolsMenu->addAction(m_showSettingsActX);
 
 	m_toolsMenu->addAction(m_showGameDatabaseWindowAct);
 

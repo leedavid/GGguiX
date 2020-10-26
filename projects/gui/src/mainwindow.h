@@ -276,7 +276,7 @@ signals:
 		QAction* m_showNextTabAct;
 		QAction* m_aboutAct;
 		QAction* m_showSettingsAct;
-		QAction* m_showSettingsActX;          // 另一个设置
+		//QAction* m_showSettingsActX;          // 另一个设置
 
 		QAction* m_changeBoardPicAct;         // 改变棋盘图片
 		QAction* m_changeBoardBackGroundAct;  // 改变背景

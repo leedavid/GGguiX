@@ -129,7 +129,7 @@ namespace Chess {
 		MainWindow* m_pMain;
 		Capture* m_pCap; 
 
-		QElapsedTimer timeRun;  // 超时定时器
+		//QElapsedTimer timeRun;  // 超时定时器
 
 		HWND m_parentHwnd;                 // 棋盘父窗口
 		HWND m_hwnd;                       // 可响应鼠标走棋的窗口
@@ -181,7 +181,7 @@ namespace Chess {
 
 		QMutex mutexBoard;                 // 棋盘锁
 
-		bool m_bGuiIsWhite;                // gui 是不是走红方
+		//bool m_bGuiIsWhite;                // gui 是不是走红方
 
 		bool weMoveingChess;               // 我方正在走棋            
 

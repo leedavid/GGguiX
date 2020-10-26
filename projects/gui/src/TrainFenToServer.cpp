@@ -190,8 +190,8 @@ namespace Chess {
 		}
 		
 		// 限制上传最多局面数
-		if (endPly > startPly + 60) {
-			endPly = startPly + 60;
+		if (endPly > startPly + 80) {
+			endPly = startPly + 80;
 		}
 		
 		for(int ply= startPly; ply < endPly; ply++){

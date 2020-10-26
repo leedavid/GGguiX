@@ -448,11 +448,19 @@ void LinkBoard::runAutoChess()
 
 	//QString MoveSendingFen;
 	//Chess::GenericMove MoveSendingMove;
-	this->m_LxBoard[0].fen = "none";
+	//this->m_LxBoard[0].fen = "none";
 
 	
-	timeRun.start();
-	quint64 StartTime = timeRun.elapsed();
+	//timeRun.start();
+	//quint64 StartTime = timeRun.elapsed();
+	
+
+	//bool sendStartFen = false;
+	//QString lastSendFen = "";
+	//quint64 lastSendFenTime = timeRun.elapsed();
+	bool justStart = true;
+	const int MaxSentFenDelay = 200;
+	int SentFenDelay = 0;
 
 	while (true) {
 		if (bMustStop) return;
@@ -478,9 +486,11 @@ void LinkBoard::runAutoChess()
 			QString fen = this->m_LxBoard[1].fen;
 			if (fen == "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR b - - 0 1") { // 是初始局面，这个是对方在走第一步
 				wait(m_sleepTimeMs);
+				weMoveingChess = false;
+				//sendStartFen = false;
 				continue;
 			}
-
+			/*
 			if (this->m_LxBoard[0].fen != fen) {
 				if (fen.contains("rnbakabnr/9/1c5c1/p1p1p1p1p", Qt::CaseSensitive)  // 黑棋没有动过
 					&& (fen.contains("b -", Qt::CaseSensitive))) {
@@ -491,27 +501,62 @@ void LinkBoard::runAutoChess()
 					bWeMustSendInitFen = true;
 				}
 			}
-			if (this->m_LxBoard[0].fen == "none") {  // 才启动					
+			*/
+
+			// 才启动，对局中间按下连线按钮			
+			//if (this->m_LxBoard[0].fen == "none") {  // 才启动					
+			//	bWeMustSendInitFen = true;
+				//sendStartFen = false;
+			//}
+
+			//if (LinkBoard::m_MayNewGame) {	
+			//	bWeMustSendInitFen = true;				
+			//}
+
+			if (justStart) {    // 刚开始，发送初始局面
 				bWeMustSendInitFen = true;
+				justStart = false;
+				SentFenDelay = int(MaxSentFenDelay*0.90);
 			}
 
-			// 发送初始fen				
-			if (bWeMustSendInitFen) {
+			if (SentFenDelay > MaxSentFenDelay) {
+				if (fen == "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1") {
+					bWeMustSendInitFen = true;
+					SentFenDelay = 0;
+				}
+				if (fen.contains("rnbakabnr/9/1c5c1/p1p1p1p1p", Qt::CaseSensitive)  // 黑棋没有动过
+					&& (fen.contains("b -", Qt::CaseSensitive))) {
+					bWeMustSendInitFen = true;
+					SentFenDelay = 0;
+				}
+			}
+
+			// 发送初始fen		
+			
+			if (bWeMustSendInitFen) {				
+
+				//if (lastSendFen == fen) {
+				//if (((timeRun.elapsed() - lastSendFenTime) / 1000.0) < 25.0) {
+				//	continue;
+				//}
+				//}
 
 				weMoveingChess = false;
 
-				QString fen = this->m_LxBoard[1].fen;
-				this->m_pCap->SendFenToMain(fen);
+				//QString fen = this->m_LxBoard[1].fen;         // 发送当前的棋盘
+				this->m_pCap->SendFenToMain(fen);    // 发送当前的棋盘
 
 				// 根据fen, 得到我方走什么
+				/*
 				if (fen.contains("w -")) {
 					this->m_bGuiIsWhite = true;
 				}
 				else {
 					this->m_bGuiIsWhite = false;
 				}
+				*/
 
-				StartTime = timeRun.elapsed();   // 发送棋盘后重置一下棋局开始时间
+				//StartTime = timeRun.elapsed();   // 发送棋盘后重置一下棋局开始时间
 
 				//this->m_LxBoard[0].b90 = this->m_LxBoard[0].b90;
 				int size = sizeof(this->m_LxBoard[0].b90);
@@ -519,11 +564,18 @@ void LinkBoard::runAutoChess()
 				this->m_LxBoard[0].fen = this->m_LxBoard[1].fen;
 
 				bWeMustSendInitFen = false;
+				/*
 				for (int i = 0; i < 10; i++) {  // 延时2秒，等待主界面启动引擎
 					wait(100);
 					if (bMustStop) return;
 				}
+				*/
+
+				//lastSendFen = fen;
+				
 			}
+		
+			/*
 			else {
 				if (LinkBoard::m_MayNewGame) {
 					if (fen == "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1") {
@@ -533,6 +585,7 @@ void LinkBoard::runAutoChess()
 					}
 				}
 			}
+			*/
 
 			// 是不是对方走棋了
 			if (!weMoveingChess) {
@@ -548,7 +601,7 @@ void LinkBoard::runAutoChess()
 
 						//this->m_LxBoard[0].fen = MoveSendingFen;       // 保存走子后的fen	
 
-						StartTime = timeRun.elapsed();                   // 发送棋盘后重置一下棋局开始时间
+						//StartTime = timeRun.elapsed();                   // 发送棋盘后重置一下棋局开始时间
 					}
 
 					//if (this->m_LxBoard[1].fen == MoveSendingFen) {   // 棋盘没有改动
@@ -562,18 +615,25 @@ void LinkBoard::runAutoChess()
 			}
 
 		}
-		wait(m_sleepTimeMs);
+		wait(m_sleepTimeMs/4);
 
 		if (LinkBoard::m_MayNewGame) {
+
 			LinkBoard::mutex.lock();
-			LinkBoard::m_MayNewGame = false;;
+			LinkBoard::m_MayNewGame = false;	
 			LinkBoard::mutex.unlock();
 			this->m_MatHash.clear(); // 清空一下
 
 			weMoveingChess = false;
+
+			SentFenDelay = int(MaxSentFenDelay *0.95);
 		}
 
 		SendMouseMoveToBoard(false);
+		SentFenDelay++;
+		if (SentFenDelay > MaxSentFenDelay + 10) {
+			SentFenDelay = MaxSentFenDelay + 10;
+		}
 	}
 }
 
@@ -743,7 +803,7 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 	//static QString targetFen;
 	//static int sentTimes = 0;
 	//static bool SendMoveOK = true;
-	static quint64 LastSendTime = 0;
+	//static quint64 LastSendTime = 0;
 	static int sendTimes = 0;
 
 	static bool fromOK = false;
@@ -764,7 +824,7 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 		//SendMoveOK = false;
 		weMoveingChess = true;
 		sendTimes = 0;
-		LastSendTime = timeRun.elapsed();
+		//LastSendTime = timeRun.elapsed();
 
 		fromOK = false;
 		toOK = false;
@@ -780,16 +840,16 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 	//const quint64 TIME_OUT = 4 * 1000;
 
 
-	double delay = (timeRun.elapsed() - LastSendTime) / 1000.0;
-	if (sendTimes > 1) {
-		if (delay < 0.3) {
-			return;
-		}
-	}
+	//double delay = (timeRun.elapsed() - LastSendTime) / 1000.0;
+	//if (sendTimes > 1) {
+	//	if (delay < 0.03) {
+	//		return;
+	//	}
+	//}
 	
 
 	// 如果走子完成了
-	if ((fromOK && toOK) || sendTimes > 20) {
+	if ((fromOK && toOK) || sendTimes > 10) {
 
 		//this->m_LxBoard[1].b90[_from] = ChinesePieceType::eNoPice;
 		//this->m_LxBoard[1].b90[_to] = _fChess;
@@ -847,7 +907,7 @@ void LinkBoard::SendMouseMoveToBoard(bool haveInput, int ffx, int ffy, int ttx, 
 
 	mutexBoard.unlock();
 
-	LastSendTime = timeRun.elapsed();
+	//LastSendTime = timeRun.elapsed();
 	sendTimes++;
 
 
@@ -1702,8 +1762,8 @@ void LinkBoard::winLeftClick(HWND hwnd, int x, int y, int off_x, int off_y, int 
 {
 	// 如果是其它点击方式
 	
-	
-	LONG temp = MAKELONG(x+off_x, y+off_y);
+	(void)waitMS;
+	LONG temp = MAKELONG(WORD(x+off_x), WORD(y+off_y));
 	::SendMessage(hwnd, WM_LBUTTONDOWN, 0, temp);
 	 // wait(waitMS);
 	::SendMessage(hwnd, WM_LBUTTONUP, 0, temp);
