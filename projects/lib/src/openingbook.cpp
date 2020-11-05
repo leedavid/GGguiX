@@ -269,8 +269,8 @@ QList<OpeningBook::Entry> OpeningBook::entriesFromDisk(quint64 key) const
 
 		//dkey = -7.28156095377995e+199;
 
-		double la = dkey * 1.01;
-		double sm = dkey * 0.99;
+		double la = dkey * 1.000000000000001;
+		double sm = dkey * 0.999999999999999;
 
 		//query.bindValue(":sm", dd2);
 		//query.bindValue(":la", dd1);

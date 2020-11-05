@@ -748,18 +748,18 @@ Chess::Move ChessGame::ChessDBMove(Chess::Side side, int& ev_score)
 
 			allEntries.append(m);
 		}
-		if (allEntries.count() >= 8) {  // 最多8个棋步
+		if (allEntries.count() >= 10) {  // 最多8个棋步
 			break;
 		}
 	}
 
-	int rankBest = 2;  //  大于这个才可以走
+	int rankBest = 1;  //  大于这个才可以走
 	// 1  求最高分
-	for (auto e : allEntries) {
-		if (e.rank >= rankBest) {
-			rankBest = e.rank;
-		}
-	}
+	//for (auto e : allEntries) {
+	//	if (e.rank >= rankBest) {
+	//		rankBest = e.rank;
+	//	}
+	//}
 	// 2 将最高分集中起来
 	QList<Chess::ChessDBmove> bestEntries;
 	for (auto e : allEntries) {
